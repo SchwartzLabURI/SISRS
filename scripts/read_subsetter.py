@@ -56,7 +56,7 @@ compiled_single_end = list()
 #For each taxa directory...
 for tax_dir in trim_read_tax_dirs:
     #List all files and set output dir
-    files = sorted(os.listdir(tax_dir))
+    files = sorted(glob(tax_dir+"*.fastq.gz"))
     taxon_ID = path.basename(tax_dir[:-1])
 
     left_pairs = list()

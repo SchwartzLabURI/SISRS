@@ -74,7 +74,7 @@ check_call(raw_fastqc_command)
 for tax_dir in raw_read_tax_dirs:
 
     #List all files and set output dir
-    files = sorted(os.listdir(tax_dir))
+    files = sorted(glob(tax_dir+"*.fastq.gz"))
     taxon_ID = path.basename(tax_dir[:-1])
     out_trim_dir = trim_read_dir + "/" + taxon_ID
 
