@@ -69,9 +69,18 @@ If your reads are already trimmed, place all read files into the appropriate tax
 To use our wrapper:
 
 * 1) Put all raw reads in (**.fastq.gz format**) in the appropriate taxon folder in RawReads.  
-  * Multiple read files per taxon is fine, as are mixes of single-end and paired-end reads.
-* 2) Run trim script, which will trim all reads in RawReads and output trimmed reads to the TrimReads directory (and runs FastQC on both sets)  
-
+  * Raw data files are not modified or used after trimming, so avoid duplication if possible by making links to the fastq.gz files as opposed to copying or moving raw data  
+  ```
+  > cd /home/Literman_PhyloSignal/Reads/RawReads/HomSap
+  > cp -as /Path/to/your/raw/data/HomSap*.gz .
+  > cd ../
+  > cd GorGor/
+  > cp -as /Path/to/your/raw/data/GorGor*.gz .
+  ```
+* 2) Run read_trimmer.py, which will:  
+  * Trim all reads in RawReads
+  * Output trimmed reads to the TrimReads directory  
+  * Run FastQC on both trimmed and untrimmed datasets
 ```
 python scripts/read_trimmer.py
 ```  
@@ -80,4 +89,15 @@ python scripts/read_trimmer.py
 * Before continuing, **check FastQC output** for trimmed data. If using 'random' DNA-seq data, be especially wary of **high sequence duplication levels** which could indicate non-random sequencing.
 * Data will eventually be pooled, so **best to remove low-quality data early** to prevent it from being incorporated into the genome assembly
 
-##### 4) Once all trimmed data is in place and QC'd, samples are pooled and then subset for composite genome assembly. 
+##### 4) Once all trimmed data is in place and QC'd, samples are subset with the following scheme:  
+* read_subsetter.py takes one argument: An estimate of the group genome size in basepairs
+```
+#For a SISRS run on ape species (with ~3.5Gb genome)
+> python scripts/read_subsetter.py 3500000000
+```
+* Based on requested depth [10*Genome Size Estimate/Number of Species], if a species has fewer total reads all reads will be sampled and the user will be notified with a warning message  
+* For species that do have sufficient total coverage, an attempt is made to sample evenly from each read set.
+* If certain read sets lack the required coverage, they are also sampled completely and the deficit is covered by a deeper read set
+* Reads must be in the appropriate TrimReads subfolder
+* Single-end should all end in "_Trim.fastq.gz"
+* Paired-end reads should end in "_Trim_1.fastq.gz/_Trim_2.fastq.gz"

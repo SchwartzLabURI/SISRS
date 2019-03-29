@@ -100,8 +100,8 @@ for tax_dir in raw_read_tax_dirs:
     single_end = [x for x in files if x not in paired_files]
 
     #Remove .fastq.gz from lists to make naming easier
-    left_pairs = [x.replace('.fastq.gz', '') for x in left_pairs]
-    right_pairs = [x.replace('.fastq.gz', '') for x in right_pairs]
+    left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
+    right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
     #Trim single-end files if present...
@@ -130,7 +130,7 @@ for tax_dir in raw_read_tax_dirs:
     #Trim paired-end files if present...
     if(len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
         for x in range(len(left_pairs)):
-            file_name = left_pairs[0].replace('_1','')
+            file_name = left_pairs[x].replace('_1','')
             pe_trim_command = [
                 'bbduk.sh',
                 'maxns=0',
@@ -139,10 +139,10 @@ for tax_dir in raw_read_tax_dirs:
                 'trimq=15',
                 'minlength=35',
                 'maq=25',
-                'in={}'.format(tax_dir+left_pairs[x]+'.fastq.gz'),
-                'in2={}'.format(tax_dir+right_pairs[x]+'.fastq.gz'),
-                'out={}'.format(out_trim_dir+"/"+left_pairs[x]+'_Trim.fastq.gz'),
-                'out2={}'.format(out_trim_dir+"/"+right_pairs[x]+'_Trim.fastq.gz'),
+                'in={}'.format(tax_dir+left_pairs[x]+'_1.fastq.gz'),
+                'in2={}'.format(tax_dir+right_pairs[x]+'_2.fastq.gz'),
+                'out={}'.format(out_trim_dir+"/"+left_pairs[x]+'_Trim_1.fastq.gz'),
+                'out2={}'.format(out_trim_dir+"/"+right_pairs[x]+'_Trim_2.fastq.gz'),
                 'k=23',
                 'mink=11',
                 'hdist=1',
