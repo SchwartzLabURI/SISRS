@@ -22,7 +22,6 @@ script_dir = sys.path[0]
 
 #Get Genome size estimate
 genomeSize = int(sys.argv[1])
-#genomeSize=291614
 
 #Set TrimRead directories based off of script folder location
 trim_read_dir = path.dirname(path.abspath(script_dir))+"/Reads/TrimReads"
@@ -89,8 +88,8 @@ for tax_dir in trim_read_tax_dirs:
     compiled_paired = compiled_paired + paired_files
     compiled_single_end = compiled_single_end + single_end
     #Remove .fastq.gz from lists to make naming easier
-    left_pairs = [x.replace('.fastq.gz', '') for x in left_pairs]
-    right_pairs = [x.replace('.fastq.gz', '') for x in right_pairs]
+    left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
+    right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
     #Count bases in single-end files if present...
@@ -98,7 +97,7 @@ for tax_dir in trim_read_tax_dirs:
         for x in single_end:
             count_command = [
                 'reformat.sh',
-                'in={}'.format(tax_dir+x+'.fastq.gz')]
+                'in={}'.format(x+'.fastq.gz')]
             proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             o, e = proc.communicate()
 
@@ -106,17 +105,17 @@ for tax_dir in trim_read_tax_dirs:
             count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
             baseCount = count.group(1)
             taxon_list.append(taxon_ID)
-            dataset_list.append(x)
+            dataset_list.append(path.basename(x))
             basecount_list.append(baseCount)
 
     #Count bases in paired-end files if present...
     if(len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
         for x in range(len(left_pairs)):
-            dataset_list.append(left_pairs[x].replace('_1',''))
+            dataset_list.append(path.basename(left_pairs[x]))
             count_command = [
                 'reformat.sh',
-                'in={}'.format(tax_dir+left_pairs[x]+'.fastq.gz'),
-                'in2={}'.format(tax_dir+right_pairs[x]+'.fastq.gz')]
+                'in={}'.format(left_pairs[x]+'_1.fastq.gz'),
+                'in2={}'.format(right_pairs[x]+'_2.fastq.gz')]
             proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             o, e = proc.communicate()
             count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
@@ -172,11 +171,12 @@ for taxa in taxa_list:
             df.loc[df.Dataset.isin(high_datasets), ["ToSample"]] = per_dataset
         else:
             df.loc[df.Taxon == taxa, ["ToSample"]] = per_dataset
+
 df.to_csv(subset_output_dir+"/Subset_Scheme.csv",index=False)
 
-compiled_paired = [x.replace('_1.fastq.gz', '') for x in compiled_paired]
-compiled_paired = [x.replace('_2.fastq.gz', '') for x in compiled_paired]
-compiled_single_end = [x.replace('.fastq.gz', '') for x in compiled_single_end]
+compiled_paired = [path.basename(x).replace('_1.fastq.gz', '') for x in compiled_paired]
+compiled_paired = [path.basename(x).replace('_2.fastq.gz', '') for x in compiled_paired]
+compiled_single_end = [path.basename(x).replace('.fastq.gz', '') for x in compiled_single_end]
 
 #Subset bases in single-end files if present...
 if len(compiled_single_end) > 0:

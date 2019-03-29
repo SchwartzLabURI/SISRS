@@ -16,7 +16,6 @@ from glob import glob
 import subprocess
 from subprocess import check_call
 
-processors = 1
 if len(sys.argv) > 1:
     processors = sys.argv[1]
 
@@ -66,8 +65,6 @@ raw_fastqc_command = [
 for x in glob(raw_read_dir+"/*/*.fastq.gz"):
     raw_fastqc_command.append(x)
 
-print(glob(raw_read_dir+"/*/*.fastq.gz"))
-print(" ".join(raw_fastqc_command))
 check_call(raw_fastqc_command)
 
 #For each taxa directory...
@@ -115,8 +112,8 @@ for tax_dir in raw_read_tax_dirs:
                 'trimq=15',
                 'minlength=35',
                 'maq=25',
-                'in={}'.format(tax_dir+x+'.fastq.gz'),
-                'out={}'.format(out_trim_dir+"/"+x+'_Trim.fastq.gz'),
+                'in={}'.format(x+'.fastq.gz'),
+                'out={}'.format(out_trim_dir+"/"+path.basename(x)+'_Trim.fastq.gz'),
                 'k=23',
                 'mink=11',
                 'hdist=1',
@@ -124,13 +121,13 @@ for tax_dir in raw_read_tax_dirs:
                 'ktrim=r',
                 'ow=t',
                 '&>',
-                '{outDir}out_{fileName}_Trim'.format(outDir=trim_output,fileName=x)]
+                '{outDir}out_{fileName}_Trim'.format(outDir=trim_output,fileName=path.basename(x))]
             check_call(se_trim_command)
 
     #Trim paired-end files if present...
     if(len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
         for x in range(len(left_pairs)):
-            file_name = left_pairs[x].replace('_1','')
+            file_name = path.basename(left_pairs[x])
             pe_trim_command = [
                 'bbduk.sh',
                 'maxns=0',
@@ -139,10 +136,10 @@ for tax_dir in raw_read_tax_dirs:
                 'trimq=15',
                 'minlength=35',
                 'maq=25',
-                'in={}'.format(tax_dir+left_pairs[x]+'_1.fastq.gz'),
-                'in2={}'.format(tax_dir+right_pairs[x]+'_2.fastq.gz'),
-                'out={}'.format(out_trim_dir+"/"+left_pairs[x]+'_Trim_1.fastq.gz'),
-                'out2={}'.format(out_trim_dir+"/"+right_pairs[x]+'_Trim_2.fastq.gz'),
+                'in={}'.format(left_pairs[x]+'_1.fastq.gz'),
+                'in2={}'.format(right_pairs[x]+'_2.fastq.gz'),
+                'out={}'.format(out_trim_dir+"/"+path.basename(left_pairs[x])+'_Trim_1.fastq.gz'),
+                'out2={}'.format(out_trim_dir+"/"+path.basename(right_pairs[x])+'_Trim_2.fastq.gz'),
                 'k=23',
                 'mink=11',
                 'hdist=1',
