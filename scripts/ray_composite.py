@@ -38,4 +38,4 @@ ray_command = [
     '{}'.format("-s " + " -s ".join(subset_reads)),
     '-o',
     '{}'.format(ray_genome_dir)]
-check_call(ray_command)
+os.system(" ".join(ray_command))
