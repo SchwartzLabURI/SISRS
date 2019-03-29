@@ -21,7 +21,7 @@ import re
 script_dir = sys.path[0]
 
 #Get Genome size estimate
-genomeSize = sys.argv[1]
+genomeSize = int(sys.argv[1])
 #genomeSize=291614
 
 #Set TrimRead directories based off of script folder location
