@@ -109,6 +109,23 @@ python scripts/read_trimmer.py
 * Paired-end reads should end in "_Trim_1.fastq.gz/_Trim_2.fastq.gz"  
 
 ##### 5) Composite Genome Assembly  
-* SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together
-* The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in only few species
-* As with the trimming, you can use any genome assembler that you're comfortable with, but we provide  a wrapper for Ray, which is fast but requires MPI even on one node
+* SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together  
+* The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in only few species  
+* As with the trimming, you can use any genome assembler that you're comfortable with, but we provide  a wrapper for Ray, which is fast but requires MPI even on one node  
+* **ray_composite.py** takes two arguments: (1) Number of nodes available (2) Number of processors per node  
+```
+#1 node, 20 processors per node
+> python scripts/ray_composite.py 1 20
+```
+
+##### 6) Setting up the SISRS run  
+* **setup_sisrs.py** will place all the files where they need to be for a SISRS run, including:
+  * Renaming scaffolds with 'SISRS_' at the front for downstream data handling  
+  * Linking all trim reads to the SISRS analysis folders  
+  * Indexing and processing the composite genome  
+  * Creating SISRS runs scripts for each species  
+  * The bulk of the user-settings take place here including arguments in this order:  
+    * Number of available processors
+    * Minimum read coverage to call a site (Default: 3)
+    * Minimum site homozygosity for SISRS (Default: 1)
+    * Number of sites allowed missing (Default: 0; Note: 0 missing is required for the manuscript analysis but for tree building, feel free to allow yourself more wiggle room)

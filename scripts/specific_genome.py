@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 import os
+from os import path
 import sys
 from collections import Counter
 from Bio import SeqIO
-import glob
+from glob import glob
 
 #get combined pileup info
-def getallbases(path):
-    assert len(glob.glob1(path,"*.pileups"))==1,'More than one pileup file in'+path
+def getallbases(tax_dir):
+    assert len(glob(tax_dir+"/*.pileups"))==1,'More than one pileup file in'+tax_dir
     allbases=dict()
-    with open (path+'/'+os.path.basename(path)+'.pileups',"r") as filein:
+    with open (tax_dir+"/"+path.basename(tax_dir)+'.pileups',"r") as filein:
         for line in filein:
             splitline=line.split()
-            if len(splitline)>4:
+            if len(splitline)>4 and int(splitline[3])>0:
                 node,pos,ref,num,bases,qual=line.split()
                 loc=node+'/'+pos
                 cleanBases=getCleanList(ref,bases)
@@ -82,22 +83,12 @@ def getFinalBase_Specific(cleanBases):
             finalBase = (sorted(finalBases))[0]
     return finalBase
 
-    #If we can find a mapper to handle degenerate bases...
-    #degenDict = {"ACGT":"N","GT":"K","AC":"M","AG":"R","CT":"Y","CG":"S","AT":"W","CGT":"B","AGT":"D","ACT":"H"}
-    #counter=Counter(cleanBases)
-    #baseList = sorted([key for key, _ in counter.most_common()])
-    #if '*' in baseList:
-    #    finalBase = 'N'
-    #else:
-    #    finalBase = degenDict[baseList]
-    #return finalBase
-
 ###############################################
-def main(path, contig_file):
+def main(tax_dir, contig_file):
 
-    allbases=getallbases(path)      #dictionary of combined pileups - locus/pos:bases(as list)
+    allbases=getallbases(tax_dir)      #dictionary of combined pileups - locus/pos:bases(as list)
     if len(allbases)==0:
-        print('No data for '+path,flush=True)
+        print('No data for '+tax_dir,flush=True)
         sys.exit(1)
 
     # Read contig fasta file into dictionary with sequence ID as the key
@@ -110,12 +101,12 @@ def main(path, contig_file):
         locus,pos = locus_pos.split('/')
         fasta_dict[locus][int(pos)-1] = base
 
-    output = open(path+'/contigs.fa', 'w')
+    output = open(tax_dir+'/contigs.fa', 'w')
     for l,seq in sorted(fasta_dict.items()):
         output.write('>'+str(l)+"\n"+"".join(seq)+"\n")
     output.close()
 
 if __name__ == '__main__':
-    path = sys.argv[1]
+    tax_dir = sys.argv[1]
     contig_file = sys.argv[2]
-    main(path, contig_file)
+    main(tax_dir, contig_file)
