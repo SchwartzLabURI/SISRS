@@ -2,13 +2,19 @@
 #### This GitHub repo contains all the necessary scripts to run analyses from *Literman and Schwartz* (2019)
 
 #### **Software Requirements** (Manuscript Version):
-* Python3 (3.6.1)  
+* Python3 (3.6.1)
+  * Add packages  
 * Bowtie2 (2.3.4)  
 * Samtools (1.3.1)  
 * BBMap Suite (37.40)  
 * Genome assembler of your choosing (Ray - 2.3.2-devel)  
+  *  Ray requires a working version of MPI, even if running on a single node
 * R (3.5.3)  
+  * Add packages  
 * FastQC (0.11.5)
+* RAxML (8.2.11)
+* MAFFT (7.310)
+* BEDTools (2.26.0)
 
 #### **Data Requirements:**
 1) Approximate genome size estimate for group  
@@ -100,4 +106,9 @@ python scripts/read_trimmer.py
 * If certain read sets lack the required coverage, they are also sampled completely and the deficit is covered by a deeper read set
 * Reads must be in the appropriate TrimReads subfolder
 * Single-end should all end in "_Trim.fastq.gz"
-* Paired-end reads should end in "_Trim_1.fastq.gz/_Trim_2.fastq.gz"
+* Paired-end reads should end in "_Trim_1.fastq.gz/_Trim_2.fastq.gz"  
+
+##### 5) Composite Genome Assembly  
+* SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together
+* The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in only few species
+* As with the trimming, you can use any genome assembler that you're comfortable with, but we provide  a wrapper for Ray, which is fast but requires MPI even on one node
