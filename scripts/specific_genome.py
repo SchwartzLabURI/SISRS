@@ -108,5 +108,8 @@ def main(tax_dir, contig_file):
 
 if __name__ == '__main__':
     tax_dir = sys.argv[1]
+    #Ensure no trailing /
+    if tax_dir[-1]=="/":
+        tax_dir=tax_dir[0:-1]
     contig_file = sys.argv[2]
     main(tax_dir, contig_file)

@@ -137,5 +137,8 @@ def main(num_missing, mainfolder, composite_dir):
 if __name__ == '__main__':
     num_missing = int(sys.argv[1])
     mainfolder = sys.argv[2]
+    #Ensure no trailing /
+    if mainfolder[-1]=="/":
+        mainfolder=mainfolder[0:-1]
     composite_dir = mainfolder + '/Composite_Genome'
     main(num_missing, mainfolder, composite_dir)

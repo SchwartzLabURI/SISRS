@@ -116,6 +116,12 @@ def main(tax_dir, contig_dir, minread, thresh):
 if __name__ == '__main__':
     tax_dir = sys.argv[1]
     contig_dir = sys.argv[2]
+
+    #Ensure no trailing /
+    if tax_dir[-1]=="/":
+        tax_dir=tax_dir[0:-1]
+    if contig_dir[-1]=="/":
+        contig_dir=tax_dir[0:-1]
     minread = int(sys.argv[3])
     thresh = float(sys.argv[4])
     main(tax_dir, contig_dir, minread, thresh)

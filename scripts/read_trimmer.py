@@ -16,6 +16,7 @@ from glob import glob
 import subprocess
 from subprocess import check_call
 
+processors = 1
 if len(sys.argv) > 1:
     processors = sys.argv[1]
 
