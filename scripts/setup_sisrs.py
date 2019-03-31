@@ -107,7 +107,7 @@ python SCRIPT_DIRget_pruned_dict.py SISRS_DIR/TAXA COMPOSITE_DIR MINREAD THRESHO
 
 python SCRIPT_DIRget_alignment.py TWOTAXA SISRS_DIR COMPOSITE_DIR
 
-python SCRIPT_DIRfilter_nexus_for_missing.py SISRS_DIR/alignment_bi.nex 0
+python SCRIPT_DIRfilter_nexus_for_missing.py SISRS_DIR/alignment_bi.nex MISSING GAP
 
 grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_bi_locs_m0.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_bi_locs_m0_Clean.txt
 """
@@ -127,14 +127,14 @@ for tax_dir in trim_read_tax_dirs:
 
     new_sisrs = sisrs_template
 
-    keyList = ['PROCESSORS','BOWTIE2-INDEX','COMPOSITE_GENOME','SCRIPT_DIR','MINREAD','THRESHOLD','MISSING','TWOTAXA','TAXA','SISRS_DIR','COMPOSITE_DIR','READS']
+    keyList = ['PROCESSORS','BOWTIE2-INDEX','COMPOSITE_GENOME','SCRIPT_DIR','MINREAD','THRESHOLD','MISSING','GAP','TWOTAXA','TAXA','SISRS_DIR','COMPOSITE_DIR','READS']
     keyDict = {'PROCESSORS':str(int(sys.argv[1])),
                'BOWTIE2-INDEX':composite_dir+"/Composite_Genome",
                'COMPOSITE_GENOME':composite_dir+"/Composite_Genome.fa",
                'SCRIPT_DIR':script_dir,
-               'MINREAD':str(3),
-               'THRESHOLD':str(1),
-               'MISSING':str(0),
+               'MINREAD':str(int(sys.argv[2])),
+               'THRESHOLD':str(float(sys.argv[3]),
+               'MISSING':str(int(sys.argv[4])),
                'TWOTAXA':str(len(trim_read_tax_dirs)-2),
                'TAXA':taxa,
                'SISRS_DIR':sisrs_dir,
