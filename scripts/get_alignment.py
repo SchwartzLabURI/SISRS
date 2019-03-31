@@ -7,7 +7,7 @@
     arguments:
         num_missing -- the number of species allowed to be missing at a site so that site will show in output alignment
         mainfolder -- folder that includes folders containing data
-        assembler -- assembler used to get composite reference
+        composite_dir -- path to composite assembly folder
 
     output:
         alignment.nex : nexus formatted alignment including position in composite reference genome; each site as up to num_missing missing data
@@ -17,8 +17,9 @@
 """
 
 import os
+from os import path
 import re
-import glob
+from glob import glob
 from collections import Counter,defaultdict
 import sys
 from Bio.Seq import Seq
@@ -54,16 +55,16 @@ class Alignment:
         return self.flag.count(2)       # number of biallelic sites
 
 
-def get_phy_sites(mainfolder,assembler,num_missing):
+def get_phy_sites(mainfolder,composite_dir,num_missing):
 
     #Fetch contig data
-    contigList=glob.glob(mainfolder+'/' + assembler +'output/contigs_LocList')
+    contigList=composite_dir +'/Composite_Genome_LocList'
     assert len(contigList) > 0, 'Total site list not found in assembly folder'
 
     #Fetch sorted species data
-    dataLists = sorted(glob.glob(mainfolder+'/*/*_LocList'))
-    dataLists.remove(mainfolder+'/' + assembler +'output/contigs_LocList')
-    splist=[os.path.basename(os.path.dirname(path)) for path in dataLists]
+    dataLists = sorted(glob(mainfolder+'/*/*_LocList'))
+    dataLists.remove(composite_dir +'/Composite_Genome_LocList')
+    splist=[path.basename(path.dirname(path1)) for path1 in dataLists]
     speciesCount=len(dataLists)
     assert len(dataLists) > 0, 'No species had data from the pileup'
 
@@ -127,14 +128,14 @@ def write_alignment(fi,alignment,numbi):
 
 #########################
 
-def main(num_missing, mainfolder, assembler):
+def main(num_missing, mainfolder, composite_dir):
 
-    alignment=get_phy_sites(mainfolder,assembler,num_missing)
+    alignment=get_phy_sites(mainfolder,composite_dir,num_missing)
     numbi=alignment.numsnps() #prints numbers of snps, biallelic snps, and singletons
     alignment = write_alignment(mainfolder+'/alignment.nex',alignment,numbi)
 
 if __name__ == '__main__':
     num_missing = int(sys.argv[1])
     mainfolder = sys.argv[2]
-    assembler = sys.argv[3]
-    main(num_missing, mainfolder, assembler)
+    composite_dir = mainfolder + '/Composite_Genome'
+    main(num_missing, mainfolder, composite_dir)
