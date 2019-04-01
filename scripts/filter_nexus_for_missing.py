@@ -5,7 +5,6 @@
     arguments:
     (1) data  -- Nexus alignment from SISRS
     (2) missing -- the number of species in the alignment allowed to have missing data
-    (3) gap (0/1) -- 0: Gapped biallelic sites removed; 1: Gapped biallelic sites retained
 
     output:
     phylip formatted file ending with _mX.phylip-relaxed where X is the number missing
@@ -24,10 +23,8 @@ from Bio import AlignIO, SeqIO
 def main(alignment_filename, missing_str,gap):
 
     ######################
-    if gap==0:
-        bases = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't']
-    if gap==1:
-        bases = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't','-']
+    bases = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't','-']
+
     missing = int(missing_str)
     data = SeqIO.to_dict(SeqIO.parse(alignment_filename,'nexus'))
 
@@ -67,5 +64,4 @@ def main(alignment_filename, missing_str,gap):
 if __name__ == '__main__':
     alignment_filename = sys.argv[1]
     missing_str = sys.argv[2]
-    gap = sys.argv[3]
     main(alignment_filename, missing_str)
