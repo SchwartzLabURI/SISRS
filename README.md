@@ -128,11 +128,6 @@ python scripts/read_trimmer.py
     1) Number of available processors  
     2) Minimum read coverage to call a SISRS site (Default: 3)   
     3) Minimum site homozygosity for SISRS sites (Default: 1)  
-    4) Number of sites allowed missing across taxa (Default: 0)  
-      * Note: 0 missing is required for the manuscript analysis but for tree building, feel free to allow yourself more wiggle room  
-
-    5) Gap consideration (0: Biallelic gaps are removed; 1: Biallelic gaps are retained)  
-
   ```
-  > setup_sisrs.py <processors> <min_coverage> <homozygosity_threshold> <number_allowed_missing> <0/1 for gaps>
+  > setup_sisrs.py <processors> <min_coverage> <homozygosity_threshold>
   ```
