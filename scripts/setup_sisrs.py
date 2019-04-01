@@ -86,7 +86,7 @@ rm SISRS_DIR/TAXA/TAXA_Header.sam
 
 samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
 
-python SCRIPT_DIRspecific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
+python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
 
 samtools faidx SISRS_DIR/TAXA/contigs.fa
 bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs
@@ -103,7 +103,7 @@ samtools index SISRS_DIR/TAXA/TAXA.bam
 
 samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
 
-python SCRIPT_DIRget_pruned_dict.py SISRS_DIR/TAXA COMPOSITE_DIR MINREAD THRESHOLD
+python SCRIPT_DIR/get_pruned_dict.py SISRS_DIR/TAXA COMPOSITE_DIR MINREAD THRESHOLD
 """
 
 #Create links to trimmed read files in SISRS_Run directory
