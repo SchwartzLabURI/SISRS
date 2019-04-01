@@ -68,7 +68,7 @@ def get_phy_sites(mainfolder,composite_dir,num_missing):
     speciesCount=len(dataLists)
     assert len(dataLists) > 0, 'No species had data from the pileup'
 
-    allLists = contigList+dataLists
+    allLists = [contigList]+dataLists
 
     alignment = Alignment()
     alignment.species_data = {species: [] for species in splist}

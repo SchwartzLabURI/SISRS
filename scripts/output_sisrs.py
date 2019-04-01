@@ -16,7 +16,7 @@ script_dir = sys.path[0]
 #Set TrimRead + SISRS directories based off of script folder location
 sisrs_dir = path.dirname(path.abspath(script_dir))+"/SISRS_Run"
 sisrs_tax_dirs = sorted(glob(sisrs_dir+"/*/"))
-sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome')]
+sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/')]
 
 sisrs_output_template = """
 SCRIPT_DIR/get_alignment.py TWOTAXA SISRS_DIR

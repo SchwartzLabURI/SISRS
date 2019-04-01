@@ -20,7 +20,7 @@ from Bio.Alphabet import generic_dna, IUPAC, Gapped
 from Bio.Align import MultipleSeqAlignment, AlignInfo
 from Bio import AlignIO, SeqIO
 
-def main(alignment_filename, missing_str,gap):
+def main(alignment_filename, missing_str):
 
     ######################
     bases = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't','-']
