@@ -12,7 +12,7 @@ def getallbases(path):
     with open (path+'/'+os.path.basename(path)+'.pileups',"r") as filein:
         for line in filein:
             splitline=line.split()
-            if len(splitline)>4:
+            if len(splitline)>4 and int(splitline[3])>0:
                 node,pos,ref,num,bases,qual=line.split()
                 loc=node+'/'+pos
                 cleanBases=getCleanList(ref,bases)
