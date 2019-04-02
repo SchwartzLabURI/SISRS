@@ -9,6 +9,7 @@ import os
 from os import path
 import sys
 from glob import glob
+import pandas as pd
 
 #Set cwd to script location
 script_dir = sys.path[0]
@@ -39,15 +40,10 @@ rename_command = [
 os.system(" ".join(rename_command))
 
 #Copy sequence length file from Ray
-seq_length_command = [
-    'cd',
-    '{}'.format(composite_dir),
-    ';',
-    'cp',
-    '-as',
-    '{}/ScaffoldLengths.txt'.format(ray_dir),
-    './Composite_Genome_SeqLength.tsv']
-os.system(" ".join(seq_length_command))
+scaffold_length = pd.read_csv(ray_dir+'/ScaffoldLengths.txt',sep="\t",header=None)
+scaffold_length.columns = ['Scaffold','Length']
+scaffold_length.Scaffold = ("SISRS_" + scaffold_length.Scaffold)
+scaffold_length.to_csv(composite_dir+"/Composite_Genome_SeqLength.tsv",sep="\t",header=None,index=False)
 
 #Index composite genome using Bowtie2 and Samtools
 bowtie_command = [
