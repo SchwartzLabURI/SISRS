@@ -18,7 +18,7 @@ import glob
 import string
 import re
 import os
-from .specific_genome import getCleanList
+from specific_genome import getCleanList
 from collections import defaultdict
 
 #get combined pileup info
@@ -40,7 +40,7 @@ def getallbases(path,contig_dir,minread,thresh):
                 speciesDict[loc] = finalBase
 
     printSpecies = open(path+"/"+os.path.basename(path)+'_LocList', 'w')
-    with open(contig_dir+"/contigs_LocList") as f:
+    with open(contig_dir+"/Composite_Genome_LocList") as f:
         for line in f:
             printSpecies.write(speciesDict[line.strip()]+'\n')
     f.close()
