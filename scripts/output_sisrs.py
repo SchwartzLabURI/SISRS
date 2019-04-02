@@ -37,6 +37,6 @@ keyDict = {'TWOTAXA':str(len(sisrs_tax_dirs) - 2),
            'MISSING':str(int(sys.argv[1])),
            'COMPOSITE_DIR':composite_dir}
 for key in keyList:
-    new_sisrs = new_sisrs.replace(key,keyDict[key])
+    sisrs_output_template = sisrs_output_template.replace(key,keyDict[key])
 with open(sisrs_dir+"/Output_Alignment.sh", "w") as text_file:
-    print(new_sisrs, file=text_file)
+    print(sisrs_output_template, file=text_file)
