@@ -43,7 +43,7 @@ git clone https://github.com/BobLiterman/Literman_PhyloSignal.git
 ##### 2) Set up folder structure using folder_setup.py
 * In the main directory (e.g. /home/Literman_PhyloSignal/) edit the included blank text file (TaxonIDs), adding each of your taxon IDs on a new line.  
   * Note: Six-letter taxon IDs may be easier to work with (e.g. HomSap vs. Homo_sapiens)
-* folder_setup.py will create taxon folders in the RawReads, TrimReads, and SISRS_Run directories
+* folder_setup.py will create taxon folders in the RawReads, TrimReads, and SISRS_Run directories  
 
 ```
 > cd /home/Literman_PhyloSignal
@@ -76,19 +76,22 @@ To use our wrapper:
 
 * 1) Put all raw reads in (**.fastq.gz format**) in the appropriate taxon folder in RawReads.  
   * Raw data files are not modified or used after trimming, so avoid duplication if possible by making links to the fastq.gz files as opposed to copying or moving raw data  
-  ```
-  > cd /home/Literman_PhyloSignal/Reads/RawReads/HomSap
-  > cp -as /Path/to/your/raw/data/HomSap*.gz .
-  > cd ../
-  > cd GorGor/
-  > cp -as /Path/to/your/raw/data/GorGor*.gz .
-  ```
+
+```
+> cd /home/Literman_PhyloSignal/Reads/RawReads/HomSap
+> cp -as /Path/to/your/raw/data/HomSap*.gz .
+> cd ../
+> cd GorGor/
+> cp -as /Path/to/your/raw/data/GorGor*.gz .
+```
+
 * 2) Run read_trimmer.py, which will:  
   * Trim all reads in RawReads
   * Output trimmed reads to the TrimReads directory  
-  * Run FastQC on both trimmed and untrimmed datasets
+  * Run FastQC on both trimmed and untrimmed datasets  
+
 ```
-python scripts/read_trimmer.py
+python scripts/read_trimmer.py <# processors>
 ```  
 
 ##### !!! Data Check !!!
@@ -96,7 +99,8 @@ python scripts/read_trimmer.py
 * Data will eventually be pooled, so **best to remove low-quality data early** to prevent it from being incorporated into the genome assembly
 
 ##### 4) Once all trimmed data is in place and QC'd, samples are subset with the following scheme:  
-* read_subsetter.py takes one argument: An estimate of the group genome size in basepairs
+* read_subsetter.py takes one argument: An estimate of the group genome size in basepairs  
+
 ```
 #For a SISRS run on ape species (with ~3.5Gb genome)
 > python scripts/read_subsetter.py 3500000000
@@ -128,6 +132,7 @@ python scripts/read_trimmer.py
     1) Number of available processors  
     2) Minimum read coverage to call a SISRS site (Default: 3)   
     3) Minimum site homozygosity for SISRS sites (Default: 1)  
-  ```
-  > setup_sisrs.py <processors> <min_coverage> <homozygosity_threshold>
-  ```
+
+```
+> python scripts/setup_sisrs.py <# processors> <min_coverage> <homozygosity_threshold>
+```
