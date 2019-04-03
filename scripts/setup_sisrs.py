@@ -40,7 +40,7 @@ rename_command = [
 os.system(" ".join(rename_command))
 
 #Copy sequence length file from Ray
-scaffold_length = pd.read_csv(ray_dir+'/ScaffoldLengths.txt',sep="\t",header=None)
+scaffold_length = pd.read_csv(ray_dir+'/ContigLengths.txt',sep="\t",header=None)
 scaffold_length.columns = ['Scaffold','Length']
 scaffold_length.Scaffold = ("SISRS_" + scaffold_length.Scaffold)
 scaffold_length.to_csv(composite_dir+"/Composite_Genome_SeqLength.tsv",sep="\t",header=None,index=False)
