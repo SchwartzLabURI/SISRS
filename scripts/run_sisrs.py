@@ -26,5 +26,5 @@ for tax_dir in sisrs_tax_dirs:
         'sh',
         '{sdir}{tid}.sh'.format(sdir=tax_dir,tid=taxa),
         '&>',
-        '{sdir}out_{fileName}_SISRS'.format(outDir=tax_dir,fileName=taxa)]
-    os.system(" ".join(run_sisrs_command))
+        '{sdir}out_{tid}_SISRS'.format(sdir=tax_dir,tid=taxa)]
+    print(" ".join(run_sisrs_command))
