@@ -17,7 +17,7 @@ script_dir = sys.path[0]
 sisrs_dir = path.dirname(path.abspath(script_dir))+"/SISRS_Run"
 sisrs_tax_dirs = sorted(glob(sisrs_dir+"/*/"))
 
-sisrs_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('Composite_Genome/')]
+sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/')]
 
 #Create links to trimmed read files in SISRS_Run directory
 for tax_dir in sisrs_tax_dirs:
