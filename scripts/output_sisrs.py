@@ -40,3 +40,10 @@ for key in keyList:
     sisrs_output_template = sisrs_output_template.replace(key,keyDict[key])
 with open(sisrs_dir+"/Output_Alignment.sh", "w") as text_file:
     print(sisrs_output_template, file=text_file)
+
+sisrs_output_command = [
+    'sh',
+    '{}/Output_Alignment.sh'.format(sisrs_dir),
+    '&>',
+    '{}/out_SISRS_Output'.format(sisrs_dir)]
+check_call(sisrs_output_command)
