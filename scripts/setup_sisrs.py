@@ -33,35 +33,35 @@ composite_dir =sisrs_dir+"/Composite_Genome"
 rename_command = [
     'rename.sh',
     'in={}'.format(ray_dir+"/Contigs.fasta"),
-    'out={}'.format(composite_dir+'/Composite_Genome.fa'),
+    'out={}'.format(composite_dir+'/contigs.fa'),
     'prefix=SISRS',
     'addprefix=t',
     'ow=t']
 os.system(" ".join(rename_command))
 
 #Copy sequence length file from Ray
-scaffold_length = pd.read_csv(ray_dir+'/ContigLengths.txt',sep="\t",header=None)
-scaffold_length.columns = ['Scaffold','Length']
-scaffold_length.Scaffold = ("SISRS_" + scaffold_length.Scaffold)
-scaffold_length.to_csv(composite_dir+"/Composite_Genome_SeqLength.tsv",sep="\t",header=None,index=False)
+contig_length = pd.read_csv(ray_dir+'/ContigLengths.txt',sep="\t",header=None)
+contig_length.columns = ['Contig','Length']
+contig_length.Contig = ("SISRS_" + contig_length.Contig)
+contig_length.to_csv(composite_dir+"/contigs_SeqLength.tsv",sep="\t",header=None,index=False)
 
 #Index composite genome using Bowtie2 and Samtools
 bowtie_command = [
     'bowtie2-build',
-    '{}'.format(composite_dir+'/Composite_Genome.fa'),
-    '{}'.format(composite_dir+'/Composite_Genome')]
+    '{}'.format(composite_dir+'/contigs.fa'),
+    '{}'.format(composite_dir+'/contigs')]
 os.system(" ".join(bowtie_command))
 
 samtools_command = [
     'samtools',
     'faidx',
-    '{}'.format(composite_dir+'/Composite_Genome.fa')]
+    '{}'.format(composite_dir+'/contigs.fa')]
 os.system(" ".join(bowtie_command))
 
 #Create file with an entry for each individual site in the alignment
 siteCount=0
-locListFile = open(composite_dir+'/Composite_Genome_LocList','a+')
-with open(composite_dir +"/Composite_Genome_SeqLength.tsv","r") as filein:
+locListFile = open(composite_dir+'/contigs_LocList','a+')
+with open(composite_dir +"/contigs_SeqLength.tsv","r") as filein:
     for line in iter(filein):
         splitline=line.split()
         for x in range(1,(int(splitline[1])+1)):
@@ -119,8 +119,8 @@ for tax_dir in trim_read_tax_dirs:
 
     keyList = ['PROCESSORS','BOWTIE2-INDEX','COMPOSITE_GENOME','SCRIPT_DIR','MINREAD','THRESHOLD','TAXA','SISRS_DIR','COMPOSITE_DIR','READS']
     keyDict = {'PROCESSORS':str(int(sys.argv[1])),
-               'BOWTIE2-INDEX':composite_dir+"/Composite_Genome",
-               'COMPOSITE_GENOME':composite_dir+"/Composite_Genome.fa",
+               'BOWTIE2-INDEX':composite_dir+"/contigs",
+               'COMPOSITE_GENOME':composite_dir+"/contigs.fa",
                'SCRIPT_DIR':script_dir,
                'MINREAD':str(int(sys.argv[2])),
                'THRESHOLD':str(float(sys.argv[3])),

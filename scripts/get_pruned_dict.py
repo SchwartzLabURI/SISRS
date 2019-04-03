@@ -40,7 +40,7 @@ def getallbases(path,contig_dir,minread,thresh):
                 speciesDict[loc] = finalBase
 
     printSpecies = open(path+"/"+os.path.basename(path)+'_LocList', 'w')
-    with open(contig_dir+"/Composite_Genome_LocList") as f:
+    with open(contig_dir+"/contigs_LocList") as f:
         for line in f:
             printSpecies.write(speciesDict[line.strip()]+'\n')
     f.close()

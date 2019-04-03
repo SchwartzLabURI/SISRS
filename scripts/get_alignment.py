@@ -57,12 +57,12 @@ class Alignment:
 def get_phy_sites(sisrs_dir,composite_dir,num_missing):
 
     #Fetch contig data
-    contigList=glob.glob(composite_dir +'/*_LocList')
+    contigList=glob.glob(composite_dir +'/contigs_LocList')
     assert len(contigList) > 0, 'Total site list not found in assembly folder'
 
     #Fetch sorted species data
     dataLists = sorted(glob.glob(sisrs_dir+'/*/*_LocList'))
-    dataLists = [x for x in dataLists if str(composite_dir) not in x]
+    dataLists = [x for x in dataLists if 'contigs_LocList' not in x]
     splist=[os.path.basename(os.path.dirname(path)) for path in dataLists]
     speciesCount=len(dataLists)
     assert len(dataLists) > 0, 'No species had data from the pileup'
