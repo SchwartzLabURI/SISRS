@@ -46,3 +46,25 @@ with open(sisrs_dir+"/Output_Alignment.sh", "w") as text_file:
 with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
     cmd = sisrs_dir+'/Output_Alignment.sh'
     subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+
+with open(sisrs_dir+"/out_SISRS_Log","w") as file:
+    file.write("\nRead Mapping and SISRS Site Selection:\n")
+    for tax_dir in sisrs_tax_dirs:
+        taxa = path.basename(tax_dir[:-1])
+        with open(tax_dir + "err_" + taxa + "_SISRS_err") as f:
+            file.write("\n"+taxa+" Composite Genome Mapping:\n\n")
+            head = [next(f) for x in range(0,6)]
+            for line in head:
+                file.write(line)
+        with open(tax_dir + "err_" + taxa + "_SISRS_err") as f2:
+            file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
+            for line in islice(f2, 9, 15):
+                file.write(line)
+        with open(tax_dir + "out_" + taxa + "_SISRS") as f3:
+            file.write("\n"+taxa+" SISRS Site Selection:\n\n")
+            for line in islice(f3, 184, 186):
+                file.write(line)
+    with open(sisrs_dir + "/out_SISRS_Alignment") as f4:
+        file.write("\nSISRS Alignment Filtering:\n\n")
+        for line in f4:
+            file.write(line)
