@@ -133,3 +133,4 @@ for tax_dir in trim_read_tax_dirs:
         new_sisrs = new_sisrs.replace(key,keyDict[key])
     with open(sisrs_dir+"/"+taxa+"/"+taxa+".sh", "w") as text_file:
         print(new_sisrs, file=text_file)
+    os.system('chmod +x '+sisrs_dir+"/"+taxa+"/"+taxa+".sh")
