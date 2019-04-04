@@ -10,6 +10,7 @@ from os import path
 import sys
 from glob import glob
 import subprocess
+from itertools import islice
 
 #Set cwd to script location
 script_dir = sys.path[0]
@@ -56,7 +57,7 @@ with open(sisrs_dir+"/out_SISRS_Log","w") as file:
             head = [next(f) for x in range(0,6)]
             for line in head:
                 file.write(line)
-        with open(tax_dir + "err_" + taxa + "_SISRS_err") as f2:
+        with open(tax_dir + "err_" + taxa + "_SISRS") as f2:
             file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
             for line in islice(f2, 9, 15):
                 file.write(line)
