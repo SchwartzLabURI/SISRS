@@ -20,6 +20,7 @@ sisrs_tax_dirs = sorted(glob(sisrs_dir+"/*/"))
 sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/')]
 
 sisrs_output_template = """
+#!/bin/sh
 python SCRIPT_DIR/get_alignment.py TWOTAXA SISRS_DIR COMPOSITE_DIR
 
 python SCRIPT_DIR/filter_nexus_for_missing.py SISRS_DIR/alignment_bi.nex MISSING

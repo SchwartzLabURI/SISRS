@@ -71,6 +71,7 @@ locListFile.close()
 print("==== Site list created: " + str(siteCount) + " total sites ==== \n",flush=True)
 
 sisrs_template = """
+#!/bin/sh
 bowtie2 -p PROCESSORS -N 1 --local -x BOWTIE2-INDEX -U READS | samtools view -Su -@ PROCESSORS -F 4 - | samtools sort -@ PROCESSORS - -o SISRS_DIR/TAXA/TAXA_Temp.bam
 
 samtools view -@ PROCESSORS -H SISRS_DIR/TAXA/TAXA_Temp.bam > SISRS_DIR/TAXA/TAXA_Header.sam
