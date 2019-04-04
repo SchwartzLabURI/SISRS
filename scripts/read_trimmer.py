@@ -63,10 +63,10 @@ raw_fastqc_command = [
     '-o',
     '{}'.format(raw_fastqc_output)]
 
-for x in glob(raw_read_dir+"/*/*.fastq.gz"):
-    raw_fastqc_command.append(x)
+#for x in glob(raw_read_dir+"/*/*.fastq.gz"):
+#    raw_fastqc_command.append(x)
 
-check_call(raw_fastqc_command)
+#check_call(raw_fastqc_command)
 
 #For each taxa directory...
 for tax_dir in raw_read_tax_dirs:
@@ -159,7 +159,7 @@ trim_fastqc_command = [
     '-o',
     '{}'.format(trim_fastqc_output)]
 
-for x in glob(trim_read_dir+"/*/*.fastq.gz"):
-    trim_fastqc_command.append(x)
+#for x in glob(trim_read_dir+"/*/*.fastq.gz"):
+#    trim_fastqc_command.append(x)
 
-check_call(trim_fastqc_command)
+#check_call(trim_fastqc_command)
