@@ -134,10 +134,27 @@ python scripts/read_trimmer.py <# processors>
     3) Minimum site homozygosity for SISRS sites (Default: 1)  
 
 ```
-> python scripts/setup_sisrs.py <# processors> <min_coverage> <homozygosity_threshold>
+# 20 processors, 3 reads required to call a site, 100% homozygosity per species
+> python scripts/setup_sisrs.py 20 3 1  
+
+# 10 processors, 5 reads required to call a site, 99% homozygosity per species
+> python scripts/setup_sisrs.py 10 5 .99
 ```
 
 ##### 6) Running Taxon-specific SISRS Steps
 * setup_sisrs.py generates a bash script in each taxon folder  
 * These scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs, but be sure to specify processors accordingly above)  
-* To run them serially on one machine (one after another), you can run **run_sisrs.py**
+* To run them serially on one machine (one after another), you can run **run_sisrs.py**  
+* Individual log files are created in each taxon folder
+```
+> python scripts/run_sisrs.py
+```
+
+##### 7) Complete SISRS Run and output alignments
+* **output_sisrs.py** takes the taxon files and finds all variable sites  
+* Sites are filtered into all sites, parsimony-informative sites, and biallelic sites
+* This script also filters the biallelic site alignment down to only data with 0 missing taxa (or whatever number you choose), both with and without biallelic gaps
+* This script also creates a final log with all mapping data and SISRS output in **SISRS_Run/out_SISRS_Log**
+```
+> python scripts/output_sisrs.py 0
+```
