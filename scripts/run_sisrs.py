@@ -27,3 +27,4 @@ for tax_dir in sisrs_tax_dirs:
         with open(tax_dir+'err_'+taxa+'_SISRS',"w") as file2:
             cmd = tax_dir+taxa+'.sh'
             subprocess.call(['sh',cmd],stdout=file, stderr=file2)
+    print("Completed SISRS filtering for "+taxa + "...\n")
