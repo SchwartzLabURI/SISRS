@@ -136,3 +136,8 @@ python scripts/read_trimmer.py <# processors>
 ```
 > python scripts/setup_sisrs.py <# processors> <min_coverage> <homozygosity_threshold>
 ```
+
+##### 6) Running Taxon-specific SISRS Steps
+* setup_sisrs.py generates a bash script in each taxon folder  
+* These scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs, but be sure to specify processors accordingly above)  
+* To run them serially on one machine (one after another), you can run **run_sisrs.py**
