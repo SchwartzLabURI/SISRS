@@ -9,6 +9,7 @@ import os
 from os import path
 import sys
 from glob import glob
+import subprocess
 
 #Set cwd to script location
 script_dir = sys.path[0]
@@ -22,9 +23,6 @@ sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/
 #Create links to trimmed read files in SISRS_Run directory
 for tax_dir in sisrs_tax_dirs:
     taxa = path.basename(tax_dir[:-1])
-    run_sisrs_command = [
-        'sh',
-        '{sdir}{tid}.sh'.format(sdir=tax_dir,tid=taxa),
-        '&>',
-        '{sdir}out_{tid}_SISRS'.format(sdir=tax_dir,tid=taxa)]
-    check_call(run_sisrs_command)
+    with open(tax_dir+'out_'+taxa+'_SISRS',"w") as file:
+        cmd = tax_dir+taxa+'.sh'
+        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)

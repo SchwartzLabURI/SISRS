@@ -9,6 +9,7 @@ import os
 from os import path
 import sys
 from glob import glob
+import subprocess
 
 #Set cwd to script location
 script_dir = sys.path[0]
@@ -42,9 +43,6 @@ for key in keyList:
 with open(sisrs_dir+"/Output_Alignment.sh", "w") as text_file:
     print(sisrs_output_template, file=text_file)
 
-sisrs_output_command = [
-    'sh',
-    '{}/Output_Alignment.sh'.format(sisrs_dir),
-    '&>',
-    '{}/out_SISRS_Output'.format(sisrs_dir)]
-check_call(sisrs_output_command)
+with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
+    cmd = sisrs_dir+'/Output_Alignment.sh'
+    subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
