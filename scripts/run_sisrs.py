@@ -24,6 +24,6 @@ sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/
 for tax_dir in sisrs_tax_dirs:
     taxa = path.basename(tax_dir[:-1])
     with open(tax_dir+'out_'+taxa+'_SISRS',"w") as file:
-        with open(tax_dir+'err_'+taxa+'_SISRS_err',"w") as file2:
+        with open(tax_dir+'err_'+taxa+'_SISRS',"w") as file2:
             cmd = tax_dir+taxa+'.sh'
             subprocess.call(['sh',cmd],stdout=file, stderr=file2)
