@@ -51,7 +51,7 @@ with open(sisrs_dir+"/out_SISRS_Log","w") as file:
     file.write("\nRead Mapping and SISRS Site Selection:\n")
     for tax_dir in sisrs_tax_dirs:
         taxa = path.basename(tax_dir[:-1])
-        with open(tax_dir + "err_" + taxa + "_SISRS_err") as f:
+        with open(tax_dir + "err_" + taxa + "_SISRS") as f:
             file.write("\n"+taxa+" Composite Genome Mapping:\n\n")
             head = [next(f) for x in range(0,6)]
             for line in head:
