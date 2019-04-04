@@ -49,7 +49,9 @@ contig_length.to_csv(composite_dir+"/contigs_SeqLength.tsv",sep="\t",header=None
 bowtie_command = [
     'bowtie2-build',
     '{}'.format(composite_dir+'/contigs.fa'),
-    '{}'.format(composite_dir+'/contigs')]
+    '{}'.format(composite_dir+'/contigs'),
+    '-p',
+    '{}'.format(str(int(sys.argv[1])))]
 os.system(" ".join(bowtie_command))
 
 samtools_command = [
@@ -86,7 +88,7 @@ samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TA
 python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
 
 samtools faidx SISRS_DIR/TAXA/contigs.fa
-bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs
+bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs -p PROCESSORS
 
 bowtie2 -p PROCESSORS -N 1 --local -x SISRS_DIR/TAXA/contigs -U READS | samtools view -Su -@ PROCESSORS -F 4 - | samtools sort -@ PROCESSORS - -o SISRS_DIR/TAXA/TAXA_Temp.bam
 
