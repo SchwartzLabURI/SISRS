@@ -17,6 +17,10 @@ if(not path.isdir(post_processing_dir+"/logFiles")):
     os.mkdir(post_processing_dir+"/logFiles")
 post_log_dir = post_processing_dir+"/logFiles"
 
+if(not path.isdir(post_processing_dir+"/Whole_Genome_Mapping")):
+    os.mkdir(post_processing_dir+"/Whole_Genome_Mapping")
+whole_genome_dir = post_processing_dir+"/Whole_Genome_Mapping"
+
 sisrs_dir = path.dirname(path.abspath(script_dir))+"/SISRS_Run"
 ref_sisrs_dir = sisrs_dir + "/" + ref_species
 
@@ -69,5 +73,5 @@ with open(post_log_dir+"/err_01_Reference_Mapping","w") as errfile:
     cmd = post_log_dir+"/01_Reference_Mapping.sh"
     subprocess.call(['sh',cmd],stderr=errfile)
 
-genome_command = {'python','{}/genome_mapper.py'.format(script_dir),'{post}/{taxa}_MapData.tsv'.format(post=post_processing_dir),taxa=ref_taxa}
+genome_command = {'python','{}/genome_mapper.py'.format(script_dir),'{post}/{taxa}_MapData.tsv'.format(post=post_processing_dir,taxa=ref_taxa})
 subprocess.call(genome_command)
