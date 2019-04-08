@@ -16,6 +16,7 @@ allData = pd.read_csv(sys.argv[1],header=None,dtype={0: object, 1: int, 2: int, 
 allData.columns=['Chrom','Start','End','Name']
 allSites = allData.shape[0]
 dataPath=os.path.dirname(os.path.abspath(sys.argv[1]))
+sisrs_output_dir=dataPath.replace('Whole_Genome_Mapping','SISRS_Sites')
 genomeName = os.path.basename(sys.argv[1]).replace("WholeGenome_","").replace("_Mapped.bed","")
 siteID = sys.argv[3]
 #Read in loc list of desired sites to locate in  reference genome
@@ -38,14 +39,13 @@ del allData
 
 #Filter all data based on provided site list
 print("Beginning site selection...\n")
-
 nonDupData = nonDupData[nonDupData['Name'].isin(sitesOfInterest)]
 foundSites = nonDupData.shape[0]
 
 #Print output files
-nonDupData.to_csv(dataPath + "/" + genomeName + "_" + siteID + "_Mapped_NonDup.bed",sep='\t',header=False,index=False)
-nonDupData['Name'].to_csv(dataPath + "/" + genomeName + "_" + siteID + "_Mapped_NonDup_LocList.txt",sep='\t',header=False,index=False)
+nonDupData.to_csv(sisrs_output_dir + "/" + genomeName + "_" + siteID + "_Mapped_NonDup.bed",sep='\t',header=False,index=False)
+nonDupData['Name'].to_csv(sisrs_output_dir + "/" + genomeName + "_" + siteID + "_Mapped_NonDup_LocList.txt",sep='\t',header=False,index=False)
 
 print("- Of " + "{:,}".format(len(sitesOfInterest)) + " requested sites from the " + siteID + " dataset, " + "{:,}".format(foundSites) + " sites were able to be genomically mapped based off non-overlapping data from " + str(sys.argv[1]) + ".")
-print("- Created BED file for these sites at " + dataPath + "/" + genomeName + "_" + siteID + "_Mapped_NonDup.bed")
-print("- Created a loc list for these sites at " + dataPath + "/" + genomeName + "_" + siteID + "_Mapped_NonDup_LocList.txt")
+print("- Created BED file for these sites at " + sisrs_output_dir + "/" + genomeName + "_" + siteID + "_Mapped_NonDup.bed")
+print("- Created a loc list for these sites at " + sisrs_output_dir + "/" + genomeName + "_" + siteID + "_Mapped_NonDup_LocList.txt")

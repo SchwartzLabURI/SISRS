@@ -9,6 +9,7 @@ from itertools import islice
 script_dir = sys.path[0]
 processors = str(int(sys.argv[1]))
 ref_species = sys.argv[2]
+site_id = 'SISRS_Biallelic_NoMissing'
 
 #Set directories based off of script folder location
 post_processing_dir = path.dirname(path.abspath(script_dir))+"/Post_SISRS_Processing"
@@ -20,6 +21,10 @@ post_log_dir = post_processing_dir+"/logFiles"
 if(not path.isdir(post_processing_dir+"/Whole_Genome_Mapping")):
     os.mkdir(post_processing_dir+"/Whole_Genome_Mapping")
 whole_genome_dir = post_processing_dir+"/Whole_Genome_Mapping"
+
+if(not path.isdir(post_processing_dir+"/SISRS_Sites")):
+    os.mkdir(post_processing_dir+"/SISRS_Sites")
+site_output_dir = post_processing_dir+"/SISRS_Sites"
 
 sisrs_dir = path.dirname(path.abspath(script_dir))+"/SISRS_Run"
 ref_sisrs_dir = sisrs_dir + "/" + ref_species
@@ -77,5 +82,9 @@ genome_command = ['python','{}/genome_mapper.py'.format(script_dir),'{post}/{tax
 subprocess.call(genome_command)
 
 with open(post_log_dir+"/out_02_Site_Mapping","w") as outfile:
-    site_command = ['python','{}/site_mapper.py'.format(script_dir),'{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped.bed'.format(post=post_processing_dir,taxa=ref_species),'{}/alignment_bi_locs_m0.txt'.format(sisrs_dir),'SISRS_Biallelic_NoMissing']
+    site_command = ['python','{}/site_mapper.py'.format(script_dir),'{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped.bed'.format(post=post_processing_dir,taxa=ref_species),'{}/alignment_bi_locs_m0.txt'.format(sisrs_dir),site_id]
     subprocess.call(site_command,stdout=outfile)
+
+with open(post_log_dir+"/out_03_Alignment_Slicer","w") as outfile:
+    slice_command = ['python','{}/alignment_slicer.py'.format(script_dir),'{}/alignment_bi_locs_m0.txt'.format(sisrs_dir),'{sitedir}/{taxa}_{siteid}_Mapped_NonDup_LocList.txt'.format(sitedir=site_output_dir,taxa=ref_species,siteid=site_id),'{}/alignment_bi_m0.phylip-relaxed'.format(sisrs_dir),ref_species+"_"+site_id]
+    subprocess.call(slice_command,stdout=outfile)
