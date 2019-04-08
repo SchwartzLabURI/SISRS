@@ -75,3 +75,6 @@ with open(post_log_dir+"/err_01_Reference_Mapping","w") as errfile:
 
 genome_command = ['python','{}/genome_mapper.py'.format(script_dir),'{post}/{taxa}_MapData.tsv'.format(post=post_processing_dir,taxa=ref_species)]
 subprocess.call(genome_command)
+
+site_command = ['python','{}/site_mapper.py'.format(script_dir),'{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped.bed'.format(post=post_processing_dir,taxa=ref_species),'{}/alignment_bi_locs_m0.txt'.format(sisrs_dir),'SISRS_Biallelic_NoMissing']
+subprocess.call(site_command)
