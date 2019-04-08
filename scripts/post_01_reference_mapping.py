@@ -68,3 +68,6 @@ with open(post_log_dir+"/01_Reference_Mapping.sh", "w") as text_file:
 with open(post_log_dir+"/err_01_Reference_Mapping","w") as errfile:
     cmd = post_log_dir+"/01_Reference_Mapping.sh"
     subprocess.call(['sh',cmd],stderr=errfile)
+
+genome_command = {'python','{}/genome_mapper.py'.format(script_dir),'{post}/{taxa}_MapData.tsv'.format(post=post_processing_dir),taxa=ref_taxa}
+subprocess.call(genome_command)
