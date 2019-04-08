@@ -23,7 +23,7 @@ def blowUpCIGAR(cigar):
 
 def getReferencePosition(commandList):
     global genomeName
-    global dataPath
+    global output_dir
 
     humanPosition = commandList[2]
     sisrsForwardPosition = 0
@@ -34,11 +34,11 @@ def getReferencePosition(commandList):
 
     for x in range(1,commandList[5]+1):
         locList.append(commandList[0] +'/'+str(x))
-    with open(dataPath + "/WholeGenome_" + genomeName + "_Mapped.bed",'a+') as printFile:
+    with open(output_dir + "/WholeGenome_" + genomeName + "_Mapped.bed",'a+') as printFile:
         if commandList[3] == 0:
             for c in commandList[4]:
                 if c=='M':
-                    print>>printFile,str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsForwardPosition])
+                    printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsForwardPosition]))
                     sisrsForwardPosition+=1
                     humanPosition+=1
                 elif c=='I':
@@ -49,7 +49,7 @@ def getReferencePosition(commandList):
         elif commandList[3] == 16:
             for c in commandList[4]:
                 if c=='M':
-                    print>>printFile,str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsReversePosition])
+                    printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsReversePosition]))
                     humanPosition+=1
                     sisrsReversePosition-=1
                 elif c=='I':
@@ -68,7 +68,7 @@ mapLength.columns=['Contig','Chrom','Start','Direction','CIGAR']
 scafCount = mapLength.shape[0]
 
 #Strip path and name of genome file
-dataPath=os.path.dirname(os.path.abspath(sys.argv[1]))+'/Whole_Genome_Mapping'
+output_dir=os.path.dirname(os.path.abspath(sys.argv[1]))+'/Whole_Genome_Mapping'
 genomeName = str(os.path.basename(sys.argv[1]).replace('_MapData.tsv',''))
 
 #Expand CIGAR
@@ -86,4 +86,4 @@ print("Creating map dataset for whole genome...")
 sys.stdout.flush()
 startTime = time.time()
 map(getReferencePosition,commandList)
-print("\nComplete genome map file for " + genomeName + " was created at " + dataPath + "/WholeGenome_" + genomeName + "_Mapped.bed in " + str(format((time.time() - startTime),'0.0f')) + "s")
+print("\nComplete genome map file for " + genomeName + " was created at " + output_dir + "/WholeGenome_" + genomeName + "_Mapped.bed in " + str(format((time.time() - startTime),'0.0f')) + "s")
