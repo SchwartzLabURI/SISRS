@@ -7,8 +7,8 @@ import stat
 from itertools import islice
 
 script_dir = sys.path[0]
-ref_species = sys.argv[1]
-processors = str(int(sys.argv[2]))
+processors = str(int(sys.argv[1]))
+ref_species = sys.argv[2]
 
 #Set directories based off of script folder location
 post_processing_dir = path.dirname(path.abspath(script_dir))+"/Post_SISRS_Processing"
