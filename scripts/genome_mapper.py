@@ -21,41 +21,39 @@ def blowUpCIGAR(cigar):
             tempCount=""
     return expandedCIGAR
 
-def getReferencePosition(commandList):
-    global genomeName
-    global output_dir
+def getReferencePosition(commandList_Set,genomeName,output_dir):
+    for commandList in commandList_Set:
+        humanPosition = commandList[2]
+        sisrsForwardPosition = 0
+        sisrsReversePosition = commandList[5] - 1
 
-    humanPosition = commandList[2]
-    sisrsForwardPosition = 0
-    sisrsReversePosition = commandList[5] - 1
+        locList = []
+        locDict = {}
 
-    locList = []
-    locDict = {}
+        for x in range(1,commandList[5]+1):
+            locList.append(commandList[0] +'/'+str(x))
+        with open(output_dir + "/WholeGenome_" + genomeName + "_Mapped.bed",'a+') as printFile:
+            if commandList[3] == 0:
+                for c in commandList[4]:
+                    if c=='M':
+                        printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsForwardPosition]))
+                        sisrsForwardPosition+=1
+                        humanPosition+=1
+                    elif c=='I':
+                        sisrsForwardPosition+=1
+                    elif c=='D':
+                        humanPosition+=1
 
-    for x in range(1,commandList[5]+1):
-        locList.append(commandList[0] +'/'+str(x))
-    with open(output_dir + "/WholeGenome_" + genomeName + "_Mapped.bed",'a+') as printFile:
-        if commandList[3] == 0:
-            for c in commandList[4]:
-                if c=='M':
-                    printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsForwardPosition]))
-                    sisrsForwardPosition+=1
-                    humanPosition+=1
-                elif c=='I':
-                    sisrsForwardPosition+=1
-                elif c=='D':
-                    humanPosition+=1
-
-        elif commandList[3] == 16:
-            for c in commandList[4]:
-                if c=='M':
-                    printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsReversePosition]))
-                    humanPosition+=1
-                    sisrsReversePosition-=1
-                elif c=='I':
-                    sisrsReversePosition-=1
-                elif c=='D':
-                    humanPosition+=1
+            elif commandList[3] == 16:
+                for c in commandList[4]:
+                    if c=='M':
+                        printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsReversePosition]))
+                        humanPosition+=1
+                        sisrsReversePosition-=1
+                    elif c=='I':
+                        sisrsReversePosition-=1
+                    elif c=='D':
+                        humanPosition+=1
 
 #Check arguments
 assert len(sys.argv) == 2, "This script accepts one argument " + str(len(sys.argv)-1) + " were given."
@@ -85,5 +83,5 @@ commandList = mapLength.values.tolist()
 print("Creating map dataset for whole genome...")
 sys.stdout.flush()
 startTime = time.time()
-map(getReferencePosition,commandList)
+getReferencePosition(commandList,genomeName,output_dir)
 print("\nComplete genome map file for " + genomeName + " was created at " + output_dir + "/WholeGenome_" + genomeName + "_Mapped.bed in " + str(format((time.time() - startTime),'0.0f')) + "s")
