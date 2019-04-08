@@ -36,7 +36,7 @@ def getReferencePosition(commandList_Set,genomeName,output_dir):
             if commandList[3] == 0:
                 for c in commandList[4]:
                     if c=='M':
-                        printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsForwardPosition]))
+                        printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsForwardPosition])+"\n")
                         sisrsForwardPosition+=1
                         humanPosition+=1
                     elif c=='I':
@@ -47,7 +47,7 @@ def getReferencePosition(commandList_Set,genomeName,output_dir):
             elif commandList[3] == 16:
                 for c in commandList[4]:
                     if c=='M':
-                        printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsReversePosition]))
+                        printFile.write(str(commandList[1])+"\t"+str(humanPosition-1)+"\t"+str(humanPosition)+"\t"+str(locList[sisrsReversePosition])+"\n")
                         humanPosition+=1
                         sisrsReversePosition-=1
                     elif c=='I':
