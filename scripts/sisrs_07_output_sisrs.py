@@ -63,8 +63,9 @@ with open(sisrs_dir+"/out_SISRS_Log","w") as file:
                 file.write(line)
         with open(tax_dir + "out_" + taxa + "_SISRS") as f3:
             file.write("\n"+taxa+" SISRS Site Selection:\n\n")
-            if(str.startswith(line,'Of ')):
-                file.write(line)
+            for line in f3:
+                if(str.startswith(line,'Of ')):
+                    file.write(line)
     with open(sisrs_dir + "/out_SISRS_Alignment") as f4:
         file.write("\nSISRS Alignment Filtering:\n\n")
         for line in f4:
