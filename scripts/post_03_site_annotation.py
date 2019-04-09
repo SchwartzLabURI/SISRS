@@ -35,6 +35,8 @@ ref_annotation_dir = path.dirname(path.abspath(script_dir))+"/Reference_Genome/A
 ref_annotation_files = glob(ref_annotation_dir+"/*.bed")
 
 sisrs_site_dir = post_processing_dir+"/SISRS_Sites"
+sisrs_sites = sisrs_site_dir+"/"+ref_species+"_"+site_id+"_NoGaps_LocList.txt"
+
 composite_site_dir = post_processing_dir+"/Whole_Genome_Mapping"
 
 post_log_dir = post_processing_dir+"/logFiles"
@@ -71,3 +73,37 @@ with open(annotation_dir+"/Annotation_Counts.tsv","w") as count_file:
                 num_lines = sum(1 for line in open(output_anno))
                 count_file.write('Composite\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
                 outfile.write(annotation + " - " + str(num_lines)+"\n")
+
+sisrs_annos = []
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    with open(post_log_dir+'/out_06_SISRS_Annotation',"w") as outfile:
+        outfile.write("SISRS Annotation Counts:\n\n")
+        for annotationFile in ref_annotation_files:
+            annotation=path.basename(annotationFile).split('.')[0]
+            input_anno ='{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)
+            output_anno ='{SISRSANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+            if(annotationFile in composite_annos):
+                fetch_command = [
+                    'grep',
+                    '-wFf',
+                    '{}'.format(input_anno),
+                    '{}'.format(sisrs_sites),
+                    '>',
+                    '{}'.format(output_anno)]
+                os.system(' '.join(fetch_command))
+                if(os.stat(output_anno).st_size == 0):
+                    count_file.write('SISRS\tAll\t'+annotation+'\t0\n')
+                    outfile.write(annotation + " - No Sites\n")
+                else:
+                    sisrs_annos.append(annotationFile)
+                    num_lines = sum(1 for line in open(output_anno))
+                    count_file.write('SISRS\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
+                    outfile.write(annotation + " - " + str(num_lines)+"\n")
+            else:
+                count_file.write('SISRS\tAll\t'+annotation+'\t0\n')
+                outfile.write(annotation + " - No Sites\n")
+
+
+
+
+HomSap_SISRS_Biallelic_NoMissing_NoGaps_LocList.txt
