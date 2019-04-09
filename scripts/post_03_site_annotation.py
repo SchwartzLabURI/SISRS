@@ -34,6 +34,25 @@ ref_topology_dir = path.dirname(path.abspath(script_dir))+"/Reference_Topology"
 ref_annotation_dir = path.dirname(path.abspath(script_dir))+"/Reference_Genome/Annotations"
 ref_annotation_files = glob(ref_annotation_dir+"/*.bed")
 
-sisrs_dir = path.dirname(path.abspath(script_dir))+"/SISRS_Run"
+sisrs_site_dir = post_processing_dir+"/SISRS_Sites"
+composite_site_dir = post_processing_dir+"/Whole_Genome_Mapping"
 
 post_log_dir = post_processing_dir+"/logFiles"
+
+for annotationFile in ref_annotation_files:
+    bed_command=[
+        'bedtools',
+        'intersect',
+        '-a',
+        '{}'.format(annotationFile),
+        '-b',
+        '{}'.format(composite_site_dir+"/WholeGenome_"+ref_species+"_Mapped_NonDup.bed"),
+        '-wb',
+        '|',
+        'awk',
+        "'{print,",
+        '$NF',
+        "}'",
+        '>',
+        '{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=path.basename(annotationFile).split('.')[0])]
+    os.system(' '.join(bed_command))
