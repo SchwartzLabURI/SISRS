@@ -49,6 +49,7 @@ bad_split_alignment = ['python',
         '{}/alignment_bi_m0.phylip-relaxed'.format(sisrs_dir),
         ref_species+"_"+site_id+"_BadSplits",
         bad_split_dir]
+subprocess.call(bad_split_alignment)
 
 bad_split_define = ['python',
         '{}/bad_splits.py'.format(script_dir),
