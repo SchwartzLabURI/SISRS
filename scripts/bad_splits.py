@@ -136,10 +136,21 @@ if __name__ == "__main__":
     for x in badCount:
         splitList.append(x)
         countList.append(badCount[x])
-    df3 = pd.DataFrame({'Split': splitList,'SplitCount': countList})
-    df3.sort_values(['SplitCount'],ascending=False,inplace=True)
-    df3['SplitNumber'] = range(1,len(splitList)+1)
-    cols = ['SplitNumber','Split','SplitCount']
+    df3 = pd.DataFrame({'Split': splitList,'Split_Count': countList})
+    df3.sort_values(['Split_Count'],ascending=False,inplace=True)
+    df3['Split_Number'] = range(1,len(splitList)+1)
+    cols = ['Split_Number','Split','SplitCount']
     df3 = df3[cols]
+
+    df3[['One','Two']] = df3.Split.str.split(pat = "\.\.\.",expand=True)
+    split_lookup_dict = {**df3.set_index('One')['Split_Number'].to_dict(),**df3.set_index('Two')['Split_Number'].to_dict()}
+    df3=df3[['Split_Number','Split','Split_Count']]
+    df['Split_Number'] = df.replace({"One": split_lookup_dict})['One']
+    df = df[['Site','Split_Number']]
+
+    for value in sorted(set(df['Split_Number'])):
+    with open(outPath+"/bad_split_"+str(value)+"_LocList.txt","w") as outfile:
+        outfile.print(df[df['Split_Number']==value]['Site'])
+
     df.to_csv(outPath + '/' + siteID + ".tsv",sep='\t',index=None,header=None)
     df3.to_csv(outPath + '/' + siteID + "_Counts.tsv",sep='\t',index=None,header=None)
