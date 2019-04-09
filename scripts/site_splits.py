@@ -168,8 +168,19 @@ print("\n - Split Support:\n")
 splitCount = Counter(df['Split'])
 splitCount_df =  pd.DataFrame(list(splitCount.items()), columns=['Split', 'Count']).sort_values(by=['Split'])
 
+bad_split = sys.argv[6]
+good_dir = sys.argv[7]
+
 for split in splitCount_df['Split']:
     if split==0:
+        badDNASplits = list(dnaSplits[dnaSplits['Split']  == 0]['Site'])
+        with open(bad_dir+"/Bad_Split_LocList.txt","w") as bad_file:
+            for bad_split in badDNASplits:
+                bad_file.write(bad_split+"\n")
         print("Non-canonical splits: " + str(splitCount[split]) + "\n")
     else:
+        tempDNASplits = list(dnaSplits[dnaSplits['Split']  == split]['Site'])
+        with open(good_dir+"/split_"+str(split)+"_LocList.txt","w") as good_file:
+            for good_split in tempDNASplits:
+                good_file.write(good_split+"\n")
         print("Split " + str(split) + " - "+split1Dict[split] + '...' + split2Dict[split] + " - " + str(splitCount[split]))

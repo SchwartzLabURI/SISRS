@@ -37,5 +37,7 @@ with open(post_log_dir+"/out_04_Site_Splits","w") as outfile:
             '{siteoutputdir}/{taxa}_{siteid}_NoGaps.phylip-relaxed'.format(siteoutputdir=site_output_dir,taxa=ref_species,siteid=site_id),
             '{siteoutputdir}/{taxa}_{siteid}_NoGaps_LocList.txt'.format(siteoutputdir=site_output_dir,taxa=ref_species,siteid=site_id),
             ref_species+"_"+site_id,
-            site_split_dir]
+            site_split_dir,
+            bad_split_dir,
+            good_split_dir]
     subprocess.call(split_command,stdout=outfile)
