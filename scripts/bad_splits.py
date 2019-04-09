@@ -138,5 +138,8 @@ if __name__ == "__main__":
         countList.append(badCount[x])
     df3 = pd.DataFrame({'Split': splitList,'SplitCount': countList})
     df3.sort_values(['SplitCount'],ascending=False,inplace=True)
+    df3['SplitNumber'] = range(1,len(splitList+1))
+    cols = ['SplitNumber','Split','SplitCount']
+    df3 = df3[cols]
     df.to_csv(outPath + '/' + siteID + ".tsv",sep='\t',index=None,header=None)
     df3.to_csv(outPath + '/' + siteID + "_Counts.tsv",sep='\t',index=None,header=None)

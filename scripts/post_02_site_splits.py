@@ -50,20 +50,32 @@ bad_split_alignment = ['python',
         ref_species+"_"+site_id+"_BadSplits",
         bad_split_dir]
 
-subprocess.call(bad_split_alignment)
+bad_split_define = ['python',
+        '{}/bad_splits.py'.format(script_dir),
+        '{}'.format(ref_tree),
+        '{badsplitdir}/{refspecies}_{siteid}_BadSplits_NoGaps.phylip-relaxed'.format(badsplitdir=bad_split_dir,refspecies=ref_species,siteid=site_id),
+        '{badsplitdir}/{refspecies}_{siteid}_BadSplits_NoGaps_LocList.txt'.format(badsplitdir=bad_split_dir,refspecies=ref_species,siteid=site_id),
+        ref_species+"_"+site_id+"_BadSplits",
+        bad_split_dir]
+
+subprocess.call(bad_split_define)
 
 #Number bad splits
-# bad_split_command = [
+# bad_split_number = [
+#         'cut',
+#         '-f1',
+#         '{badsplitdir}/{refspecies}_{siteid}_BadSplits_Counts.tsv'.format(badsplitdir=bad_split_dir,refspecies=ref_species,siteid=site_id),
+#         '|',
 #         'nl',
 #         '-v',
 #         '1',
 #         '-n',
 #         'rn',
-#         '{}/Bad_Split_LocList.txt'.format(bad_split_dir),
+#         '-',
 #         '|',
 #         'sed',
 #         "'s/\.\.\./\t/g'",
 #         '-',
-#         '>'
-#         '{}/Bad_Split_Numbered'.format(bad_split_dir)]
-# os.system(bad_split_command)
+#         '>',
+#         '{}/Numbered_BadSplits'.format(bad_split_dir)
+# subprocess.call(bad_split_number)
