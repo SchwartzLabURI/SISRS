@@ -81,7 +81,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         for annotationFile in ref_annotation_files:
             annotation=path.basename(annotationFile).split('.')[0]
             input_anno ='{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)
-            output_anno ='{SISRSANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+            output_anno ='{SISRSANNODIR}/SISRS_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
             if(annotationFile in composite_annos):
                 fetch_command = [
                     'grep',
@@ -102,8 +102,3 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
             else:
                 count_file.write('SISRS\tAll\t'+annotation+'\t0\n')
                 outfile.write(annotation + " - No Sites\n")
-
-
-
-
-HomSap_SISRS_Biallelic_NoMissing_NoGaps_LocList.txt
