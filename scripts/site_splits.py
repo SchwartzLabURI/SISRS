@@ -4,6 +4,7 @@ Argument 1: Unrooted tree file
 Argument 2: Alignment file
 Argument 3: Loc list for all sites in alignment
 Argument 4: User-defined name for output file prefix
+Argument 5: Directory for site splits
 '''
 
 from Bio import AlignIO,Align
@@ -117,17 +118,18 @@ for record in alignment:
     i+=1
 assert set(alignmentSpecies) == set(treeSpecies), " - Species from tree do NOT match species in alignment!"
 
-#SYS.ARGV[3]
-outPath = os.path.abspath(os.path.dirname(sys.argv[3]))
 
-with open(sys.argv[3],'rb') as f:
-    allLocs = f.read().split()
+#SYS.ARGV[3]
+with open(sys.argv[3],'r') as f:
+    allLocs = f.read().splitlines()
 assert len(allLocs) == align_length, " - Length of loc list does NOT equal alignment length!"
 
 columnList = []
 for column in range(0,align_length):
     columnList.append([alignment[:,column],column])
 results = map(goodOrBad,columnList)
+
+outPath = sys.argv[4]
 
 df = pd.DataFrame.from_records(results, columns=['Site','Split','Gap'])
 siteID = str(sys.argv[4])
