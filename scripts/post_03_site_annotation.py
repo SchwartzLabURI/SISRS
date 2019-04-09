@@ -6,12 +6,6 @@ import subprocess
 import stat
 from itertools import islice
 
-def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1
-
 script_dir = sys.path[0]
 processors = str(int(sys.argv[1]))
 ref_species = sys.argv[2]
@@ -45,10 +39,13 @@ composite_site_dir = post_processing_dir+"/Whole_Genome_Mapping"
 
 post_log_dir = post_processing_dir+"/logFiles"
 
-with open(post_log_dir+'/out_05_Composite_Annotation') as outfile:
+composite_annos = []
+
+with open(post_log_dir+'/out_05_Composite_Annotation',"w") as outfile:
     outfile.write("Composite Genome Annotation Counts:\n\n")
     for annotationFile in ref_annotation_files:
-        annotation=path.basename(annotationFile).split('.')[0])
+        annotation=path.basename(annotationFile).split('.')[0]
+        output_anno ='{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)
         bed_command=[
             'bedtools',
             'intersect',
@@ -63,10 +60,12 @@ with open(post_log_dir+'/out_05_Composite_Annotation') as outfile:
             '$NF',
             "}'",
             '>',
-            '{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)]
+            '{}'.format(output_anno)]
         os.system(' '.join(bed_command))
-        if(os.stat('{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)).st_size == 0)
-            outfile.write(annotation + " : " + "No Sites")
+        if(os.stat(output_anno).st_size == 0):
+            outfile.write(annotation + " - No Sites\n")
         else:
-            site_count = file_len('{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation))
-            outfile.write(annotation + " : " + str(site_count))
+            composite_annos.append(annotationFile)
+            num_lines = sum(1 for line in open(output_anno))
+            outfile.write(annotation + " - " + str(num_lines)+"\n")
+print(composite_annos)
