@@ -168,7 +168,7 @@ print("\n - Split Support:\n")
 splitCount = Counter(df['Split'])
 splitCount_df =  pd.DataFrame(list(splitCount.items()), columns=['Split', 'Count']).sort_values(by=['Split'])
 
-bad_split = sys.argv[6]
+bad_dir = sys.argv[6]
 good_dir = sys.argv[7]
 
 for split in splitCount_df['Split']:
