@@ -55,7 +55,7 @@ def getSplits(tree_path):
         goodSplits = []
         for k in natsorted(split1Dict.keys()):
             if isinstance(k,int):
-                outfile.write('Split '+ str(k) + ': ' + split1Dict[k] + '...' + split2Dict[k])
+                outfile.write('Split '+ str(k) + ': ' + split1Dict[k] + '...' + split2Dict[k]+'\n')
                 goodSplits.append(split1Dict[k])
                 goodSplits.append(split2Dict[k])
     print(" - Site split ID key written to " + outPath + "/RefTree_SplitKey.txt")
@@ -129,7 +129,7 @@ for column in range(0,align_length):
     columnList.append([alignment[:,column],column])
 results = map(goodOrBad,columnList)
 
-outPath = sys.argv[4]
+outPath = sys.argv[5]
 
 df = pd.DataFrame.from_records(results, columns=['Site','Split','Gap'])
 siteID = str(sys.argv[4])
@@ -166,8 +166,10 @@ else:
 
 print("\n - Split Support:\n")
 splitCount = Counter(df['Split'])
-for k,v in splitCount.iteritems():
-    if k == 0:
-        print("Non-canonical splits: " + str(v) + "\n")
+splitCount_df =  pd.DataFrame(list(splitCount.items()), columns=['Split', 'Count']).sort_values(by=['Split'])
+
+for split in splitCount_df['Split']:
+    if split==0:
+        print("Non-canonical splits: " + str(splitCount[split]) + "\n")
     else:
-        print("Split " + str(k) + " - "+split1Dict[k] + '...' + split2Dict[k] + " - " + str(v))
+        print("Split " + str(split) + " - "+split1Dict[split] + '...' + split2Dict[split] + " - " + str(splitCount[split]))
