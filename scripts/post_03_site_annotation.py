@@ -6,6 +6,12 @@ import subprocess
 import stat
 from itertools import islice
 
+def file_len(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
 script_dir = sys.path[0]
 processors = str(int(sys.argv[1]))
 ref_species = sys.argv[2]
@@ -39,20 +45,28 @@ composite_site_dir = post_processing_dir+"/Whole_Genome_Mapping"
 
 post_log_dir = post_processing_dir+"/logFiles"
 
-for annotationFile in ref_annotation_files:
-    bed_command=[
-        'bedtools',
-        'intersect',
-        '-a',
-        '{}'.format(annotationFile),
-        '-b',
-        '{}'.format(composite_site_dir+"/WholeGenome_"+ref_species+"_Mapped_NonDup.bed"),
-        '-wb',
-        '|',
-        'awk',
-        "'{print",
-        '$NF',
-        "}'",
-        '>',
-        '{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=path.basename(annotationFile).split('.')[0])]
-    os.system(' '.join(bed_command))
+with open(post_log_dir+'/out_05_Composite_Annotation') as outfile:
+    outfile.write("Composite Genome Annotation Counts:\n\n")
+    for annotationFile in ref_annotation_files:
+        annotation=path.basename(annotationFile).split('.')[0])
+        bed_command=[
+            'bedtools',
+            'intersect',
+            '-a',
+            '{}'.format(annotationFile),
+            '-b',
+            '{}'.format(composite_site_dir+"/WholeGenome_"+ref_species+"_Mapped_NonDup.bed"),
+            '-wb',
+            '|',
+            'awk',
+            "'{print",
+            '$NF',
+            "}'",
+            '>',
+            '{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)]
+        os.system(' '.join(bed_command))
+        if(os.stat('{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)).st_size == 0)
+            outfile.write(annotation + " : " + "No Sites")
+        else:
+            site_count = file_len('{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation))
+            outfile.write(annotation + " : " + str(site_count))
