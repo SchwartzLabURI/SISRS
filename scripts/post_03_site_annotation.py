@@ -41,31 +41,33 @@ post_log_dir = post_processing_dir+"/logFiles"
 
 composite_annos = []
 
-with open(post_log_dir+'/out_05_Composite_Annotation',"w") as outfile:
-    outfile.write("Composite Genome Annotation Counts:\n\n")
-    for annotationFile in ref_annotation_files:
-        annotation=path.basename(annotationFile).split('.')[0]
-        output_anno ='{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)
-        bed_command=[
-            'bedtools',
-            'intersect',
-            '-a',
-            '{}'.format(annotationFile),
-            '-b',
-            '{}'.format(composite_site_dir+"/WholeGenome_"+ref_species+"_Mapped_NonDup.bed"),
-            '-wb',
-            '|',
-            'awk',
-            "'{print",
-            '$NF',
-            "}'",
-            '>',
-            '{}'.format(output_anno)]
-        os.system(' '.join(bed_command))
-        if(os.stat(output_anno).st_size == 0):
-            outfile.write(annotation + " - No Sites\n")
-        else:
-            composite_annos.append(annotationFile)
-            num_lines = sum(1 for line in open(output_anno))
-            outfile.write(annotation + " - " + str(num_lines)+"\n")
-print(composite_annos)
+with open(annotation_dir+"/Annotation_Counts.tsv","w") as count_file:
+    with open(post_log_dir+'/out_05_Composite_Annotation',"w") as outfile:
+        outfile.write("Composite Genome Annotation Counts:\n\n")
+        for annotationFile in ref_annotation_files:
+            annotation=path.basename(annotationFile).split('.')[0]
+            output_anno ='{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)
+            bed_command=[
+                'bedtools',
+                'intersect',
+                '-a',
+                '{}'.format(annotationFile),
+                '-b',
+                '{}'.format(composite_site_dir+"/WholeGenome_"+ref_species+"_Mapped_NonDup.bed"),
+                '-wb',
+                '|',
+                'awk',
+                "'{print",
+                '$NF',
+                "}'",
+                '>',
+                '{}'.format(output_anno)]
+            os.system(' '.join(bed_command))
+            if(os.stat(output_anno).st_size == 0):
+                count_file.write('Composite\tAll\t'+annotation+'\t0\n')
+                outfile.write(annotation + " - No Sites\n")
+            else:
+                composite_annos.append(annotationFile)
+                num_lines = sum(1 for line in open(output_anno))
+                count_file.write('Composite\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
+                outfile.write(annotation + " - " + str(num_lines)+"\n")
