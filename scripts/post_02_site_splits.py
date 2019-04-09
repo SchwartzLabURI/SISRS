@@ -42,6 +42,16 @@ with open(post_log_dir+"/out_04_Site_Splits","w") as outfile:
             good_split_dir]
     subprocess.call(split_command,stdout=outfile)
 
+bad_split_alignment = ['python',
+        '{}/alignment_slicer.py'.format(script_dir),
+        '{}/alignment_bi_locs_m0.txt'.format(sisrs_dir),
+        '{}/Bad_Split_LocList.txt'.format(bad_split_dir),
+        '{}/alignment_bi_m0.phylip-relaxed'.format(sisrs_dir),
+        ref_species+"_"+site_id+"_BadSplits",
+        bad_split_dir]
+
+subprocess.call(bad_split_alignment)
+
 #Number bad splits
 # bad_split_command = [
 #         'nl',
