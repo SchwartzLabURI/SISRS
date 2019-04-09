@@ -125,8 +125,8 @@ if __name__ == "__main__":
         columnList.append([alignment[:,column],column])
     results = map(goodOrBad,columnList)
 
-    df = pd.DataFrame.from_records(results, columns=['Loc','One','Two'])
-    df2=df.drop(['Loc'],axis=1)
+    df = pd.DataFrame.from_records(results, columns=['Site','One','Two'])
+    df2=df.drop(['Site'],axis=1)
     df2['Set']=df2.values.tolist()
     df2.apply(lambda row: row.Set.sort(),axis=1)
     df2['String']=df2.apply(lambda row:"...".join(row.Set),axis=1)
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     df3 = pd.DataFrame({'Split': splitList,'Split_Count': countList})
     df3.sort_values(['Split_Count'],ascending=False,inplace=True)
     df3['Split_Number'] = range(1,len(splitList)+1)
-    cols = ['Split_Number','Split','SplitCount']
+    cols = ['Split_Number','Split','Split_Count']
     df3 = df3[cols]
 
     df3[['One','Two']] = df3.Split.str.split(pat = "\.\.\.",expand=True)
@@ -149,8 +149,7 @@ if __name__ == "__main__":
     df = df[['Site','Split_Number']]
 
     for value in sorted(set(df['Split_Number'])):
-    with open(outPath+"/bad_split_"+str(value)+"_LocList.txt","w") as outfile:
-        outfile.print(df[df['Split_Number']==value]['Site'])
+        df[df['Split_Number']==value]['Site'].to_csv(outPath+"/bad_split_"+str(value)+"_LocList.txt",header=None,index=None)
 
     df.to_csv(outPath + '/' + siteID + ".tsv",sep='\t',index=None,header=None)
     df3.to_csv(outPath + '/' + siteID + "_Counts.tsv",sep='\t',index=None,header=None)

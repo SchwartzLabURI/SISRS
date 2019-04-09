@@ -60,23 +60,3 @@ bad_split_define = ['python',
         bad_split_dir]
 
 subprocess.call(bad_split_define)
-
-#Number bad splits
-# bad_split_number = [
-#         'cut',
-#         '-f1',
-#         '{badsplitdir}/{refspecies}_{siteid}_BadSplits_Counts.tsv'.format(badsplitdir=bad_split_dir,refspecies=ref_species,siteid=site_id),
-#         '|',
-#         'nl',
-#         '-v',
-#         '1',
-#         '-n',
-#         'rn',
-#         '-',
-#         '|',
-#         'sed',
-#         "'s/\.\.\./\t/g'",
-#         '-',
-#         '>',
-#         '{}/Numbered_BadSplits'.format(bad_split_dir)
-# subprocess.call(bad_split_number)
