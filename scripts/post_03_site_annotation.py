@@ -50,7 +50,7 @@ for annotationFile in ref_annotation_files:
         '-wb',
         '|',
         'awk',
-        "'{print,",
+        "'{print",
         '$NF',
         "}'",
         '>',
