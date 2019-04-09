@@ -41,3 +41,19 @@ with open(post_log_dir+"/out_04_Site_Splits","w") as outfile:
             bad_split_dir,
             good_split_dir]
     subprocess.call(split_command,stdout=outfile)
+
+#Number bad splits
+# bad_split_command = [
+#         'nl',
+#         '-v',
+#         '1',
+#         '-n',
+#         'rn',
+#         '{}/Bad_Split_LocList.txt'.format(bad_split_dir),
+#         '|',
+#         'sed',
+#         "'s/\.\.\./\t/g'",
+#         '-',
+#         '>'
+#         '{}/Bad_Split_Numbered'.format(bad_split_dir)]
+# os.system(bad_split_command)
