@@ -162,3 +162,33 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
                 else:
                     count_file.write('SISRS\tBad\t'+str(split_num)+'\t'+annotation+'\t0\n')
                     outfile.write('Bad Split '+str(split_num)+" - " + annotation + " - No Sites\n")
+
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    for bad_split in bad_split_lists:
+        split_num = path.basename(bad_split).replace('bad_split_','').replace('_LocList.txt','')
+        num_lines = sum(1 for line in open(bad_split))
+        count_file.write('SISRS\tBad\t'+str(split_num)+'\tSISRS_Sites\t'+str(num_lines)+"\n")
+    for good_split in good_split_lists:
+        split_num = path.basename(good_split).replace('split_','').replace('_LocList.txt','')
+        num_lines = sum(1 for line in open(good_split))
+        count_file.write('SISRS\tGood\t'+str(split_num)+'\tSISRS_Sites\t'+str(num_lines)+"\n")
+
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    for annotationFile in ref_annotation_files:
+        annotation=path.basename(annotationFile).split('.')[0]
+        ref_count_command = [
+            'bedtools',
+            'merge',
+            '-i',
+            '{}'.format(annotationFile),
+            '|',
+            'awk',
+            "'{SUM",
+            '+=',
+            '$3-$2}',
+            'END',
+            '{print',
+            "SUM}'",
+            '-']
+        ref_count = subprocess.check_output(' '.join(ref_count_command),shell=True).decode().strip()
+        count_file.write('Reference\tAll\tAll\t'+annotation+'\t'+str(ref_count)+"\n")
