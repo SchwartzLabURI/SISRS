@@ -9,6 +9,7 @@ from itertools import islice
 script_dir = sys.path[0]
 processors = str(int(sys.argv[1]))
 ref_species = sys.argv[2]
+
 site_id = 'SISRS_Biallelic_NoMissing'
 
 #Set directories based off of script folder location
@@ -192,3 +193,54 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
             '-']
         ref_count = subprocess.check_output(' '.join(ref_count_command),shell=True).decode().strip()
         count_file.write('Reference\tAll\tAll\t'+annotation+'\t'+str(ref_count)+"\n")
+
+os.system(' '.join(['cat']+good_split_lists+['>',good_split_dir+'/Good_Split_LocList.txt']))
+good_splits = good_split_dir+'/Good_Split_LocList.txt'
+
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    for annotationFile in ref_annotation_files:
+        annotation=path.basename(annotationFile).split('.')[0]
+        input_anno ='{SISRSANNODIR}/SISRS_All_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+        output_anno ='{SISRSANNODIR}/SISRS_AllGood_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+        if(annotationFile in sisrs_annos):
+            fetch_command = [
+                'grep',
+                '-wFf',
+                '{}'.format(input_anno),
+                '{}'.format(good_splits),
+                '>',
+                '{}'.format(output_anno)]
+            os.system(' '.join(fetch_command))
+            if(os.stat(output_anno).st_size == 0):
+                count_file.write('SISRS\tGood\tAll\t'+annotation+'\t0\n')
+            else:
+                sisrs_annos.append(annotationFile)
+                num_lines = sum(1 for line in open(output_anno))
+                count_file.write('SISRS\tGood\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
+        else:
+            count_file.write('SISRS\tGood\tAll\t'+annotation+'\t0\n')
+
+bad_splits = bad_split_dir+'/Bad_Split_LocList.txt'
+
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    for annotationFile in ref_annotation_files:
+        annotation=path.basename(annotationFile).split('.')[0]
+        input_anno ='{SISRSANNODIR}/SISRS_All_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+        output_anno ='{SISRSANNODIR}/SISRS_AllBad_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+        if(annotationFile in sisrs_annos):
+            fetch_command = [
+                'grep',
+                '-wFf',
+                '{}'.format(input_anno),
+                '{}'.format(bad_splits),
+                '>',
+                '{}'.format(output_anno)]
+            os.system(' '.join(fetch_command))
+            if(os.stat(output_anno).st_size == 0):
+                count_file.write('SISRS\tBad\tAll\t'+annotation+'\t0\n')
+            else:
+                sisrs_annos.append(annotationFile)
+                num_lines = sum(1 for line in open(output_anno))
+                count_file.write('SISRS\tBad\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
+        else:
+            count_file.write('SISRS\tBad\tAll\t'+annotation+'\t0\n')
