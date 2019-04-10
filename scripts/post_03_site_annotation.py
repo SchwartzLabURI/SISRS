@@ -26,11 +26,13 @@ if(not path.isdir(annotation_dir+"/SISRS")):
     os.mkdir(annotation_dir+"/SISRS")
 sisrs_annotation_dir = annotation_dir+"/SISRS"
 
-site_output_dir = post_processing_dir+"/SISRS_Sites"
-good_split_dir = site_output_dir + "/Good_Splits"
-bad_split_dir = site_output_dir + "/Bad_Splits"
+split_dir = post_processing_dir+"/Site_Splits"
+good_split_dir = split_dir + "/Good_Splits"
+good_split_lists = glob(good_split_dir+"/split*")
 
-ref_topology_dir = path.dirname(path.abspath(script_dir))+"/Reference_Topology"
+bad_split_dir = split_dir + "/Bad_Splits"
+bad_split_lists = glob(bad_split_dir+"/bad_split*")
+
 ref_annotation_dir = path.dirname(path.abspath(script_dir))+"/Reference_Genome/Annotations"
 ref_annotation_files = glob(ref_annotation_dir+"/*.bed")
 
@@ -66,12 +68,12 @@ with open(annotation_dir+"/Annotation_Counts.tsv","w") as count_file:
                 '{}'.format(output_anno)]
             os.system(' '.join(bed_command))
             if(os.stat(output_anno).st_size == 0):
-                count_file.write('Composite\tAll\t'+annotation+'\t0\n')
+                count_file.write('Composite\tAll\tAll\t'+annotation+'\t0\n')
                 outfile.write(annotation + " - No Sites\n")
             else:
                 composite_annos.append(annotationFile)
                 num_lines = sum(1 for line in open(output_anno))
-                count_file.write('Composite\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
+                count_file.write('Composite\tAll\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
                 outfile.write(annotation + " - " + str(num_lines)+"\n")
 
 sisrs_annos = []
@@ -81,7 +83,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         for annotationFile in ref_annotation_files:
             annotation=path.basename(annotationFile).split('.')[0]
             input_anno ='{COMPOSITEANNODIR}/Composite_{ANNOTATION}_LocList.txt'.format(COMPOSITEANNODIR=composite_annotation_dir,ANNOTATION=annotation)
-            output_anno ='{SISRSANNODIR}/SISRS_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+            output_anno ='{SISRSANNODIR}/SISRS_All_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
             if(annotationFile in composite_annos):
                 fetch_command = [
                     'grep',
@@ -92,13 +94,71 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
                     '{}'.format(output_anno)]
                 os.system(' '.join(fetch_command))
                 if(os.stat(output_anno).st_size == 0):
-                    count_file.write('SISRS\tAll\t'+annotation+'\t0\n')
+                    count_file.write('SISRS\tAll\tAll\t'+annotation+'\t0\n')
                     outfile.write(annotation + " - No Sites\n")
                 else:
                     sisrs_annos.append(annotationFile)
                     num_lines = sum(1 for line in open(output_anno))
-                    count_file.write('SISRS\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
+                    count_file.write('SISRS\tAll\tAll\t'+annotation+'\t'+str(num_lines)+"\n")
                     outfile.write(annotation + " - " + str(num_lines)+"\n")
             else:
-                count_file.write('SISRS\tAll\t'+annotation+'\t0\n')
+                count_file.write('SISRS\tAll\tAll\t'+annotation+'\t0\n')
                 outfile.write(annotation + " - No Sites\n")
+
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    with open(post_log_dir+'/out_07_SISRS_GoodSplit_Annotation',"w") as outfile:
+        outfile.write("SISRS Good Split Annotation Counts:\n\n")
+        for good_split in good_split_lists:
+            split_num = path.basename(good_split).replace('split_','').replace('_LocList.txt','')
+            for annotationFile in ref_annotation_files:
+                annotation=path.basename(annotationFile).split('.')[0]
+                input_anno ='{SISRSANNODIR}/SISRS_All_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+                output_anno ='{SISRSANNODIR}/SISRS_Good_{SPLIT}_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,SPLIT=split_num,ANNOTATION=annotation)
+                if(annotationFile in sisrs_annos):
+                    fetch_command = [
+                        'grep',
+                        '-wFf',
+                        '{}'.format(input_anno),
+                        '{}'.format(good_split),
+                        '>',
+                        '{}'.format(output_anno)]
+                    os.system(' '.join(fetch_command))
+                    if(os.stat(output_anno).st_size == 0):
+                        count_file.write('SISRS\tGood\t'+str(split_num)+'\t'+annotation+'\t0\n')
+                        outfile.write('Good Split '+str(split_num)+" - " + annotation + " - No Sites\n")
+                    else:
+                        num_lines = sum(1 for line in open(output_anno))
+                        count_file.write('SISRS\tGood\t'+str(split_num)+'\t'+annotation+'\t'+str(num_lines)+"\n")
+                        outfile.write('Good Split '+str(split_num)+" - " + annotation + " - " + str(num_lines)+"\n")
+                else:
+                    count_file.write('SISRS\tGood\t'+str(split_num)+'\t'+annotation+'\t0\n')
+                    outfile.write('Good Split '+str(split_num)+" - " + annotation + " - No Sites\n")
+
+with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
+    with open(post_log_dir+'/out_08_SISRS_BadSplit_Annotation',"w") as outfile:
+        outfile.write("SISRS Bad Split Annotation Counts:\n\n")
+        for bad_split in bad_split_lists:
+            split_num = path.basename(bad_split).replace('bad_split_','').replace('_LocList.txt','')
+            for annotationFile in ref_annotation_files:
+                annotation=path.basename(annotationFile).split('.')[0]
+                input_anno ='{SISRSANNODIR}/SISRS_All_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
+                output_anno ='{SISRSANNODIR}/SISRS_Bad_{SPLIT}_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,SPLIT=split_num,ANNOTATION=annotation)
+                if(annotationFile in sisrs_annos):
+                    fetch_command = [
+                        'grep',
+                        '-wFf',
+                        '{}'.format(input_anno),
+                        '{}'.format(bad_split),
+                        '>',
+                        '{}'.format(output_anno)]
+                    os.system(' '.join(fetch_command))
+                    if(os.stat(output_anno).st_size == 0):
+                        count_file.write('SISRS\tBad\t'+str(split_num)+'\t'+annotation+'\t0\n')
+                        outfile.write('Bad Split '+str(split_num)+" - " + annotation + " - No Sites\n")
+                    else:
+                        num_lines = sum(1 for line in open(output_anno))
+                        count_file.write('SISRS\tBad\t'+str(split_num)+'\t'+annotation+'\t'+str(num_lines)+"\n")
+                        outfile.write('Bad Split '+str(split_num)+" - " + annotation + " - " + str(num_lines)+"\n")
+                else:
+                    count_file.write('SISRS\tBad\t'+str(split_num)+'\t'+annotation+'\t0\n')
+                    outfile.write('Bad Split '+str(split_num)+" - " + annotation + " - No Sites\n")
