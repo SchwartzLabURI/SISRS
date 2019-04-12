@@ -90,3 +90,12 @@ with open(post_log_dir+"/out_02_Site_Mapping","w") as outfile:
 with open(post_log_dir+"/out_03_Alignment_Slicer","w") as outfile:
     slice_command = ['python','{}/alignment_slicer.py'.format(script_dir),'{}/alignment_bi_locs_m0.txt'.format(sisrs_dir),'{sitedir}/{taxa}_{siteid}_Mapped_NonDup_LocList.txt'.format(sitedir=site_output_dir,taxa=ref_species,siteid=site_id),'{}/alignment_bi_m0.phylip-relaxed'.format(sisrs_dir),ref_species+"_"+site_id]
     subprocess.call(slice_command,stdout=outfile)
+
+sort_whole_genome = ['sort',
+        '-k',
+        -'1,1',
+        -'k2,2n',
+        '{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped_NonDup.bed'.format(post=post_processing_dir,taxa=ref_species)',
+        '-o',
+        '{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped_NonDup.bed'.format(post=post_processing_dir,taxa=ref_species)]
+os.system(' '.join(sort_whole_genome))
