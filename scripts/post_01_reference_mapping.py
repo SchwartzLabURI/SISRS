@@ -93,9 +93,9 @@ with open(post_log_dir+"/out_03_Alignment_Slicer","w") as outfile:
 
 sort_whole_genome = ['sort',
         '-k',
-        -'1,1',
-        -'k2,2n',
-        '{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped_NonDup.bed'.format(post=post_processing_dir,taxa=ref_species)',
+        '1,1',
+        '-k2,2n',
+        '{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped_NonDup.bed'.format(post=post_processing_dir,taxa=ref_species),
         '-o',
         '{post}/Whole_Genome_Mapping/WholeGenome_{taxa}_Mapped_NonDup.bed'.format(post=post_processing_dir,taxa=ref_species)]
 os.system(' '.join(sort_whole_genome))

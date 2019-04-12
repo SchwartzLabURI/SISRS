@@ -43,8 +43,8 @@ ref_annotation_files = glob(ref_annotation_dir+"/*.bed")
 for annotationFile in ref_annotation_files:
     sort_annotation = ['sort',
             '-k',
-            -'1,1',
-            -'k2,2n',
+            '1,1',
+            '-k2,2n',
             annotationFile,
             '-o',
             annotationFile]
