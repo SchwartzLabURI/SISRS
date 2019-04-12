@@ -193,6 +193,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         ref_count_command = [
             'bedtools',
             'merge',
+            '-sorted',
             '-i',
             '{}'.format(annotationFile),
             '|',
