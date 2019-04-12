@@ -79,6 +79,10 @@ with open(annotation_dir+"/Annotation_Counts.tsv","w") as count_file:
                 "'{print",
                 '$NF',
                 "}'",
+                '|',
+                'sort',
+                '|'
+                'uniq'
                 '>',
                 '{}'.format(output_anno)]
             os.system(' '.join(bed_command))
