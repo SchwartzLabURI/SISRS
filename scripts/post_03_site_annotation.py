@@ -39,6 +39,17 @@ bad_split_lists = glob(bad_split_dir+"/bad_split*")
 ref_annotation_dir = path.dirname(path.abspath(script_dir))+"/Reference_Genome/Annotations"
 ref_annotation_files = glob(ref_annotation_dir+"/*.bed")
 
+#Sort annotation BED files
+for annotationFile in ref_annotation_files:
+    sort_annotation = ['sort',
+            '-k',
+            -'1,1',
+            -'k2,2n',
+            annotationFile,
+            '-o',
+            annotationFile]
+    os.system(' '.join(sort_annotation))
+
 sisrs_site_dir = post_processing_dir+"/SISRS_Sites"
 sisrs_sites = sisrs_site_dir+"/"+ref_species+"_"+site_id+"_NoGaps_LocList.txt"
 
