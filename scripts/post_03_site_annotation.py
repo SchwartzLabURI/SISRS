@@ -68,6 +68,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","w") as count_file:
             bed_command=[
                 'bedtools',
                 'intersect',
+                '-sorted',
                 '-a',
                 '{}'.format(annotationFile),
                 '-b',
@@ -193,7 +194,6 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         ref_count_command = [
             'bedtools',
             'merge',
-            '-sorted',
             '-i',
             '{}'.format(annotationFile),
             '|',
