@@ -82,6 +82,8 @@ with open(annotation_dir+"/Annotation_Counts.tsv","w") as count_file:
                 '>',
                 '{}'.format(output_anno)]
             os.system(' '.join(bed_command))
+            print('Completed annotation transfer of '+annotation+' onto composite genome...')
+
             if(os.stat(output_anno).st_size == 0):
                 count_file.write('Composite\tAll\tAll\t'+annotation+'\t0\n')
                 outfile.write(annotation + " - No Sites\n")
@@ -207,7 +209,6 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
             '-']
         ref_count = subprocess.check_output(' '.join(ref_count_command),shell=True).decode().strip()
         count_file.write('Reference\tAll\tAll\t'+annotation+'\t'+str(ref_count)+"\n")
-        print('Completed annotation transfer of '+annotation+' onto composite genome...')
 
 os.system(' '.join(['cat']+good_split_lists+['>',good_split_dir+'/Good_Split_LocList.txt']))
 good_splits = good_split_dir+'/Good_Split_LocList.txt'
