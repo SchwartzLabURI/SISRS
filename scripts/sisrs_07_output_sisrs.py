@@ -52,20 +52,19 @@ with open(sisrs_dir+"/out_SISRS_Log","w") as file:
     file.write("\nRead Mapping and SISRS Site Selection:\n")
     for tax_dir in sisrs_tax_dirs:
         taxa = path.basename(tax_dir[:-1])
-        with open(tax_dir + "err_" + taxa + "_SISRS") as f:
-            bowtie1 = ['grep','-A4',"'of these'",'{}'.format(f),'|','sed','-n','2,6p']
-            bowtie2 = ['grep','-A4',"'of these'",'{}'.format(f),'|','sed','-n','8,13p']
-            file.write("\n"+taxa+" Composite Genome Mapping:\n\n")
-            file.write((subprocess.check_output(' '.join(bowtie1),shell=True).decode("UTF8"))))
-            file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
-            file.write((subprocess.check_output(' '.join(bowtie2),shell=True).decode("UTF8"))))
+        bowtie1 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','2,6p']
+        bowtie2 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','9,13p']
+        file.write("\n"+ taxa + " Composite Genome Mapping:\n\n")
+        file.write((subprocess.check_output(' '.join(bowtie1),shell=True).decode("UTF8")))
+        file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
+        file.write((subprocess.check_output(' '.join(bowtie2),shell=True).decode("UTF8")))
 
-        with open(tax_dir + "out_" + taxa + "_SISRS") as f2:
+        with open(tax_dir + "out_" + taxa + "_SISRS") as f:
             file.write("\n"+taxa+" SISRS Site Selection:\n\n")
-            for line in f2:
+            for line in f:
                 if(str.startswith(line,'Of ')):
                     file.write(line)
-    with open(sisrs_dir + "/out_SISRS_Alignment") as f3:
+    with open(sisrs_dir + "/out_SISRS_Alignment") as f2:
         file.write("\nSISRS Alignment Filtering:\n\n")
-        for line in f3:
+        for line in f2:
             file.write(line)
