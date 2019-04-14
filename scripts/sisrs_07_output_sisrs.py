@@ -53,20 +53,19 @@ with open(sisrs_dir+"/out_SISRS_Log","w") as file:
     for tax_dir in sisrs_tax_dirs:
         taxa = path.basename(tax_dir[:-1])
         with open(tax_dir + "err_" + taxa + "_SISRS") as f:
+            bowtie1 = ['grep','-A4',"'of these'",'{}'.format(f),'|','sed','-n','2,6p']
+            bowtie2 = ['grep','-A4',"'of these'",'{}'.format(f),'|','sed','-n','8,13p']
             file.write("\n"+taxa+" Composite Genome Mapping:\n\n")
-            head = [next(f) for x in range(0,6)]
-            for line in head:
-                file.write(line)
-        with open(tax_dir + "err_" + taxa + "_SISRS") as f2:
+            file.write((subprocess.check_output(' '.join(bowtie1),shell=True).decode("UTF8"))))
             file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
-            for line in islice(f2, 9, 15):
-                file.write(line)
-        with open(tax_dir + "out_" + taxa + "_SISRS") as f3:
+            file.write((subprocess.check_output(' '.join(bowtie2),shell=True).decode("UTF8"))))
+
+        with open(tax_dir + "out_" + taxa + "_SISRS") as f2:
             file.write("\n"+taxa+" SISRS Site Selection:\n\n")
-            for line in f3:
+            for line in f2:
                 if(str.startswith(line,'Of ')):
                     file.write(line)
-    with open(sisrs_dir + "/out_SISRS_Alignment") as f4:
+    with open(sisrs_dir + "/out_SISRS_Alignment") as f3:
         file.write("\nSISRS Alignment Filtering:\n\n")
-        for line in f4:
+        for line in f3:
             file.write(line)
