@@ -107,8 +107,8 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
             output_anno ='{SISRSANNODIR}/SISRS_All_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
             if(annotationFile in composite_annos):
                 fetch_command = [
-                    'grep',
-                    '-wFf',
+                    'comm',
+                    '-3',
                     '{}'.format(input_anno),
                     '{}'.format(sisrs_sites),
                     '>',
@@ -137,8 +137,8 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
                 output_anno ='{SISRSANNODIR}/SISRS_Good_{SPLIT}_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,SPLIT=split_num,ANNOTATION=annotation)
                 if(annotationFile in sisrs_annos):
                     fetch_command = [
-                        'grep',
-                        '-wFf',
+                        'comm',
+                        '-3',
                         '{}'.format(input_anno),
                         '{}'.format(good_split),
                         '>',
@@ -166,8 +166,8 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
                 output_anno ='{SISRSANNODIR}/SISRS_Bad_{SPLIT}_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,SPLIT=split_num,ANNOTATION=annotation)
                 if(annotationFile in sisrs_annos):
                     fetch_command = [
-                        'grep',
-                        '-wFf',
+                        'comm',
+                        '-3',
                         '{}'.format(input_anno),
                         '{}'.format(bad_split),
                         '>',
@@ -224,8 +224,8 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         output_anno ='{SISRSANNODIR}/SISRS_AllGood_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
         if(annotationFile in sisrs_annos):
             fetch_command = [
-                'grep',
-                '-wFf',
+                'comm',
+                '-3',
                 '{}'.format(input_anno),
                 '{}'.format(good_splits),
                 '>',
@@ -249,8 +249,8 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         output_anno ='{SISRSANNODIR}/SISRS_AllBad_{ANNOTATION}_LocList.txt'.format(SISRSANNODIR=sisrs_annotation_dir,ANNOTATION=annotation)
         if(annotationFile in sisrs_annos):
             fetch_command = [
-                'grep',
-                '-wFf',
+                'comm',
+                '-3',
                 '{}'.format(input_anno),
                 '{}'.format(bad_splits),
                 '>',
