@@ -51,7 +51,6 @@ bad_split_alignment = ['python',
         '{}/alignment_bi_m0.phylip-relaxed'.format(sisrs_dir),
         ref_species+"_"+site_id+"_BadSplits",
         bad_split_dir]
-#print(' '.join(bad_split_alignment))
 subprocess.call(bad_split_alignment)
 
 bad_split_define = ['python',
@@ -61,5 +60,22 @@ bad_split_define = ['python',
         '{badsplitdir}/{refspecies}_{siteid}_BadSplits_NoGaps_LocList.txt'.format(badsplitdir=bad_split_dir,refspecies=ref_species,siteid=site_id),
         ref_species+"_"+site_id+"_BadSplits",
         bad_split_dir]
-#print(' '.join(bad_split_define))
 subprocess.call(bad_split_define)
+
+#Sort Loclists for easy grep
+good_split_list = glob(good_split_dir+'/*LocList.txt')
+bad_split_list = glob(bad_split_dir+'/*LocList.txt')
+for good in good_split_list:
+    sort_good = ['sort',
+        '-u',
+        '-o',
+        '{}'.format(good),
+        good]
+    subprocess.call(sort_good)
+for bad in bad_split_list:
+    sort_bad = ['sort',
+        '-u',
+        '-o',
+        '{}'.format(bad),
+        bad]
+    subprocess.call(sort_bad)
