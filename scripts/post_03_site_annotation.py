@@ -53,6 +53,13 @@ for annotationFile in ref_annotation_files:
 sisrs_site_dir = post_processing_dir+"/SISRS_Sites"
 sisrs_sites = sisrs_site_dir+"/"+ref_species+"_"+site_id+"_NoGaps_LocList.txt"
 
+sort_sisrs = ['sort',
+    '-u',
+    '-o',
+    '{}'.format(sisrs_sites),
+    sisrs_sites]
+subprocess.call(sort_sisrs)
+
 composite_site_dir = post_processing_dir+"/Whole_Genome_Mapping"
 
 post_log_dir = post_processing_dir+"/logFiles"
@@ -108,7 +115,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
             if(annotationFile in composite_annos):
                 fetch_command = [
                     'comm',
-                    '-3',
+                    '-12',
                     '{}'.format(input_anno),
                     '{}'.format(sisrs_sites),
                     '>',
@@ -138,7 +145,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
                 if(annotationFile in sisrs_annos):
                     fetch_command = [
                         'comm',
-                        '-3',
+                        '-12',
                         '{}'.format(input_anno),
                         '{}'.format(good_split),
                         '>',
@@ -167,7 +174,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
                 if(annotationFile in sisrs_annos):
                     fetch_command = [
                         'comm',
-                        '-3',
+                        '-12',
                         '{}'.format(input_anno),
                         '{}'.format(bad_split),
                         '>',
@@ -225,7 +232,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         if(annotationFile in sisrs_annos):
             fetch_command = [
                 'comm',
-                '-3',
+                '-12',
                 '{}'.format(input_anno),
                 '{}'.format(good_splits),
                 '>',
@@ -250,7 +257,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         if(annotationFile in sisrs_annos):
             fetch_command = [
                 'comm',
-                '-3',
+                '-12',
                 '{}'.format(input_anno),
                 '{}'.format(bad_splits),
                 '>',
