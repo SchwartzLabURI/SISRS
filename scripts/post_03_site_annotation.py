@@ -214,7 +214,7 @@ with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
         ref_count = subprocess.check_output(' '.join(ref_count_command),shell=True).decode().strip()
         count_file.write('Reference\tAll\tAll\t'+annotation+'\t'+str(ref_count)+"\n")
 
-os.system(' '.join(['cat']+good_split_lists+['>',good_split_dir+'/Good_Split_LocList.txt']))
+os.system(' '.join(['cat']+good_split_lists+['| sort >',good_split_dir+'/Good_Split_LocList.txt']))
 good_splits = good_split_dir+'/Good_Split_LocList.txt'
 
 with open(annotation_dir+"/Annotation_Counts.tsv","a+") as count_file:
