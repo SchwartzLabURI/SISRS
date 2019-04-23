@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-#!/usr/bin/env python3
-
 import os
 from os import path
 import sys
 from glob import glob
 import pandas as pd
+import subprocess
 
 from Bio import SeqIO, AlignIO
 from Bio.Align import MultipleSeqAlignment,AlignInfo
@@ -19,6 +18,7 @@ script_dir = sys.path[0]
 processors = str(int(sys.argv[1]))
 ref_species = sys.argv[2]
 contig_count = str(int(sys.argv[3]))
+outgroup = (sys.argv[4])
 
 site_id = 'SISRS_Biallelic_NoMissing'
 
@@ -32,6 +32,8 @@ chronos_dir = post_processing_dir+"/Chronos_"+contig_count
 sisrs_dir = path.dirname(path.abspath(script_dir))+"/SISRS_Run"
 sisrs_tax_dirs = sorted(glob(sisrs_dir+"/*/"))
 sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/')]
+
+ref_tree = glob(path.dirname(path.abspath(script_dir))+"/Reference_Topology/*.nwk")
 
 all_sisrs=  pd.read_csv(sisrs_site_dir+'/'+ref_species+'_'+site_id+'_NoGaps_LocList.txt',header=None)[0].str.split("/", n = 1, expand = True)
 all_sisrs.columns=['Contig','Site']
@@ -141,3 +143,32 @@ for k,v in cat_data.items():
     datalist.append(seq)
 
 SeqIO.write(datalist,chronos_dir+"/Concat_"+contig_count+".phylip-relaxed", "phylip-relaxed")
+
+if(not path.isdir(chronos_dir+"/RAxML")):
+    os.mkdir(chronos_dir+"/RAxML")
+raxml_dir = chronos_dir+"/RAxML"
+
+raxml_command = [
+    'raxmlHPC-PTHREADS-SSE3',
+    '-s',
+     '{CHRON}/Concat_{CONTIGCOUNT}.phylip-relaxed'.format(CHRON=chronos_dir,CONTIGCOUNT=contig_count),
+     '-t',
+     '{}'.format(ref_tree[0]),
+     '-f',
+     'e',
+     '-p',
+     '{}'.format("$RANDOM"),
+     '-T',
+     '{}'.format(processors),
+     '-m',
+     'GTRGAMMA',
+     '-n',
+     'Concat_{}'.format(contig_count),
+     '-o',
+     '{}'.format(outgroup)]
+with open(raxml_dir+"/RAxML_"+contig_count+".sh","w") as raxscript:
+    raxscript.write("#!/bin/sh\n")
+    raxscript.write(' '.join(raxml_command))
+    raxscript.write("\n")
+os.chdir(raxml_dir)
+subprocess.Popen(['bash',"RAxML_"+contig_count+".sh"])
