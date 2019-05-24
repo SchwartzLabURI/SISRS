@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+'''
+Last edit: Devin McConnell May 23, 2019
+'''
+
 # This script preps the folder architecture for a SISRS run.
 # Taxon ID file (text file with Taxon IDs on new lines) must be in base SISRS folder
 # Arguments: (1) Path to Taxon ID file (text file with Taxon IDs on new lines)
