@@ -16,7 +16,10 @@ import os
 from os import listdir,path
 from os.path import isdir, isfile, join
 
-
+'''
+This function will be developing the taxon list based on an input file of taxon
+ids.
+'''
 def devTaxaList(taxon_ID_file):
     # Error check to make sure the file can be opened
     if isfile(taxon_ID_file) == False:
