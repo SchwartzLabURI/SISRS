@@ -14,14 +14,12 @@ import sys
 import cProfile
 import os
 from os import listdir,path
-from os.path import isdir, join
+from os.path import isdir, isfile, join
 
 
 def devTaxaList(taxon_ID_file):
     # Error check to make sure the file can be opened
-    try:
-        taxonFile = open(taxon_ID_file)
-    except:
+    if isfile(taxon_ID_file) == False:
         print("ERROR WHILE PROCESSING FILE!")
         exit()
 
@@ -31,13 +29,13 @@ def devTaxaList(taxon_ID_file):
 
 '''
 This function is relient on the fact that the folders inside the path are labeled
-according to the correct taxon. Takes as the mainm argumemt the path it will be
-search for the arguments to the files
+according to the correct taxon. Takes as the main argumemt the path it will be
+searching for the arguments to the files
 '''
 def readTaxaFromFolders(path):
     # Error check to make sure it is a path that exists
     if isdir(path) == False:
-        print("ERROR WHILE PROCESSING TAXON IDS!")
+        print("ERROR WHILE PROCESSING PATH to TAXON FOLDERS!")
         exit()
 
     # Make list of taxa based on the foler names
@@ -51,7 +49,7 @@ them into the proper folders. This function requiers the path to the data, a lis
 of tha taxons/folder names, and a boolean value determining if the reads are
 trimmer already or if it is rawdata.
 '''
-def makeLinks(path, taxa_list, trim):
+def makeLinks(data_path, sisrs_dir, taxa_list, trim):
     dest = ""
     if trim:
         dest = "TrimReads"
@@ -60,10 +58,10 @@ def makeLinks(path, taxa_list, trim):
 
     for x in taxa_list:
         # Only batins the files that are not starting with '.'
-        l = [f for f in listdir(path + '/' + x) if not f.startswith('.')]
+        l = [f for f in listdir(data_path + '/' + x) if not f.startswith('.')]
         for i in l:
             # Creates the soft link to the files
-            os.symlink(path + '/' + x + '/' + i,
+            os.symlink(data_path + '/' + x + '/' + i,
                 sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
 
 
@@ -73,6 +71,8 @@ for sisrs to properly run. It will take in as input the taxa list
 and the working sisrs directory
 '''
 def fileStructure(sisrs_dir,taxa_list):
+    if isdir(sisrs_dir) == False:
+        os.mkdir(sisrs_dir)
     os.mkdir(sisrs_dir+"/Reads")
     os.mkdir(sisrs_dir+"/Reads/RawReads")
     os.mkdir(sisrs_dir+"/Reads/TrimReads")
@@ -88,11 +88,3 @@ def fileStructure(sisrs_dir,taxa_list):
         os.mkdir(sisrs_dir+"/Reads/RawReads/"+x)
         os.mkdir(sisrs_dir+"/Reads/TrimReads/"+x)
         os.mkdir(sisrs_dir+"/SISRS_Run/"+x)
-
-
-if __name__ == '__main__':
-    taxon_ID_file = path.abspath(sys.argv[1])
-    sisrs_dir = path.dirname(taxon_ID_file)
-    taxa_list = readTaxaFromFolders(taxon_ID_file)
-    fileStructure(sisrs_dir,taxa_list)
-    makeLinks(taxon_ID_file, taxa_list,False)
