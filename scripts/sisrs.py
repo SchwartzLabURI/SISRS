@@ -33,54 +33,55 @@ def commandLine(cmdln):
         print("Requiered flags to run: -id or -rd, -gs, and -ms")
         exit()
 
+    rtn = [ "" for i in range(9)]
     # Variables that will get passed to the scripts
-    taxon_ID_file = ""
-    data_path = ""
-    sisrs_dir = ""
-    trimed = False
-    threads = 1
-    genomeSize = 0
-    threshold = 1
-    minRead = 3
-    missing = 0
+    # taxon_ID_file = ""  --> 1
+    # data_path = ""      --> 2
+    # sisrs_dir = ""      --> 0
+    # trimed = False      --> 3
+    # threads = 1         --> 4
+    # genomeSize = 0      --> 5
+    # threshold = 1       --> 6
+    # minRead = 3         --> 7
+    # missing = 0         --> 8
 
     # Variablese used throughout if's
     bool = True
 
     # Let the user specify where to place the sisrs output
     if '-dir' in cmdln:
-        sisrs_dir = cmdln[cmdln.index('-dir') + 1]
+        rtn[0] = cmdln[cmdln.index('-dir') + 1]
     else:
-        sisrs_dir = '.'
+        rtn[0] = '.'
 
     # Flag if you plan on using a TaxonID txt file and
     # wish to move files by hand
     if '-id' in cmdln:
-        taxon_ID_file = cmdln[cmdln.index('-id') + 1]
+        rtn[1] = cmdln[cmdln.index('-id') + 1]
     # Flag to tell us were the raw data is stored
     elif '-rd' in cmdln:
-        data_path = cmdln[cmdln.index('-rd') + 1]
+        rtn[2] = cmdln[cmdln.index('-rd') + 1]
     else:
         print("MISSING TAXA INFORMATION")
         exit()
 
     # Determine if the data has been pretrimed or not
     if '-trm' in cmdln:
-        trimed = True
+        rtn[3] = True
 
     # Determine the number of the threads to use
     ############################################################################
                                 # Defaults to 1
     if '-th' in cmdln:
         bool = isInt(cmdln[cmdln.index('-th') + 1])
-        threads = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
+        rtn[4] = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
 
     ############################################################################
 
     # Obtain the genomeSize estimation for script 3
     if '-gs' in cmdln:
         bool = isInt(cmdln[cmdln.index('-gs') + 1])
-        genomeSize = int(cmdln[cmdln.index('-gs') + 1]) if bool else 0
+        rtn[5] = int(cmdln[cmdln.index('-gs') + 1]) if bool else 0
     else:
         if bool == False:
             print("GENOME SIZE ESTIMATION IS NOT A VALID NUMBER")
@@ -91,7 +92,7 @@ def commandLine(cmdln):
     # Get threshold for script 5
     if '-thrs' in cmdln:
         bool = isFloat(cmdln[cmdln.index('-thrs') + 1])
-        threshold = float(cmdln[cmdln.index('-thrs') + 1]) if bool else 1
+        rtn[6] = float(cmdln[cmdln.index('-thrs') + 1]) if bool else 1
         if bool == False:
             print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES WAS NOT" +
                         "A VALID NUMBER --> SWITCHED TO 1")
@@ -99,7 +100,7 @@ def commandLine(cmdln):
     # Gets the minread need to run the 5 script
     if '-mr' in cmdln:
         bool = isInt(cmdln[cmdln.index('-mr') + 1])
-        minRead = int(cmdln[cmdln.index('-mr') + 1]) if bool else 3
+        rtn[7] = int(cmdln[cmdln.index('-mr') + 1]) if bool else 3
 
         if bool == False:
             print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
@@ -109,7 +110,7 @@ def commandLine(cmdln):
     # Gets the allowed amount of missing data from the files
     if '-ms' in cmdln:
         bool = isInt(cmdln[cmdln.index('-ms') + 1])
-        missing = int(cmdln[cmdln.index('-ms') + 1]) if bool else 0
+        rtn[8] = int(cmdln[cmdln.index('-ms') + 1]) if bool else 0
         if bool == False:
             print("THE ALLOWED AMOUNT OF MISSING DATA MUST BE A VALID NUMBER")
             exit()
@@ -117,11 +118,7 @@ def commandLine(cmdln):
         print("THE ALLOWED AMOUNT OF MISSING DATA IS REQUEIERED TO RUN SISRS")
         exit()
 
-    ############################################################################
-                        #CHANGE THIS TO BE A LIST
-    return taxon_ID_file,data_path,sisrs_dir,trimed,threads,genomeSize,threshold,minRead,missing
-
-    ############################################################################
+    return rtn
 
 '''
 Function to run all of the first script
@@ -143,5 +140,5 @@ def sisrs01(taxon_ID_file,data_path,sisrs_dir,trimed):
 
 if __name__ == '__main__':
     cmdln = sys.argv
-    taxon_ID_file,data_path,sisrs_dir,trimed,threads,genomeSize,threshold,minRead,missing = commandLine(cmdln)
-    sisrs01(taxon_ID_file,data_path,sisrs_dir,trimed)
+    rtn = commandLine(cmdln)
+    sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
