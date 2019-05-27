@@ -33,17 +33,17 @@ def commandLine(cmdln):
         print("Requiered flags to run: -id or -rd, -gs, and -ms")
         exit()
 
-    rtn = [ "" for i in range(9)]
     # Variables that will get passed to the scripts
+    # sisrs_dir = ""      --> 0
     # taxon_ID_file = ""  --> 1
     # data_path = ""      --> 2
-    # sisrs_dir = ""      --> 0
     # trimed = False      --> 3
     # threads = 1         --> 4
     # genomeSize = 0      --> 5
     # threshold = 1       --> 6
     # minRead = 3         --> 7
     # missing = 0         --> 8
+    rtn = [ "" for i in range(9)]
 
     # Variablese used throughout if's
     bool = True
@@ -66,8 +66,7 @@ def commandLine(cmdln):
         exit()
 
     # Determine if the data has been pretrimed or not
-    if '-trm' in cmdln:
-        rtn[3] = True
+    rtn[3] = True if '-trm' in cmdln else False
 
     # Determine the number of the threads to use
     ############################################################################
@@ -75,6 +74,8 @@ def commandLine(cmdln):
     if '-th' in cmdln:
         bool = isInt(cmdln[cmdln.index('-th') + 1])
         rtn[4] = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
+    else:
+        rtn[4] = 1
 
     ############################################################################
 
@@ -106,6 +107,8 @@ def commandLine(cmdln):
             print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
         elif int(cmdln[cmdln.index('-mr') + 1]) < 1 or int(cmdln[cmdln.index('-mr') + 1]) > 3:
             print("MINREAD COVERAGE MUST BE BETWEEN 1 AND 3 --> SWITCHED TO 3")
+    else:
+        rtn[7] = 3
 
     # Gets the allowed amount of missing data from the files
     if '-ms' in cmdln:
@@ -138,7 +141,16 @@ def sisrs01(taxon_ID_file,data_path,sisrs_dir,trimed):
         else:
             makeLinks(data_path, sisrs_dir, taxa_list, False)
 
+'''
+Function to run all of the second script
+'''
+def sisrs2(trimed,processors):
+    if not trimed:
+        print("WE NEED TO CALL THAT SCRIPT")
+
+
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln)
+    print rtn
     sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
