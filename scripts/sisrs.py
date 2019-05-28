@@ -154,6 +154,8 @@ def sisrs2(trimed,processors,sisrs_dir):
 
         # trim_fastqc_command
         fastqcCommand(processors,out[4],out[1])
+    else:
+        print("FILES ALREADY TRIMMED")
 
 
 if __name__ == '__main__':

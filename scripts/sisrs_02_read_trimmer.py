@@ -73,7 +73,8 @@ def setup(sisrs_dir):
 
     rtn += [raw_read_tax_dirs]
 
-   return rtn
+    return rtn
+
 '''
 This function is designed to run the fastqc command. Modified to run both the raw
 and the trimmed data, takes the number of processors, the output directory, and
