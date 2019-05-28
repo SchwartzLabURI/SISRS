@@ -43,9 +43,12 @@ def sisrs2(trimed,processors,sisrs_dir):
     else:
         print("FILES ALREADY TRIMMED")
 
+def sisrs3(genomeSize, sisrs_dir):
+    setupInfo = setup(sisrs_dir,genomeSize)
 
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln)
     sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
     sisrs2(rtn[3],rtn[4],rtn[0])
+    sisrs3(rtn[5],rtn[0])

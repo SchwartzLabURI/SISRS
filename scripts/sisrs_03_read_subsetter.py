@@ -17,40 +17,60 @@ from subprocess import check_call
 import pandas as pd
 import re
 
-#Set cwd to script location
-script_dir = sys.path[0]
+'''
+This function is designed to do the remaining folder setup for the read subsetting.
+It also finisihes up the other minor setups needed for this script. The arguments
+that are needed for this script are the working sisrs directory and the genomeSize
+estimation.
+'''
+def setup(sisrs_dir,genomeSize):
 
-#Get Genome size estimate
-genomeSize = int(sys.argv[1])
+    # returned list of items
+    # trim_read_dir         --> 0
+    # subset_output_dir     --> 1
+    # subset_log_dir        --> 2
+    # subsetDepth           --> 3
+    # df                    --> 4
+    # compiled_paired       --> 5
+    # compiled_single_end   --> 6
+    # trim_read_tax_dirs    --> 7
+    rtn = []
 
-#Set TrimRead directories based off of script folder location
-trim_read_dir = path.dirname(path.abspath(script_dir))+"/Reads/TrimReads"
+    #Set TrimRead directories based off of script folder location
+    trim_read_dir = path.dirname(path.abspath(sisrs_dir))+"/Reads/TrimReads"
+    rtn += [trim_read_dir]
 
-#Find taxa folders within TrimRead folder
-trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
+    #Find taxa folders within TrimRead folder
+    trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
+    rtn += [trim_read_tax_dirs]
 
-#Create folder for Subset reads
-if(not path.isdir(path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads")):
-    os.mkdir(path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads")
-subset_output_dir = path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads/"
+    #Create folder for Subset reads
+    if(not path.isdir(path.dirname(path.abspath(sisrs_dir))+"/Reads/SubsetReads")):
+        os.mkdir(path.dirname(path.abspath(sisrs_dir))+"/Reads/SubsetReads")
+    subset_output_dir = path.dirname(path.abspath(sisrs_dir))+"/Reads/SubsetReads/"
+    rtn += [subset_output_dir]
 
-#Create folder for Subset output logs
-if(not path.isdir(trim_read_dir+"/subsetOutput")):
-    os.mkdir(trim_read_dir+"/subsetOutput")
-subset_log_dir = trim_read_dir+"/subsetOutput/"
+    #Create folder for Subset output logs
+    if(not path.isdir(trim_read_dir+"/subsetOutput")):
+        os.mkdir(trim_read_dir+"/subsetOutput")
+    subset_log_dir = trim_read_dir+"/subsetOutput/"
+    rtn += [subset_log_dir]
 
-#Ensure Trim Log/FastQC/subset Log output directories not included in taxa list
-trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('trimOutput/')]
-trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('fastqcOutput/')]
-trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('subsetOutput/')]
+    #Ensure Trim Log/FastQC/subset Log output directories not included in taxa list
+    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('trimOutput/')]
+    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('fastqcOutput/')]
+    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('subsetOutput/')]
+    rtn += [trim_read_tax_dirs]
 
-#Calculate subset depth
-subsetDepth = int((10*genomeSize)/len(trim_read_tax_dirs))
+    #Calculate subset depth
+    rtn += = [int((10*genomeSize)/len(trim_read_tax_dirs))]
 
-#Initialize Pandas DF to get base counts and lists of paired and single-end files
-df = pd.DataFrame(columns=['Taxon','Dataset','Basecount'])
-compiled_paired = list()
-compiled_single_end = list()
+    #Initialize Pandas DF to get base counts and lists of paired and single-end files
+    rtn += [pd.DataFrame(columns=['Taxon','Dataset','Basecount'])]
+    rtn += [list()]
+    rtn += [list()]
+
+    return rtn
 
 #For each taxa directory...
 for tax_dir in trim_read_tax_dirs:
