@@ -64,7 +64,7 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
         l = [f for f in listdir(data_path + '/' + x) if not f.startswith('.')]
         for i in l:
             # Creates the soft link to the files
-            os.symlink(data_path + '/' + x + '/' + i,
+            os.link(data_path + '/' + x + '/' + i,
                 sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
 
 
