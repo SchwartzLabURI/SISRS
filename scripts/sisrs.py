@@ -5,6 +5,7 @@ Schwartz Lab May 2019
 
 from sisrs_01_folder_setup import *
 from sisrs_02_read_trimmer import *
+from sisrs_03_read_subsetter import *
 from cmdCheck import *
 
 '''
@@ -44,7 +45,7 @@ def sisrs2(trimed,processors,sisrs_dir):
         print("FILES ALREADY TRIMMED")
 
 def sisrs3(genomeSize, sisrs_dir):
-    setupInfo = setup(sisrs_dir,genomeSize)
+    setupInfo = setupDir(sisrs_dir,genomeSize)
     df = firstLoop(setupInfo[7],setupInfo[5], setupInfo[6],setupInfo[4])
 
     print("Based on a genome size estimate of " + str(genomeSize) + " bp, and with " + str(len(setupInfo[7])) + " species, the requested subset depth is " + str(setupInfo[3]) + " bp per species")

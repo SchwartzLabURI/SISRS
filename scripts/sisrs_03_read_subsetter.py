@@ -23,31 +23,30 @@ It also finisihes up the other minor setups needed for this script. The argument
 that are needed for this script are the working sisrs directory and the genomeSize
 estimation.
 '''
-def setup(sisrs_dir,genomeSize):
+def setupDir(sisrs_dir,genomeSize):
 
     # returned list of items
     # trim_read_dir         --> 0
     # subset_output_dir     --> 1
     # subset_log_dir        --> 2
-    # subsetDepth           --> 3
-    # df                    --> 4
-    # compiled_paired       --> 5
-    # compiled_single_end   --> 6
-    # trim_read_tax_dirs    --> 7
+    # trim_read_tax_dirs    --> 3
+    # subsetDepth           --> 4
+    # df                    --> 5
+    # compiled_paired       --> 6
+    # compiled_single_end   --> 7
     rtn = []
 
     #Set TrimRead directories based off of script folder location
-    trim_read_dir = path.dirname(path.abspath(sisrs_dir))+"/Reads/TrimReads"
+    trim_read_dir = sisrs_dir + "/Reads/TrimReads"
     rtn += [trim_read_dir]
 
     #Find taxa folders within TrimRead folder
     trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
-    rtn += [trim_read_tax_dirs]
 
     #Create folder for Subset reads
-    if(not path.isdir(path.dirname(path.abspath(sisrs_dir))+"/Reads/SubsetReads")):
-        os.mkdir(path.dirname(path.abspath(sisrs_dir))+"/Reads/SubsetReads")
-    subset_output_dir = path.dirname(path.abspath(sisrs_dir))+"/Reads/SubsetReads/"
+    if(not path.isdir(sisrs_dir +"/Reads/SubsetReads")):
+        os.mkdir(sisrs_dir+"/Reads/SubsetReads")
+    subset_output_dir = sisrs_dir+"/Reads/SubsetReads/"
     rtn += [subset_output_dir]
 
     #Create folder for Subset output logs
@@ -63,7 +62,7 @@ def setup(sisrs_dir,genomeSize):
     rtn += [trim_read_tax_dirs]
 
     #Calculate subset depth
-    rtn += = [int((10*genomeSize)/len(trim_read_tax_dirs))]
+    rtn += [int((10*genomeSize)/len(trim_read_tax_dirs))]
 
     #Initialize Pandas DF to get base counts and lists of paired and single-end files
     rtn += [pd.DataFrame(columns=['Taxon','Dataset','Basecount'])]
@@ -149,7 +148,7 @@ def firstLoop(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
                 basecount_list.append(int(baseCount))
                 taxon_list.append(taxon_ID)
         list_of_tuples = list(zip(taxon_list,dataset_list, basecount_list))
-        df = df.append((pd.DataFrame(list_of_tuples, columns = ['Taxon','Dataset', 'Basecount'])))
+        df.append((pd.DataFrame(list_of_tuples, columns = ['Taxon','Dataset', 'Basecount'])))
         return df
 
 def secondLoop(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
