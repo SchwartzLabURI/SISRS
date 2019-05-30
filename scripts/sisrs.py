@@ -46,11 +46,11 @@ def sisrs2(trimed,processors,sisrs_dir):
 
 def sisrs3(genomeSize, sisrs_dir):
     setupInfo = setupDir(sisrs_dir,genomeSize)
-    df = firstLoop(setupInfo[7],setupInfo[5], setupInfo[6],setupInfo[4])
+    df = firstLoop(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
 
     print("Based on a genome size estimate of " + str(genomeSize) + " bp, and with " + str(len(setupInfo[7])) + " species, the requested subset depth is " + str(setupInfo[3]) + " bp per species")
 
-    out = secondLoop(df,setupInfo[3],setupInfo[1],setupInfo[5],setupInfo[6])
+    out = secondLoop(df,setupInfo[4],setupInfo[1],setupInfo[6],setupInfo[7])
 
     # Subset Single End
     subset(out[1],out[2],setupInfo[0],setupInfo[1],setupInfo[2],False)
