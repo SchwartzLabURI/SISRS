@@ -217,6 +217,11 @@ def secondLoop(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_
 
     return out
 
+'''
+This function is designed to help strip the list of files that are going to be
+subsetted. They will be stripped of the file path, file extension, and if there
+is paired files the _1 and _2 will also be stripped
+'''
 def stripFiles(aList):
     nList = []
     for item in aList:

@@ -95,6 +95,48 @@ def fastqcCommand(processors,fastqc_output,read_dir):
     check_call(fastqc_command)
 
 '''
+This function is desinged to do setup work to obtain all of the possible
+single read and pair read files. Its main purpose is to clean up the large for
+loop that is seem below in the trim function. It only needs the current working
+raw read directory and the matching trim read directory as arguments. 
+'''
+def trimHelper(tax_dir,trim_read_dir):
+
+    #List all files and set output dir
+    files = sorted(glob(tax_dir+"*.fastq.gz"))
+    taxon_ID = path.basename(tax_dir[:-1])
+    out_trim_dir = trim_read_dir + "/" + taxon_ID
+
+    left_pairs = list()
+    right_pairs = list()
+    single_end = list()
+
+    #Find files ending in _1/_2.fastq.gz
+    left_files = [s for s in files if "_1.fastq.gz" in s]
+    right_files = [s for s in files if "_2.fastq.gz" in s]
+
+    #Strip _1.fastq.gz/_2.fastq.gz and identify pairs based on file name
+    left_files = [x.replace('_1.fastq.gz', '') for x in left_files]
+    right_files = [x.replace('_2.fastq.gz', '') for x in right_files]
+    paired_files = list(set(left_files).intersection(right_files))
+
+    #Reset file names and filter out single-end files
+    for pair in paired_files:
+        left_pairs.append(pair+"_1.fastq.gz")
+        right_pairs.append(pair+"_2.fastq.gz")
+    paired_files = sorted(left_pairs + right_pairs)
+
+    single_end = [x for x in files if x not in paired_files]
+
+    #Remove .fastq.gz from lists to make naming easier
+    left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
+    right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
+    single_end = [x.replace('.fastq.gz', '') for x in single_end]
+
+    return out_trim_dir,left_pairs,right_pairs,single_end
+
+
+'''
 This function is designed to trim all of the rawdata that has been provided to
 the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
 bbduk_adapter file.
@@ -104,36 +146,7 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output):
     #For each taxa directory...
     for tax_dir in raw_read_tax_dirs:
 
-        #List all files and set output dir
-        files = sorted(glob(tax_dir+"*.fastq.gz"))
-        taxon_ID = path.basename(tax_dir[:-1])
-        out_trim_dir = trim_read_dir + "/" + taxon_ID
-
-        left_pairs = list()
-        right_pairs = list()
-        single_end = list()
-
-        #Find files ending in _1/_2.fastq.gz
-        left_files = [s for s in files if "_1.fastq.gz" in s]
-        right_files = [s for s in files if "_2.fastq.gz" in s]
-
-        #Strip _1.fastq.gz/_2.fastq.gz and identify pairs based on file name
-        left_files = [x.replace('_1.fastq.gz', '') for x in left_files]
-        right_files = [x.replace('_2.fastq.gz', '') for x in right_files]
-        paired_files = list(set(left_files).intersection(right_files))
-
-        #Reset file names and filter out single-end files
-        for pair in paired_files:
-            left_pairs.append(pair+"_1.fastq.gz")
-            right_pairs.append(pair+"_2.fastq.gz")
-        paired_files = sorted(left_pairs + right_pairs)
-
-        single_end = [x for x in files if x not in paired_files]
-
-        #Remove .fastq.gz from lists to make naming easier
-        left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
-        right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
-        single_end = [x.replace('.fastq.gz', '') for x in single_end]
+        out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir)
 
         #Trim single-end files if present...
         if len(single_end) > 0:

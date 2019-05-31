@@ -44,6 +44,9 @@ def sisrs2(trimed,processors,sisrs_dir):
     else:
         print("FILES ALREADY TRIMMED")
 
+'''
+Function to run all of the thrid script
+'''
 def sisrs3(genomeSize, sisrs_dir):
     setupInfo = setupDir(sisrs_dir,genomeSize)
 
