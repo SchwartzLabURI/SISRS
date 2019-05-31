@@ -260,7 +260,7 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
                     'samplebasestarget={}'.format(int(row.ToSample)),
                     'ow=t',
                     '&>',
-                    '{outDir}out_{fileName}_Trim'.format(outDir=subset_log_dir,fileName=row.Dataset)]
+                    '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=row.Dataset)]
             else:
                 subset_command = [
                     'reformat.sh',
@@ -269,5 +269,5 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
                     'samplebasestarget={}'.format(int(row.ToSample)),
                     'ow=t',
                     '&>',
-                    '{outDir}out_{fileName}_Trim'.format(outDir=subset_log_dir,fileName=row.Dataset)]
+                    '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=row.Dataset)]
             check_call(subset_command)
