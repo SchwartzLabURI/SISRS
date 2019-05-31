@@ -148,9 +148,14 @@ def firstLoop(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
                 basecount_list.append(int(baseCount))
                 taxon_list.append(taxon_ID)
         list_of_tuples = list(zip(taxon_list,dataset_list, basecount_list))
-        df.append((pd.DataFrame(list_of_tuples, columns = ['Taxon','Dataset', 'Basecount'])))
-        return df
 
+        df = df.append((pd.DataFrame(list_of_tuples, columns = ['Taxon','Dataset', 'Basecount'])))
+
+    return df, compiled_paired, compiled_single_end
+
+'''
+Poorly planned function to execute the second for loop
+'''
 def secondLoop(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
 
     df = df.reset_index(drop=True)
@@ -204,6 +209,7 @@ def secondLoop(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_
     compiled_paired = [path.basename(x).replace('_2.fastq.gz', '') for x in compiled_paired]
     compiled_single_end = [path.basename(x).replace('.fastq.gz', '') for x in compiled_single_end]
 
+    out = []
     # Return the three necessary pieces of information
     out += [compiled_paired]
     out += [compiled_single_end]
@@ -211,12 +217,35 @@ def secondLoop(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_
 
     return out
 
+def stripFiles(aList):
+    nList = []
+    for item in aList:
+        fName = os.path.basename(item)
+        save = fName.strip('.fastq.gz')
+        if '_1' in save:
+            nList += [save.strip('_1')]
+        elif '_2' in save:
+            nList += [save.strip('_2')]
+        else:
+            nList += [save]
+    return nList
+
+'''
+Function to do all of the subsetting the is needed by sisrs. This is a general
+function and can handle single and paired ends genomes.
+'''
 def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
-    if len(compiledList) > 0:
-        end_DF = df[df.Dataset.isin(compiledList)]
+    cList = stripFiles(compiledList)
+
+    if len(cList) > 0:
+
+        end_DF = df[df.Dataset.isin(cList)]
+
         for row in end_DF.itertuples():
+
             subset_command = []
             if paired:
+
                 subset_command = [
                     'reformat.sh',
                     'in={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+"_1.fastq.gz"),
