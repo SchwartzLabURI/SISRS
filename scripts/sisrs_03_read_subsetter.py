@@ -72,49 +72,71 @@ def setupDir(sisrs_dir,genomeSize):
     return rtn
 
 '''
+This function is designed to break up the load that is careied by countBasePair.
+'''
+def countHelper(tax_dir,compiled_paired,compiled_single_end):
+
+    #List all files and set output dir
+    files = sorted(glob(tax_dir+"*.fastq.gz"))
+    taxon_ID = path.basename(tax_dir[:-1])
+
+    left_pairs = list()
+    right_pairs = list()
+    single_end = list()
+
+    taxon_list = list()
+    taxon_ID = path.basename(tax_dir[:-1])
+
+    dataset_list = list()
+    basecount_list = list()
+
+    #Find files ending in _1/_2.fastq.gz
+    left_files = [s for s in files if "_Trim_1.fastq.gz" in s]
+    right_files = [s for s in files if "_Trim_2.fastq.gz" in s]
+
+    #Strip _1_Trim.fastq.gz/_2_Trim.fastq.gz and identify pairs based on file name
+    left_files = [x.replace('_Trim_1.fastq.gz', '') for x in left_files]
+    right_files = [x.replace('_Trim_2.fastq.gz', '') for x in right_files]
+    paired_files = list(set(left_files).intersection(right_files))
+
+    #Reset file names and filter out single-end files
+    for pair in paired_files:
+        left_pairs.append(pair+"_Trim_1.fastq.gz")
+        right_pairs.append(pair+"_Trim_2.fastq.gz")
+    paired_files = sorted(left_pairs + right_pairs)
+
+    single_end = [x for x in files if x not in paired_files]
+
+    compiled_paired = compiled_paired + paired_files
+    compiled_single_end = compiled_single_end + single_end
+    #Remove .fastq.gz from lists to make naming easier
+    left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
+    right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
+    single_end = [x.replace('.fastq.gz', '') for x in single_end]
+
+    # This return statement looks this way because of an erro that is assosicated
+    # with turning it into a list. I will attempt to fix it again later
+    return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_list,dataset_list,basecount_list,taxon_ID
+
+'''
 Poorly planned function to execute the first for loop
 '''
-def firstLoop(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
+def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 
     #For each taxa directory...
     for tax_dir in trim_read_tax_dirs:
-        #List all files and set output dir
-        files = sorted(glob(tax_dir+"*.fastq.gz"))
-        taxon_ID = path.basename(tax_dir[:-1])
 
-        left_pairs = list()
-        right_pairs = list()
-        single_end = list()
-
-        taxon_list = list()
-        taxon_ID = path.basename(tax_dir[:-1])
-
-        dataset_list = list()
-        basecount_list = list()
-
-        #Find files ending in _1/_2.fastq.gz
-        left_files = [s for s in files if "_Trim_1.fastq.gz" in s]
-        right_files = [s for s in files if "_Trim_2.fastq.gz" in s]
-
-        #Strip _1_Trim.fastq.gz/_2_Trim.fastq.gz and identify pairs based on file name
-        left_files = [x.replace('_Trim_1.fastq.gz', '') for x in left_files]
-        right_files = [x.replace('_Trim_2.fastq.gz', '') for x in right_files]
-        paired_files = list(set(left_files).intersection(right_files))
-
-        #Reset file names and filter out single-end files
-        for pair in paired_files:
-            left_pairs.append(pair+"_Trim_1.fastq.gz")
-            right_pairs.append(pair+"_Trim_2.fastq.gz")
-        paired_files = sorted(left_pairs + right_pairs)
-
-        single_end = [x for x in files if x not in paired_files]
-
-        compiled_paired = compiled_paired + paired_files
-        compiled_single_end = compiled_single_end + single_end
-        #Remove .fastq.gz from lists to make naming easier
-        left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
-        right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
-        single_end = [x.replace('.fastq.gz', '') for x in single_end]
+        outPut = []
+        outPut += countHelper(tax_dir,compiled_paired,compiled_single_end)
+        compiled_paired = outPut[0]
+        compiled_single_end = outPut[1]
+        left_pairs = outPut[2]
+        right_pairs = outPut[3]
+        single_end = outPut[4]
+        taxon_list = outPut[5]
+        dataset_list = outPut[6]
+        basecount_list = outPut[7]
+        taxon_ID = outPut[8]
 
         #Count bases in single-end files if present...
         if len(single_end) > 0:
@@ -156,7 +178,7 @@ def firstLoop(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 '''
 Poorly planned function to execute the second for loop
 '''
-def secondLoop(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
+def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
 
     df = df.reset_index(drop=True)
     df["Basecount"] = pd.to_numeric(df["Basecount"])

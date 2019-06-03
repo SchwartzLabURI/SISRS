@@ -50,11 +50,11 @@ Function to run all of the thrid script
 def sisrs3(genomeSize, sisrs_dir):
     setupInfo = setupDir(sisrs_dir,genomeSize)
 
-    df, compiled_paired, compiled_single_end = firstLoop(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
+    df, compiled_paired, compiled_single_end = countBasePair(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
 
     print("Based on a genome size estimate of " + str(genomeSize) + " bp, and with " + str(len(setupInfo[3])) + " species, the requested subset depth is " + str(setupInfo[4]) + " bp per species")
 
-    out = secondLoop(df,setupInfo[4],setupInfo[1],compiled_paired, compiled_single_end)
+    out = checkCoverage(df,setupInfo[4],setupInfo[1],compiled_paired, compiled_single_end)
 
     # Subset Single End
     subset(compiled_single_end,out[2],setupInfo[0],setupInfo[1],setupInfo[2],False)
