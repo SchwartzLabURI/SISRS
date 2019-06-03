@@ -15,27 +15,32 @@ import subprocess
 from subprocess import check_call
 
 
-#Set cwd to script location
-script_dir = sys.path[0]
+'''
+This function is designed to obtain the neccessary file paths and data that is
+needed for the Ray command. It only requeires the working directory for were all
+of the sisrs information is stationed.
+'''
+def getDirs(sisrs_dir):
+    #Set SubsetRead and Genome directories based off of script folder location
+    subset_read_dir = sisrs_dir+"/Reads/SubsetReads"
+    ray_genome_dir = sisrs_dir+"/Ray_Composite_Genome"
 
-node_count = int(sys.argv[1])
-processors_per_node = int(sys.argv[2])
+    subset_reads = glob(subset_read_dir+"/*.gz")
 
-mpi_processor = node_count*processors_per_node
+    return ray_genome_dir, subset_reads
 
-#Set SubsetRead and Genome directories based off of script folder location
-subset_read_dir = path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads"
-ray_genome_dir = path.dirname(path.abspath(script_dir))+"/Ray_Composite_Genome"
-
-subset_reads = glob(subset_read_dir+"/*.gz")
-
-ray_command = [
-    'mpirun',
-    '-n','{}'.format(str(mpi_processor)),
-    'Ray',
-    '-k',
-    '31',
-    '{}'.format("-s " + " -s ".join(subset_reads)),
-    '-o',
-    '{}'.format(ray_genome_dir)]
-os.system(" ".join(ray_command))
+'''
+This function is designed to run ray on all files that are found in the subset
+folders. Requieres the output folder developed, number of threads, and the files.
+'''
+def runRay(ray_genome_dir,subset_reads,threads):
+    ray_command = [
+        'mpirun',
+        '-n','{}'.format(str(threads)),
+        'Ray',
+        '-k',
+        '31',
+        '{}'.format("-s " + " -s ".join(subset_reads)),
+        '-o',
+        '{}'.format(ray_genome_dir)]
+    os.system(" ".join(ray_command))

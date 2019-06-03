@@ -6,6 +6,7 @@ Schwartz Lab May 2019
 from sisrs_01_folder_setup import *
 from sisrs_02_read_trimmer import *
 from sisrs_03_read_subsetter import *
+from sisrs_04_ray_composite import *
 from cmdCheck import *
 
 '''
@@ -62,9 +63,21 @@ def sisrs3(genomeSize, sisrs_dir):
     #Subset paired ends
     subset(compiled_paired,out[2],setupInfo[0],setupInfo[1],setupInfo[2],True)
 
+'''
+Function to run all of the fourth script
+'''
+def sisrs4(sisrs_dir,threads):
+
+    # obtain the directories and files needed for Ray
+    ray_genome_dir, subset_reads = getDirs(sisrs_dir)
+
+    # Run the ray command
+    runRay(ray_genome_dir,subset_reads,threads)
+
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln)
     #sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
     #sisrs2(rtn[3],rtn[4],rtn[0])
-    sisrs3(rtn[5],rtn[0])
+    #sisrs3(rtn[5],rtn[0])
+    sisrs4(rtn[0],rtn[4])
