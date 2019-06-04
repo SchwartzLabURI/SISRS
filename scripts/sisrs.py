@@ -8,6 +8,7 @@ from sisrs_02_read_trimmer import *
 from sisrs_03_read_subsetter import *
 from sisrs_04_ray_composite import *
 from sisrs_05_setup_sisrs import *
+from sisrs_06_run_sisrs import *
 from cmdCheck import *
 
 '''
@@ -75,12 +76,22 @@ def sisrs4(sisrs_dir,threads):
     # Run the ray command
     runRay(ray_genome_dir,subset_reads,threads)
 
+'''
+Function to run all of the fifth script
+'''
 def sisrs05(outPath,threads,minread,threshold):
     trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
     fileChanges(ray_dir,composite_dir)
     indexCompGenome(composite_dir,threads)
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
     copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold)
+
+'''
+Function to run all of the sixth script
+'''
+def sisrs06(sisrs_dir):
+    sisrs_tax_dirs = sisrsSetup(sisrs_dir)
+    runSisrs(sisrs_tax_dirs)
 
 if __name__ == '__main__':
     cmdln = sys.argv
@@ -89,4 +100,5 @@ if __name__ == '__main__':
     #sisrs2(rtn[3],rtn[4],rtn[0])
     #sisrs3(rtn[5],rtn[0])
     #sisrs4(rtn[0],rtn[4])
-    sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
+    #sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
+    sisrs06(rtn[0])
