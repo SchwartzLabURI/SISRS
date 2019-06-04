@@ -7,6 +7,7 @@ from sisrs_01_folder_setup import *
 from sisrs_02_read_trimmer import *
 from sisrs_03_read_subsetter import *
 from sisrs_04_ray_composite import *
+from sisrs_05_setup_sisrs import *
 from cmdCheck import *
 
 '''
@@ -74,10 +75,18 @@ def sisrs4(sisrs_dir,threads):
     # Run the ray command
     runRay(ray_genome_dir,subset_reads,threads)
 
+def sisrs05(outPath,threads,minread,threshold):
+    trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
+    fileChanges(ray_dir,composite_dir)
+    indexCompGenome(composite_dir,threads)
+    sisrs_template = beginSetUp(composite_dir,sys.path[0])
+    copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold)
+
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln)
     #sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
     #sisrs2(rtn[3],rtn[4],rtn[0])
     #sisrs3(rtn[5],rtn[0])
-    sisrs4(rtn[0],rtn[4])
+    #sisrs4(rtn[0],rtn[4])
+    sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
