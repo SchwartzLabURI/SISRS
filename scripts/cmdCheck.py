@@ -20,7 +20,7 @@ def isFloat(number):
 Function that will parse the command line arguments. This might be better served
 as a seperate file so this file does not get to large.
 '''
-def commandLine(cmdln):
+def commandLine(cmdln,script_dir):
 
     if len(cmdln) < 7:
         print("Requiered flags to run: -id or -rd, -gs, and -ms")
@@ -46,7 +46,7 @@ def commandLine(cmdln):
     if '-dir' in cmdln:
         rtn[0] = cmdln[cmdln.index('-dir') + 1]
     else:
-        rtn[0] = '.'
+        rtn[0] = script_dir
 
     # Flag if you plan on using a TaxonID txt file and
     # wish to move files by hand

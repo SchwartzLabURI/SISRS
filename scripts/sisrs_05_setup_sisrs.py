@@ -122,7 +122,6 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
     #Create links to trimmed read files in SISRS_Run directory
     for tax_dir in trim_read_tax_dirs:
         tax_dir = os.path.abspath(tax_dir)
-        print(tax_dir)
         taxa = path.basename(tax_dir[:])
         read_link_command = [
             'cd',
@@ -148,7 +147,6 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
                    'COMPOSITE_DIR':composite_dir,
                    'READS':",".join(glob(tax_dir+"/*.fastq.gz"))}
         for key in keyList:
-            print(key,keyDict[key])
             new_sisrs = new_sisrs.replace(key,keyDict[key])
         with open(sisrs_dir+"/"+taxa+"/"+taxa+".sh", "w") as text_file:
             print(new_sisrs, file=text_file)
