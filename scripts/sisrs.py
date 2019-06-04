@@ -96,16 +96,16 @@ def sisrs06(sisrs_dir):
 
 def sisrs07(outPath,missing):
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
-    createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing)
+    createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
     runBash(sisrs_dir,sisrs_tax_dirs)
 
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln,sys.path[0])
-    sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
-    sisrs2(rtn[3],rtn[4],rtn[0])
-    sisrs3(rtn[5],rtn[0])
-    sisrs4(rtn[0],rtn[4])
-    sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
-    sisrs06(rtn[0])
+    #sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
+    #sisrs2(rtn[3],rtn[4],rtn[0])
+    #sisrs3(rtn[5],rtn[0])
+    #sisrs4(rtn[0],rtn[4])
+    #sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
+    #sisrs06(rtn[0])
     sisrs07(rtn[0],rtn[8])

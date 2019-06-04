@@ -33,18 +33,13 @@ to finish off the sisrs run. It requiers as input the current working directory
 for sisrs, the location of the "SISRS_Run" folder, the missing data parameter,
 and the list of composite genome paths.
 '''
-def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing):
+def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
 
-    sisrs_output_template = """
-    #!/bin/sh
-    python SCRIPT_DIR/get_alignment.py TWOTAXA SISRS_DIR COMPOSITE_DIR
+    sisrs_output_template = ""
 
-    python SCRIPT_DIR/filter_nexus_for_missing.py SISRS_DIR/alignment_bi.nex MISSING
-    python SCRIPT_DIR/filter_nexus_for_missing_nogap.py SISRS_DIR/alignment_bi.nex MISSING
-
-    grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_bi_locs_mMISSING.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_bi_locs_mMISSING_Clean.txt
-    grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_bi_locs_mMISSING_nogap.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_bi_locs_mMISSING_nogap_Clean.txt
-    """
+    shFile = open(dir + '/sisrs_05_template.sh')
+    for line in shFile:
+        sisrs_output_template += line
 
     keyList = ['TWOTAXA','SISRS_DIR','SCRIPT_DIR','MISSING','COMPOSITE_DIR']
     keyDict = {'TWOTAXA':str(len(sisrs_tax_dirs) - 2),
@@ -60,7 +55,7 @@ def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing):
 '''
 This function is designed to run all of the newly created bash scripts. It
 requiers as input the path to the SISRS_Run directory and the path to all of
-the folders that contain sh scripts. 
+the folders that contain sh scripts.
 '''
 def runBash(sisrs_dir,sisrs_tax_dirs):
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
