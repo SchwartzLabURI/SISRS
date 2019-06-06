@@ -293,3 +293,29 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
                     '&>',
                     '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=row.Dataset)]
             check_call(subset_command)
+
+if __name__ == '__main__':
+
+    cmd = sys.argv
+    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    gs = 0
+    try:
+        gs = int(cmd[1])
+    except:
+        print("INVALID GENOME SIZE")
+        exit()
+
+    setupInfo = setupDir(sis,gs)
+
+    df, compiled_paired, compiled_single_end = countBasePair(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
+
+    print("Based on a genome size estimate of " + str(gs) + " bp, and with " + str(len(setupInfo[3])) + " species, the requested subset depth is " + str(setupInfo[4]) + " bp per species")
+
+    out = checkCoverage(df,setupInfo[4],setupInfo[1],compiled_paired, compiled_single_end)
+
+    # Subset Single End
+    subset(compiled_single_end,out[2],setupInfo[0],setupInfo[1],setupInfo[2],False)
+
+    #Subset paired ends
+    subset(compiled_paired,out[2],setupInfo[0],setupInfo[1],setupInfo[2],True)
