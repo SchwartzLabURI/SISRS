@@ -44,3 +44,21 @@ def runRay(ray_genome_dir,subset_reads,threads):
         '-o',
         '{}'.format(ray_genome_dir)]
     os.system(" ".join(ray_command))
+
+if __name__ == '__main__':
+
+    cmd = sys.argv
+
+    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    thr = 1
+    try:
+        thr = int(cmd[1])
+    except:
+        thr = 1
+
+    # obtain the directories and files needed for Ray
+    ray_genome_dir, subset_reads = getDirs(sis)
+
+    # Run the ray command
+    runRay(ray_genome_dir,subset_reads,thr)
