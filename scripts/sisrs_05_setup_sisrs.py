@@ -151,3 +151,27 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
         with open(sisrs_dir+"/"+taxa+"/"+taxa+".sh", "w") as text_file:
             print(new_sisrs, file=text_file)
         os.system('chmod +x '+sisrs_dir+"/"+taxa+"/"+taxa+".sh")
+
+if __name__ == '__main__':
+    cmd = sys.argv
+    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    proc = 1
+    mr = 3
+    thres = 1
+
+    try:
+        proc = int(cmd[1])
+        mr = int(cmd[2])
+        thres = int(cmd[3])
+    except:
+        proc = 1
+        mr = 3
+        thres = 1
+
+    trim_read_tax_dirs,ray_dir,sisrs,composite_dir = obtainDir(sis)
+    fileChanges(ray_dir,composite_dir)
+    indexCompGenome(composite_dir,proc)
+    sisrs_template = beginSetUp(composite_dir,sys.path[0])
+    copyShFile(trim_read_tax_dirs,sisrs,sisrs_template,composite_dir,sis,proc,mr,thres)
+    
