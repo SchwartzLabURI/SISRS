@@ -67,13 +67,13 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
             os.link(data_path + '/' + x + '/' + i,
                 sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
 
-
 '''
 Function that is designed to build the necessay file structure
 for sisrs to properly run. It will take in as input the taxa list
 and the working sisrs directory
 '''
 def fileStructure(sisrs_dir,taxa_list):
+
     if isdir(sisrs_dir) == False:
         os.mkdir(sisrs_dir)
     os.mkdir(sisrs_dir+"/Reads")
@@ -91,3 +91,26 @@ def fileStructure(sisrs_dir,taxa_list):
         os.mkdir(sisrs_dir+"/Reads/RawReads/"+x)
         os.mkdir(sisrs_dir+"/Reads/TrimReads/"+x)
         os.mkdir(sisrs_dir+"/SISRS_Run/"+x)
+
+if __name__ == "__main__":
+
+    # Store the command line in a seperate argument
+    cmd = sys.argv
+
+    # Grab the taxon names
+    tl = []
+    if isdir(cmd[1]) == False:
+        tl = devTaxaList(cmd[1])
+    else:
+        tl = readTaxaFromFolders(cmd[1])
+
+    sisrs = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    # Create the file structure
+    fileStructure(sisrs, tl)
+
+    if isdir(cmd[1]) == True:
+        if cmd[2] == '-trm':
+            makeLinks(cmd[1], sisrs, tl, True)
+        else:
+            makeLinks(cmd[1], sisrs, tl, False)

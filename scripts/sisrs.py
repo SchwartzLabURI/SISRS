@@ -102,10 +102,10 @@ def sisrs07(outPath,missing):
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln,sys.path[0])
-    #sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
-    #sisrs2(rtn[3],rtn[4],rtn[0])
-    #sisrs3(rtn[5],rtn[0])
-    #sisrs4(rtn[0],rtn[4])
-    #sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
-    #sisrs06(rtn[0])
+    sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
+    sisrs2(rtn[3],rtn[4],rtn[0])
+    sisrs3(rtn[5],rtn[0])
+    sisrs4(rtn[0],rtn[4])
+    sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
+    sisrs06(rtn[0])
     sisrs07(rtn[0],rtn[8])
