@@ -98,7 +98,7 @@ def fastqcCommand(processors,fastqc_output,read_dir):
 This function is desinged to do setup work to obtain all of the possible
 single read and pair read files. Its main purpose is to clean up the large for
 loop that is seem below in the trim function. It only needs the current working
-raw read directory and the matching trim read directory as arguments. 
+raw read directory and the matching trim read directory as arguments.
 '''
 def trimHelper(tax_dir,trim_read_dir):
 
@@ -196,3 +196,25 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output):
                     '&>',
                     '{outDir}out_{fileName}_Trim'.format(outDir=trim_output,fileName=file_name)]
                 check_call(pe_trim_command)
+
+if __name__ == "__main__":
+
+    cmd = sys.argv
+    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    proc = 1
+    try:
+        proc = int(cmd[1])
+    except:
+        proc = 1
+        
+    bba = findAdapter()
+    out = setup(sis)
+
+    # raw_fastqc_command
+    fastqcCommand(proc,out[3],out[0])
+
+    trim(out[5],out[1],bba,out[2])
+
+    # trim_fastqc_command
+    fastqcCommand(proc,out[4],out[1])

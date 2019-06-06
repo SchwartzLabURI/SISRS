@@ -110,7 +110,7 @@ if __name__ == "__main__":
     fileStructure(sisrs, tl)
 
     if isdir(cmd[1]) == True:
-        if cmd[2] == '-trm':
+        if '-trm' in cmd:
             makeLinks(cmd[1], sisrs, tl, True)
         else:
             makeLinks(cmd[1], sisrs, tl, False)
