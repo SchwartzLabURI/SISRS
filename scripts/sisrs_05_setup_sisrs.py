@@ -163,7 +163,7 @@ if __name__ == '__main__':
     try:
         proc = int(cmd[1])
         mr = int(cmd[2])
-        thres = int(cmd[3])
+        thres = float(cmd[3])
     except:
         proc = 1
         mr = 3
@@ -174,4 +174,3 @@ if __name__ == '__main__':
     indexCompGenome(composite_dir,proc)
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
     copyShFile(trim_read_tax_dirs,sisrs,sisrs_template,composite_dir,sis,proc,mr,thres)
-    

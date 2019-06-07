@@ -39,3 +39,12 @@ def runSisrs(sisrs_tax_dirs):
                 cmd = tax_dir+taxa+'.sh'
                 subprocess.call(['sh',cmd],stdout=file, stderr=file2)
         print("Completed SISRS filtering for "+taxa + "...\n")
+
+if __name__ == '__main__':
+
+    cmd = sys.argv
+
+    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    sisrs_tax_dirs = sisrsSetup(sis)
+    runSisrs(sisrs_tax_dirs)

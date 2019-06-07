@@ -82,3 +82,20 @@ def runBash(sisrs_dir,sisrs_tax_dirs):
             file.write("\nSISRS Alignment Filtering:\n\n")
             for line in f2:
                 file.write(line)
+
+if __name__ == '__main__':
+    cmd = sys.argv
+    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    md = 0
+    try:
+        md = int(cmd[1])
+    except:
+        md = 0
+
+    composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
+    createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])
+    runBash(sisrs,sisrs_tax_dirs)
+
+    print(sis)
+    print(sys.path[0])
