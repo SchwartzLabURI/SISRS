@@ -299,11 +299,19 @@ if __name__ == '__main__':
     cmd = sys.argv
     sis = path.dirname(path.abspath(path.dirname(cmd[0])))
 
+    if len(cmd) < 3:
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")
+        exit()
+
     gs = 0
-    try:
-        gs = int(cmd[1])
-    except:
-        print("INVALID GENOME SIZE")
+    if '-gs' in cmd:
+        try:
+            gs = int(cmd[cmd.index('-gs') + 1])
+        except:
+            print("INVALID GENOME SIZE")
+            exit()
+    else:
+        print("GENOME SIZE REQUIERED FOR THIS SCRIPT")
         exit()
 
     setupInfo = setupDir(sis,gs)

@@ -159,14 +159,34 @@ if __name__ == '__main__':
     proc = 1
     mr = 3
     thres = 1
-
-    try:
-        proc = int(cmd[1])
-        mr = int(cmd[2])
-        thres = float(cmd[3])
-    except:
+    if '-th' in cmd:
+        try:
+            proc = int(cmd[cmd.index('-th') + 1])
+        except:
+            print("INVALID NUMBER OF THREADS: RESTING THREAD COUNT TO 1")
+            proc = 1
+    else:
+        print("SETTING THREAD COUNT TO 1")
         proc = 1
+
+    if '-mr' in cmd:
+        try:
+            mr = int(cmd[cmd.index('-mr') + 1])
+        except:
+            print("INVALID NUMBER OF MINREAD: RESTING THREAD COUNT TO 3")
+            mr = 3
+    else:
+        print("SETTING THREAD COUNT TO 3")
         mr = 3
+
+    if '-thrs' in cmd:
+        try:
+            thres = int(cmd[cmd.index('-thrs') + 1])
+        except:
+            print("INVALID NUMBER OF THRESHOLD: RESTING THREAD COUNT TO 1")
+            thres = 1
+    else:
+        print("SETTING THRESHOLD COUNT TO 1")
         thres = 1
 
     trim_read_tax_dirs,ray_dir,sisrs,composite_dir = obtainDir(sis)

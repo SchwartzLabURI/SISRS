@@ -96,21 +96,34 @@ if __name__ == "__main__":
 
     # Store the command line in a seperate argument
     cmd = sys.argv
+    sisrs = path.dirname(path.abspath(path.dirname(cmd[0])))
+
+    if len(cmd) < 3:
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")
+        exit()
+
+    id = ""
+    rd = ""
+    if '-id' in cmd:
+        id = cmd[cmd.index('-id') + 1]
+    elif '-rd' in cmd:
+        rd = cmd[cmd.index('-rd') + 1]
+    else:
+        print("MISSING TAXA INFORMATION")
+        exit()
 
     # Grab the taxon names
     tl = []
-    if isdir(cmd[1]) == False:
-        tl = devTaxaList(cmd[1])
+    if id != "":
+        tl = devTaxaList(id)
     else:
-        tl = readTaxaFromFolders(cmd[1])
-
-    sisrs = path.dirname(path.abspath(path.dirname(cmd[0])))
+        tl = readTaxaFromFolders(rd)
 
     # Create the file structure
     fileStructure(sisrs, tl)
 
-    if isdir(cmd[1]) == True:
+    if rd != "":
         if '-trm' in cmd:
-            makeLinks(cmd[1], sisrs, tl, True)
+            makeLinks(rd, sisrs, tl, True)
         else:
-            makeLinks(cmd[1], sisrs, tl, False)
+            makeLinks(rd, sisrs, tl, False)

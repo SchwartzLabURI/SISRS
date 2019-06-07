@@ -48,17 +48,19 @@ def runRay(ray_genome_dir,subset_reads,threads):
 if __name__ == '__main__':
 
     cmd = sys.argv
-
     sis = path.dirname(path.abspath(path.dirname(cmd[0])))
 
-    thr = 1
-    try:
-        thr = int(cmd[1])
-    except:
-        thr = 1
+    proc = 1
+    if '-th' in cmd:
+        try:
+            proc = int(cmd[1])
+        except:
+            proc = 1
+    else:
+        print("SWITCHING TO DEFAULT THREAD OF 1")
 
     # obtain the directories and files needed for Ray
     ray_genome_dir, subset_reads = getDirs(sis)
 
     # Run the ray command
-    runRay(ray_genome_dir,subset_reads,thr)
+    runRay(ray_genome_dir,subset_reads,proc)

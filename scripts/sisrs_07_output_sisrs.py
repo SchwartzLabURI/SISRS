@@ -88,14 +88,16 @@ if __name__ == '__main__':
     sis = path.dirname(path.abspath(path.dirname(cmd[0])))
 
     md = 0
-    try:
-        md = int(cmd[1])
-    except:
-        md = 0
+
+    if '-ms' in cmd:
+        try:
+            md = int(cmd[cmd.index('-ms') + 1])
+        except:
+            print("INVALID NUMBER OF MISSING: RESTING ALLOWED MISSING COUNT TO 0")
+            md = 0
+    else:
+        print("USING DEFAUL MISSING DATA: 0")
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
     createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])
     runBash(sisrs,sisrs_tax_dirs)
-
-    print(sis)
-    print(sys.path[0])

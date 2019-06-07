@@ -203,11 +203,14 @@ if __name__ == "__main__":
     sis = path.dirname(path.abspath(path.dirname(cmd[0])))
 
     proc = 1
-    try:
-        proc = int(cmd[1])
-    except:
-        proc = 1
-        
+    if '-th' in cmd:
+        try:
+            proc = int(cmd[1])
+        except:
+            proc = 1
+    else:
+        print("SWITCHING TO DEFAULT THREAD OF 1")
+
     bba = findAdapter()
     out = setup(sis)
 
