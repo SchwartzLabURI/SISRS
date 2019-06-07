@@ -48,7 +48,7 @@ def runRay(ray_genome_dir,subset_reads,threads):
 if __name__ == '__main__':
 
     cmd = sys.argv
-    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sis = os.path.dirname(sys.path[0])
 
     proc = 1
     if '-th' in cmd:

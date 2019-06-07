@@ -297,7 +297,7 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
 if __name__ == '__main__':
 
     cmd = sys.argv
-    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sis = os.path.dirname(sys.path[0])
 
     if len(cmd) < 3:
         print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")

@@ -22,8 +22,8 @@ as a seperate file so this file does not get to large.
 '''
 def commandLine(cmdln,script_dir):
 
-    if len(cmdln) < 7:
-        print("Requiered flags to run: -id or -rd, -gs, and -ms")
+    if len(cmdln) < 5:
+        print("Requiered flags to run: -id or -rd, and -gs")
         exit()
 
     # Variables that will get passed to the scripts
@@ -67,6 +67,7 @@ def commandLine(cmdln,script_dir):
         bool = isInt(cmdln[cmdln.index('-th') + 1])
         rtn[4] = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
     else:
+        print("DEFAULT NUMBER OF THREADS BEING USED: 1")
         rtn[4] = 1
 
     # Obtain the genomeSize estimation for script 3
@@ -87,6 +88,12 @@ def commandLine(cmdln,script_dir):
         if bool == False:
             print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES WAS NOT" +
                         "A VALID NUMBER --> SWITCHED TO 1")
+        elif rtn[6] <= 0 and rtn[6] >= 1:
+            print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES MUST BE " +
+                        "BETWEEN 0 AND 1  --> SWITCHED TO 1")
+    else:
+        print("DEFAULT THRESHOLD IS BEING USED: 1")
+        rtn[6] = 1
 
     # Gets the minread need to run the 5 script
     if '-mr' in cmdln:
@@ -95,9 +102,10 @@ def commandLine(cmdln,script_dir):
 
         if bool == False:
             print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
-        elif int(cmdln[cmdln.index('-mr') + 1]) < 1 or int(cmdln[cmdln.index('-mr') + 1]) > 3:
+        elif rtn[7] < 1 or rtn[7] > 3:
             print("MINREAD COVERAGE MUST BE BETWEEN 1 AND 3 --> SWITCHED TO 3")
     else:
+        print("DEFAULT MINREAD IS BEING USED: 3")
         rtn[7] = 3
 
     # Gets the allowed amount of missing data from the files
@@ -108,7 +116,7 @@ def commandLine(cmdln,script_dir):
             print("THE ALLOWED AMOUNT OF MISSING DATA MUST BE A VALID NUMBER")
             exit()
     else:
-        print("THE ALLOWED AMOUNT OF MISSING DATA IS REQUEIERED TO RUN SISRS")
-        exit()
+        print("THE DEFAULT AMOUNT OF MISSING DATA IS BEING USED TO RUN SISRS: 0")
+        rtn[8] = 0
 
     return rtn

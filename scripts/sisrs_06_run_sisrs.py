@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     cmd = sys.argv
 
-    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sis = os.path.dirname(sys.path[0])
 
     sisrs_tax_dirs = sisrsSetup(sis)
     runSisrs(sisrs_tax_dirs)

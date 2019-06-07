@@ -85,7 +85,7 @@ def runBash(sisrs_dir,sisrs_tax_dirs):
 
 if __name__ == '__main__':
     cmd = sys.argv
-    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sis = os.path.dirname(sys.path[0])
 
     md = 0
 

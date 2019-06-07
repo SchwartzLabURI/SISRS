@@ -154,7 +154,7 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
 
 if __name__ == '__main__':
     cmd = sys.argv
-    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sis = os.path.dirname(sys.path[0])
 
     proc = 1
     mr = 3

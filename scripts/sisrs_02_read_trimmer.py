@@ -200,7 +200,7 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output):
 if __name__ == "__main__":
 
     cmd = sys.argv
-    sis = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sis = os.path.dirname(sys.path[0])
 
     proc = 1
     if '-th' in cmd:

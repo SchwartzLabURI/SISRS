@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     # Store the command line in a seperate argument
     cmd = sys.argv
-    sisrs = path.dirname(path.abspath(path.dirname(cmd[0])))
+    sisrs = os.path.dirname(sys.path[0])
 
     if len(cmd) < 3:
         print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")
