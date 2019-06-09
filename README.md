@@ -43,7 +43,7 @@ There are two way to run SISRS
 * -dir --> Specify where the SISRS output will go. DEFAULT: The directory preceding where the scripts are located
     * This option is only available for the continuous run. The default is used in the individual scripts
 * -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files
-* FILE MUST LOOK LIKE
+    * FILE MUST LOOK LIKE
 ```
 > cat TaxonIDs
 
