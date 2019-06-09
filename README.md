@@ -45,6 +45,8 @@ There are two way to run SISRS
 * -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files
 * FILE MUST LOOK LIKE
 ```
+> cat TaxonIDs
+
 AotNan
 CalJac
 ColAng
