@@ -71,7 +71,7 @@ PapCyn
 ### REQUIREMENTS FOR CONTINUOUS SISRS RUN
 In order to run SISRS you need to use the minimum of two flags, -id or -rd and -gs, without the use of these two flags the software will not run. All other flags will move to the default.
 
-EXAMPLE RUNS:
+EXAMPLE COMMANDS:
 ```
 > python sisrs.py -id TaxonIDs -gs 100000000 -th 20
 
