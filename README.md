@@ -82,7 +82,7 @@ In order to run SISRS you need to use the minimum of two flags, -id or -rd and -
 
 Data organization:
 
-Your data must be stored in a folder consisting of sub-directories that are labeled after the taxon names. Inside each folder there can only be files labeled (taxa)_1,_2,or _SE.fastq.gz.
+Your data must be stored in a folder consisting of sub-directories that are labeled after the taxon names. Inside each folder there can only be files labeled (taxa)_1,_2,or _SE.fastq.gz *which is requiered for every version of SISRS.
 
 Ex:
 
@@ -95,9 +95,7 @@ Ex:
 > AotNan_1.fastq.gz	AotNan_2.fastq.gz	AotNan_SE.fastq.gz
 ```
 
-#### *IT IS IMPORTANT TO NOTE THAT THIS FILE NAMING CONVENTION IS NEEDED FOR ALL SISRS RUNS*
-
-EXAMPLE COMMANDS:
+Example Commands:
 
 ```
 > python sisrs.py -id TaxonIDs -gs 100000000 -th 20
