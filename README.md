@@ -81,17 +81,17 @@ PapCyn
 In order to run SISRS you need to use the minimum of two flags, -id or -rd and -gs, without the use of these two flags the software will not run. All other flags will move to the default.
 
 Data organization: Your data must be stored in a folder consisting of sub-directories that are labeled after the taxon names. Inside each folder there can only be files labeled (taxa)_1,_2,or _SE.fastq.gz.
-    Ex:
-    ```
-    > cd SISRS/ ; ls
-    > README.md	SISRS_Small	TaxonIDs scripts
-    > cd SISRS_Small/ ; ls
-    > AotNan CalJac	ColAng	GorGor	HomSap	HylMol	MacMul	MacNem	PanPan	PanTro	PapAnu	PapCyn
-    > cd AotNan ; ls
-    > AotNan_1.fastq.gz	AotNan_2.fastq.gz	AotNan_SE.fastq.gz
+Ex:
+```
+> cd SISRS/ ; ls
+> README.md	SISRS_Small	TaxonIDs scripts
+> cd SISRS_Small/ ; ls
+> AotNan CalJac	ColAng	GorGor	HomSap	HylMol	MacMul	MacNem	PanPan	PanTro	PapAnu	PapCyn
+> cd AotNan ; ls
+> AotNan_1.fastq.gz	AotNan_2.fastq.gz	AotNan_SE.fastq.gz
 
-    ```
-### **IT IS IMPORTANT TO NOTE THAT THIS FILE NAMING CONVENTION IS NEEDED FOR ALL SISRS RUNS** 
+```
+### **IT IS IMPORTANT TO NOTE THAT THIS FILE NAMING CONVENTION IS NEEDED FOR ALL SISRS RUNS**
 
 EXAMPLE COMMANDS:
 ```
