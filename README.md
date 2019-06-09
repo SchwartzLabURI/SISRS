@@ -34,17 +34,17 @@
 There are two way to run SISRS
 
 1) Run SISRS as a continuous program
-    * Only script that needs to be ran is sisrs.py
+    * Only script that needs to be ran directly: sisrs.py
     * WARNING: DEPENDING ON DATA SIZE THIS CAN TAKE A LONG AMOUNT OF TIME
 2) Run SISRS as individual scripts
-    * Scripts that need to be run
-        1)
-        2)
-        3)
-        4)
-        5)
-        6)
-        7)
+    * Scripts that need to be run directly
+        * sisrs_01_folder_setup.py
+        * sisrs_02_read_trimmer.py
+        * sisrs_03_read_subsetter.py
+        * sisrs_04_ray_composite.py
+        * sisrs_05_setup_sisrs.py
+        * sisrs_06_run_sisrs.py
+        * sisrs_07_output_sisrs.py
 
 ### Flags to run SISRS
 #### Some flags can only be used for the continuous run of SISRS
