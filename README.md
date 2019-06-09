@@ -39,6 +39,7 @@ There are two way to run SISRS
 
 ### Flags to run SISRS
 #### Some flags can only be used for the continuous run of SISRS
+```
 -dir --> Specify where the SISRS output will go. DEFAULT: The directory preceding where the scripts are located
     * This option is only available for the continuous run. The default is used in the individual scripts
 -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files
@@ -64,3 +65,4 @@ PapCyn
 -thrs --> Specify the threshold for the minimum site homozygosity for SISRS sites. DEFAULT: 1
 -mr --> Specify the minimum read coverage to call a SISRS site. Default: 3
 -ms --> Specify the number of taxa to leave out. DEFAULT: 0
+```
