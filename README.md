@@ -61,9 +61,24 @@ PapAnu
 PapCyn
 ```
 * -rd --> Specify the path where all the data is. Providing this path will make links to the correct locations for you
-* -trm --> Tell's SISRS the data has been trimmed if it is present. It will link the files files in Reads/RawReads if this flag is not present and if it is present the links go in Reads/TrimReads. In the continues run it skips the trimming step.
+* -trm --> Tell's SISRS the data has been trimmed if it is present. It will link the files files in Reads/RawReads if this flag is not present and if it is present the links go in Reads/TrimReads. In the continues run it skips the trimming step. DEFAULT: untrimmed
 * -th --> Specify the number of threads. DEFAULT: 1
 * -gs --> Specify the approximate genome size estimate for group  
-* -thrs --> Specify the threshold for the minimum site homozygosity for SISRS sites. DEFAULT: 1
-* -mr --> Specify the minimum read coverage to call a SISRS site. Default: 3
+* -thrs --> Specify the threshold for the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1
+* -mr --> Specify the minimum read coverage to call a SISRS site, must be 1-3. Default: 3
 * -ms --> Specify the number of taxa to leave out. DEFAULT: 0
+
+### REQUIREMENTS FOR CONTINUOUS SISRS RUN
+In order to run SISRS you need to use the minimum of two flags, -id or -rd and -gs, without the use of these two flags the software will not run. All other flags will move to the default.
+
+EXAMPLE RUNS:
+```
+> python sisrs.py -id TaxonIDs -gs 100000000 -th 20
+
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000
+
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -trm
+
+> python sisrs.py -id TaxonIDs -gs 100000000 -th 20 -thrs .66 -mr 2 -ms 1
+
+```
