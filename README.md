@@ -32,3 +32,7 @@
 ## **Instructions for Running SISRS**
 
 There are two way to run SISRS
+
+1) Run SISRS as a continuous program
+    * WARNING: DEPENDING ON DATA SIZE THIS CAN TAKE A LONG AMOUNT OF TIME 
+2) Run SISRS as individual scripts
