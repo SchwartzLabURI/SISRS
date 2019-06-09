@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 '''
 Validation checks for string to int and float to prevent any errors
 '''
