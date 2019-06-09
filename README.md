@@ -95,9 +95,10 @@ Ex:
 > AotNan_1.fastq.gz	AotNan_2.fastq.gz	AotNan_SE.fastq.gz
 ```
 
-### **IT IS IMPORTANT TO NOTE THAT THIS FILE NAMING CONVENTION IS NEEDED FOR ALL SISRS RUNS**
+#### *IT IS IMPORTANT TO NOTE THAT THIS FILE NAMING CONVENTION IS NEEDED FOR ALL SISRS RUNS*
 
 EXAMPLE COMMANDS:
+
 ```
 > python sisrs.py -id TaxonIDs -gs 100000000 -th 20
 
@@ -106,5 +107,4 @@ EXAMPLE COMMANDS:
 > python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -trm
 
 > python sisrs.py -id TaxonIDs -gs 100000000 -th 20 -thrs .66 -mr 2 -ms 1
-
 ```
