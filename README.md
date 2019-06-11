@@ -155,7 +155,7 @@ python scripts/rsisrs_02_read_trimmer.py -th <# processors>
 * Data will eventually be pooled, so **best to remove low-quality data early** to prevent it from being incorporated into the genome assembly
 ----
 
-#### 3) Subset trimmed samples with sisrs_03_read_subsetter.py
+##### 3) Subset trimmed samples with sisrs_03_read_subsetter.py
 
 * Based on requested depth [10*Genome Size Estimate/Number of Species], if a species has fewer total reads all reads will be sampled and the user will be notified with a warning message  
 * For species that do have sufficient total coverage, an attempt is made to sample evenly from each read set.
