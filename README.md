@@ -114,6 +114,7 @@ Example Commands:
 ### REQUIREMENTS FOR SPLIT UP SISRS RUN
 
 ##### 1) Set up folder structure using sisrs_01_folder_setup.py
+
 * In the main directory (e.g. /home/dmcconnell/SISRS) edit the included blank text file (TaxonIDs), adding each of your taxon IDs on a new line or place the directory with all of your data here organized as specified above in the Data organization section of the requirements for continuous run of SISRS.  
   * Note: Six-letter taxon IDs and folder names may be easier to work with (e.g. HomSap vs. Homo_sapiens)
 * sisrs_01_folder_setup.py will create taxon folders in the RawReads, TrimReads, and SISRS_Run directories  
