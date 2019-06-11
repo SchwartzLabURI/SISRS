@@ -134,10 +134,10 @@ If your reads are already trimmed, place all read files into the appropriate tax
 
   * Multiple read files per taxon is fine, as are mixes of single-end and paired-end reads.
 
-* 1. Put all raw reads in (**.fastq.gz format**) in the appropriate taxon folder in RawReads.  
+* 1: Put all raw reads in (**.fastq.gz format**) in the appropriate taxon folder in RawReads.  
     * Raw data files are not modified or used after trimming, so avoid duplication if possible by making links to the fastq.gz files as opposed to copying or moving raw data
 
-* 2. Run sisrs_02_read_trimmer.py, which will:  
+* 2: Run sisrs_02_read_trimmer.py, which will:  
     * Trim all reads in RawReads
     * Output trimmed reads to the TrimReads directory  
     * Run FastQC on both trimmed and untrimmed datasets  
