@@ -129,6 +129,7 @@ Example:
 ```
 
 ##### 2) Trimming data with sisrs_02_read_trimmer.py
+
 * Trimming can certainly be done using your preferred methods, but this script is a wrapper around the BBDuk program (part of the BBMap Suite).
 
 If your reads are already trimmed, place all read files into the appropriate taxon folder in TrimReads.  
@@ -143,7 +144,7 @@ If your reads are already trimmed, place all read files into the appropriate tax
     * Output trimmed reads to the TrimReads directory  
     * Run FastQC on both trimmed and untrimmed datasets  
 
-Flags needed: -th
+Flags (Optional): -th
 
 Example:
 ```
@@ -158,7 +159,7 @@ python scripts/rsisrs_02_read_trimmer.py -th <# processors>
 
 ##### 3) Subset trimmed samples with sisrs_03_read_subsetter.py
 
-* Based on requested depth [10*Genome Size Estimate/Number of Species], if a species has fewer total reads all reads will be sampled and the user will be notified with a warning message  
+* Based on the requested depth [10*Genome Size Estimate/Number of Species], if a species has fewer total reads all reads will be sampled and the user will be notified with a warning message  
 * For species that do have sufficient total coverage, an attempt is made to sample evenly from each read set.
 * If certain read sets lack the required coverage, they are also sampled completely and the deficit is covered by a deeper read set
 * Reads must be in the appropriate TrimReads subfolder by Taxon
@@ -169,5 +170,66 @@ Flags needed: -gs
 
 ```
 #For a SISRS run on ape species (with ~3.5Gb genome)
-> python scripts/read_subsetter.py -gs 3500000000
+> python scripts/sisrs_03_read_subsetter.py -gs 3500000000
+```
+
+##### 4) Composite Genome Assembly with sisrs_04_ray_composite.py
+
+* As with the trimming, you can use your preferred genome assembler, but we provide a script that wraps around Ray, which is fast but requires MPI even on one node
+
+* SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together  
+* The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in few species   
+
+Flags (Optioanl): -th
+
+```
+#1 node, 20 processors per node
+> python scripts/sisrs_04_ray_composite.py -th <# processors>
+```
+
+##### 5) Setting up the SISRS run with sisrs_05_setup_sisrs.py
+
+* This step will place all the files where they need to be for a SISRS run, including:
+  * Renaming scaffolds with 'SISRS_' at the front for downstream data handling  
+  * Linking all trim reads to the SISRS analysis folders  
+  * Indexing and processing the composite genome  
+  * Creating SISRS runs scripts for each species  
+
+ Flags (Optional): -th, -mr, and -thrs
+
+```
+# 20 processors, 3 reads required to call a site, 100% homozygosity per species
+> python scripts/sisrs_05_setup_sisrs.py -th 20 -mr 3 -thrs 1  
+
+# 10 processors, 5 reads required to call a site, 99% homozygosity per species
+> python scripts/sisrs_05_setup_sisrs.py
+```
+
+##### 6) Running Taxon-specific SISRS Steps with sisrs_06_run_sisrs.py
+
+* sisrs_05_setup_sisrs.py generates a bash script in each taxon folder  
+* These scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs, but be sure to specify processors accordingly above)
+* This script will run them serially on one machine (one after another)
+* Individual log files are created in each taxon folder
+
+Flags: NONE
+
+```
+> python scripts/run_sisrs.py
+```
+
+##### 7) Complete SISRS Run and output alignments with sisrs_07_output_sisrs.py
+
+* This script takes the taxon files and finds all variable sites  
+* Sites are filtered into all sites, parsimony-informative sites, and biallelic sites
+* This script also filters the biallelic site alignment down to only data with 0 missing taxa (or whatever number you choose), both with and without biallelic gaps
+* This script also creates a final log with all mapping data and SISRS output in **SISRS_Run/out_SISRS_Log**
+
+Flags (Optional): -ms
+
+```
+> python scripts/output_sisrs.py -ms 3
+
+> python scripts/output_sisrs.py 
+
 ```

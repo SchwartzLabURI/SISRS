@@ -37,7 +37,7 @@ def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
 
     sisrs_output_template = ""
 
-    shFile = open(dir + '/sisrs_05_template.sh')
+    shFile = open(dir + '/sisrs_07_template.sh')
     for line in shFile:
         sisrs_output_template += line
 
