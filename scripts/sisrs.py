@@ -86,7 +86,7 @@ def sisrs05(outPath,threads,minread,threshold):
     fileChanges(ray_dir,composite_dir)
     indexCompGenome(composite_dir,threads)
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
-    copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold)
+    copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
 
 '''
 Function to run all of the sixth script

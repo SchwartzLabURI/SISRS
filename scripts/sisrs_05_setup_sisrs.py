@@ -113,9 +113,9 @@ def beginSetUp(composite_dir,script_dir):
 This function is designed to complete the sisrs setup and will be going through
 to replace all of the non-specfic portions of the bash script with more specfic
 portions of the scripts. This function requiers all of the directory information
-alond with the number of threads, mindread, and threshold.
+alond with the number of threads, mindread, threshold, and the script directory.
 '''
-def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold):
+def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,script):
 
     composite_dir = os.path.abspath(composite_dir)
     sisrs_dir = os.path.abspath(sisrs_dir)
@@ -139,7 +139,7 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
         keyDict = {'PROCESSORS':str(threads),
                    'BOWTIE2-INDEX':composite_dir+"/contigs",
                    'COMPOSITE_GENOME':composite_dir+"/contigs.fa",
-                   'SCRIPT_DIR':outPath,
+                   'SCRIPT_DIR':script,
                    'MINREAD':str(minread),
                    'THRESHOLD':str(threshold),
                    'TAXA':taxa,
@@ -193,4 +193,4 @@ if __name__ == '__main__':
     fileChanges(ray_dir,composite_dir)
     indexCompGenome(composite_dir,proc)
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
-    copyShFile(trim_read_tax_dirs,sisrs,sisrs_template,composite_dir,sis,proc,mr,thres)
+    copyShFile(trim_read_tax_dirs,sisrs,sisrs_template,composite_dir,sis,proc,mr,thres,sys.path[0])

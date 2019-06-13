@@ -215,7 +215,7 @@ Flags (Optioanl): -th
 Flags: NONE
 
 ```
-> python scripts/run_sisrs.py
+> python scripts/sisrs_06_run_sisrs.py
 ```
 
 ##### 7) Complete SISRS Run and output alignments with sisrs_07_output_sisrs.py
@@ -228,7 +228,7 @@ Flags: NONE
 Flags (Optional): -ms
 
 ```
-> python scripts/output_sisrs.py -ms 3
+> python scripts/sisrs_07_output_sisrs.py -ms 3
 
-> python scripts/output_sisrs.py 
+> python scripts/sisrs_07_output_sisrs.py 
 ```

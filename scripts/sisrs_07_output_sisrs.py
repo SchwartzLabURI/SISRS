@@ -10,6 +10,7 @@ from os import path
 import sys
 from glob import glob
 import subprocess
+from subprocess import Popen
 from itertools import islice
 
 '''
@@ -44,7 +45,7 @@ def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
     keyList = ['TWOTAXA','SISRS_DIR','SCRIPT_DIR','MISSING','COMPOSITE_DIR']
     keyDict = {'TWOTAXA':str(len(sisrs_tax_dirs) - 2),
                'SISRS_DIR':sisrs_dir,
-               'SCRIPT_DIR':outPath,
+               'SCRIPT_DIR':dir,
                'MISSING':str(missing),
                'COMPOSITE_DIR':composite_dir}
     for key in keyList:
@@ -60,7 +61,13 @@ the folders that contain sh scripts.
 def runBash(sisrs_dir,sisrs_tax_dirs):
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment.sh'
-        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+        p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
+        output, err = p.communicate()
+        rc = p.returncode
+        print(output)
+        print(err)
+        print(rc)
+        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
 
     with open(sisrs_dir+"/out_SISRS_Log","w") as file:
         file.write("\nRead Mapping and SISRS Site Selection:\n")
