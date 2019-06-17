@@ -97,7 +97,7 @@ def commandLine(cmdln,script_dir):
 
         if bool == False:
             print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
-        elif rtn[6] < 1 or rtn[7] > 3:
+        elif rtn[6] < 1 or rtn[6] > 3:
             print("MINREAD COVERAGE MUST BE BETWEEN 1 AND 3 --> SWITCHED TO 3")
     else:
         print("DEFAULT MINREAD IS BEING USED: 3")
