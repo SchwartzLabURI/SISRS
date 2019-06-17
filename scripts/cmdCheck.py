@@ -23,20 +23,19 @@ as a seperate file so this file does not get to large.
 def commandLine(cmdln,script_dir):
 
     if len(cmdln) < 5:
-        print("Requiered flags to run: -id or -rd, and -gs")
+        print("Requiered flags to run: -rd and -gs")
         exit()
 
     # Variables that will get passed to the scripts
     # Set defaults are shown
     # sisrs_dir = ""      --> 0
-    # taxon_ID_file = ""  --> 1
-    # data_path = ""      --> 2
-    # trimed = False      --> 3
-    # threads = 1         --> 4
-    # genomeSize = 0      --> 5
-    # threshold = 1       --> 6
-    # minRead = 3         --> 7
-    # missing = 0         --> 8
+    # data_path = ""      --> 1
+    # trimed = False      --> 2
+    # threads = 1         --> 3
+    # genomeSize = 0      --> 4
+    # threshold = 1       --> 5
+    # minRead = 3         --> 6
+    # missing = 0         --> 7
     rtn = [ "" for i in range(9)]
 
     # Variablese used throughout if's
@@ -48,32 +47,28 @@ def commandLine(cmdln,script_dir):
     else:
         rtn[0] = script_dir
 
-    # Flag if you plan on using a TaxonID txt file and
-    # wish to move files by hand
-    if '-id' in cmdln:
-        rtn[1] = cmdln[cmdln.index('-id') + 1]
     # Flag to tell us were the raw data is stored
-    elif '-rd' in cmdln:
-        rtn[2] = cmdln[cmdln.index('-rd') + 1]
+    if '-rd' in cmdln:
+        rtn[1] = cmdln[cmdln.index('-rd') + 1]
     else:
         print("MISSING TAXA INFORMATION")
         exit()
 
     # Determine if the data has been pretrimed or not
-    rtn[3] = True if '-trm' in cmdln else False
+    rtn[2] = True if '-trm' in cmdln else False
 
     # Determine the number of the threads to use
     if '-th' in cmdln:
         bool = isInt(cmdln[cmdln.index('-th') + 1])
-        rtn[4] = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
+        rtn[3] = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
     else:
         print("DEFAULT NUMBER OF THREADS BEING USED: 1")
-        rtn[4] = 1
+        rtn[3] = 1
 
     # Obtain the genomeSize estimation for script 3
     if '-gs' in cmdln:
         bool = isInt(cmdln[cmdln.index('-gs') + 1])
-        rtn[5] = int(cmdln[cmdln.index('-gs') + 1]) if bool else 0
+        rtn[4] = int(cmdln[cmdln.index('-gs') + 1]) if bool else 0
     else:
         if bool == False:
             print("GENOME SIZE ESTIMATION IS NOT A VALID NUMBER")
@@ -84,39 +79,39 @@ def commandLine(cmdln,script_dir):
     # Get threshold for script 5
     if '-thrs' in cmdln:
         bool = isFloat(cmdln[cmdln.index('-thrs') + 1])
-        rtn[6] = float(cmdln[cmdln.index('-thrs') + 1]) if bool else 1
+        rtn[5] = float(cmdln[cmdln.index('-thrs') + 1]) if bool else 1
         if bool == False:
             print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES WAS NOT" +
                         "A VALID NUMBER --> SWITCHED TO 1")
-        elif rtn[6] <= 0 and rtn[6] >= 1:
+        elif rtn[5] <= 0 and rtn[5] >= 1:
             print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES MUST BE " +
                         "BETWEEN 0 AND 1  --> SWITCHED TO 1")
     else:
         print("DEFAULT THRESHOLD IS BEING USED: 1")
-        rtn[6] = 1
+        rtn[5] = 1
 
     # Gets the minread need to run the 5 script
     if '-mr' in cmdln:
         bool = isInt(cmdln[cmdln.index('-mr') + 1])
-        rtn[7] = int(cmdln[cmdln.index('-mr') + 1]) if bool else 3
+        rtn[6] = int(cmdln[cmdln.index('-mr') + 1]) if bool else 3
 
         if bool == False:
             print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
-        elif rtn[7] < 1 or rtn[7] > 3:
+        elif rtn[6] < 1 or rtn[6] > 3:
             print("MINREAD COVERAGE MUST BE BETWEEN 1 AND 3 --> SWITCHED TO 3")
     else:
         print("DEFAULT MINREAD IS BEING USED: 3")
-        rtn[7] = 3
+        rtn[6] = 3
 
     # Gets the allowed amount of missing data from the files
     if '-ms' in cmdln:
         bool = isInt(cmdln[cmdln.index('-ms') + 1])
-        rtn[8] = int(cmdln[cmdln.index('-ms') + 1]) if bool else 0
+        rtn[7] = int(cmdln[cmdln.index('-ms') + 1]) if bool else 0
         if bool == False:
             print("THE ALLOWED AMOUNT OF MISSING DATA MUST BE A VALID NUMBER")
             exit()
     else:
         print("THE DEFAULT AMOUNT OF MISSING DATA IS BEING USED TO RUN SISRS: 0")
-        rtn[8] = 0
+        rtn[7] = 0
 
     return rtn
