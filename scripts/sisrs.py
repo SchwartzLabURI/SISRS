@@ -16,17 +16,20 @@ from cmdCheck import *
 '''
 Function to run all of the first script
 '''
-def sisrs01(data_path,sisrs_dir,trimed):
+def sisrs01(taxon_ID_file,data_path,sisrs_dir,trimed):
     taxa_list = []
-
-    taxa_list = readTaxaFromFolders(data_path)
+    if taxon_ID_file != "":
+        taxa_list = devTaxaList(taxon_ID_file)
+    else:
+        taxa_list = readTaxaFromFolders(data_path)
 
     fileStructure(sisrs_dir, taxa_list)
 
-    if trimed:
-        makeLinks(data_path, sisrs_dir, taxa_list, True)
-    else:
-        makeLinks(data_path, sisrs_dir, taxa_list, False)
+    if data_path != "" :
+        if trimed:
+            makeLinks(data_path, sisrs_dir, taxa_list, True)
+        else:
+            makeLinks(data_path, sisrs_dir, taxa_list, False)
 
 '''
 Function to run all of the second script
@@ -100,10 +103,10 @@ def sisrs07(outPath,missing):
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln,os.path.dirname(sys.path[0]))
-    sisrs01(rtn[1],rtn[0],rtn[3])
-    sisrs2(rtn[2],rtn[3],rtn[0])
-    sisrs3(rtn[4],rtn[0])
-    sisrs4(rtn[0],rtn[3])
-    sisrs05(rtn[0],rtn[3],rtn[6],rtn[5])
+    sisrs01(rtn[1],rtn[2],rtn[0],rtn[3])
+    sisrs2(rtn[3],rtn[4],rtn[0])
+    sisrs3(rtn[5],rtn[0])
+    sisrs4(rtn[0],rtn[4])
+    sisrs05(rtn[0],rtn[4],rtn[7],rtn[6])
     sisrs06(rtn[0])
-    sisrs07(rtn[0],rtn[7])
+    sisrs07(rtn[0],rtn[8])

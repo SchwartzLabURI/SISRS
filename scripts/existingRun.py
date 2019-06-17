@@ -25,13 +25,6 @@ def folderStruct(sisrs_dir):
     return rtn
 
 '''
-Helper function to grab the previous files that were used in the SISRS_Run. This
-function will be used by getOldTaxons???
-
-Return a list of old files
-'''
-
-'''
 Function to check for the .nex files and read the alignment.nex file.
 This function will be used to extract the taxon list for further data exploration
 
@@ -72,7 +65,7 @@ This function will need to determine if there is duplicate data.
 '''
 
 '''
-Function to check for subset reads
+Function ot check for subset reads
 
 Return True or False if they are missing
 '''
@@ -87,8 +80,6 @@ FUnction to look at sh file from sisrs_07 and all of its output
 
 if __name__ == '__main__':
     sis = sys.argv[1]
-    tList = []
-
     booVal = folderStruct(sis)
 
     if booVal == False:
@@ -96,7 +87,4 @@ if __name__ == '__main__':
 
     if booVal:
         b = getOldTaxons(sis)
-        if b == False:
-            print("NO COMPLETE SISRS RUN FOUND!")
-        else:
-            tList = b
+        print(b)
