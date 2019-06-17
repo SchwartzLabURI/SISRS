@@ -55,7 +55,7 @@ There are two way to run SISRS
 
 * -dir --> Specify where the SISRS output will go. DEFAULT: The directory preceding where the scripts are located
     * This option is only available for the continuous run. The default is used in the individual scripts
-* -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files
+* -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files. This will only be available in the individual sisrs run
     * FILE MUST LOOK LIKE
 ```
 > cat TaxonIDs
@@ -119,12 +119,11 @@ Example Commands:
   * Note: Six-letter taxon IDs and folder names may be easier to work with (e.g. HomSap vs. Homo_sapiens)
 * sisrs_01_folder_setup.py will create taxon folders in the RawReads, TrimReads, and SISRS_Run directories  
 
-Flags needed: -rd or -id and -trm is optional. It is important to note that if you use the -id flag you are expected to manually move your data into the correct folder.
+Flags needed: -rd and -trm is optional. It is important to note that if you use the -id flag you are expected to manually move your data into the correct folder.
 
 Example:
 ```
-> python scripts/sisrs_01_folder_setup.py -id TaxonIDs -trm
-> python scripts/sisrs_01_folder_setup.py -id TaxonIDs
+> python scripts/sisrs_01_folder_setup.py -rd ./SISRS_Small/
 > python scripts/sisrs_01_folder_setup.py -rd ./SISRS_Small/ -trm
 ```
 
@@ -230,5 +229,5 @@ Flags (Optional): -ms
 ```
 > python scripts/sisrs_07_output_sisrs.py -ms 3
 
-> python scripts/sisrs_07_output_sisrs.py 
+> python scripts/sisrs_07_output_sisrs.py
 ```
