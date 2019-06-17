@@ -17,65 +17,43 @@ from subprocess import check_call
 import pandas as pd
 import re
 
-'''
-This function is designed to do the remaining folder setup for the read subsetting.
-It also finisihes up the other minor setups needed for this script. The arguments
-that are needed for this script are the working sisrs directory and the genomeSize
-estimation.
-'''
-def setupDir(sisrs_dir,genomeSize):
+#Set cwd to script location
+script_dir = sys.path[0]
 
-    # returned list of items
-    # trim_read_dir         --> 0
-    # subset_output_dir     --> 1
-    # subset_log_dir        --> 2
-    # trim_read_tax_dirs    --> 3
-    # subsetDepth           --> 4
-    # df                    --> 5
-    # compiled_paired       --> 6
-    # compiled_single_end   --> 7
-    rtn = []
+#Get Genome size estimate
+genomeSize = int(sys.argv[1])
 
-    #Set TrimRead directories based off of script folder location
-    trim_read_dir = sisrs_dir + "/Reads/TrimReads"
-    rtn += [trim_read_dir]
+#Set TrimRead directories based off of script folder location
+trim_read_dir = path.dirname(path.abspath(script_dir))+"/Reads/TrimReads"
 
-    #Find taxa folders within TrimRead folder
-    trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
+#Find taxa folders within TrimRead folder
+trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
 
-    #Create folder for Subset reads
-    if(not path.isdir(sisrs_dir +"/Reads/SubsetReads")):
-        os.mkdir(sisrs_dir+"/Reads/SubsetReads")
-    subset_output_dir = sisrs_dir+"/Reads/SubsetReads/"
-    rtn += [subset_output_dir]
+#Create folder for Subset reads
+if(not path.isdir(path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads")):
+    os.mkdir(path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads")
+subset_output_dir = path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads/"
 
-    #Create folder for Subset output logs
-    if(not path.isdir(trim_read_dir+"/subsetOutput")):
-        os.mkdir(trim_read_dir+"/subsetOutput")
-    subset_log_dir = trim_read_dir+"/subsetOutput/"
-    rtn += [subset_log_dir]
+#Create folder for Subset output logs
+if(not path.isdir(trim_read_dir+"/subsetOutput")):
+    os.mkdir(trim_read_dir+"/subsetOutput")
+subset_log_dir = trim_read_dir+"/subsetOutput/"
 
-    #Ensure Trim Log/FastQC/subset Log output directories not included in taxa list
-    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('trimOutput/')]
-    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('fastqcOutput/')]
-    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('subsetOutput/')]
-    rtn += [trim_read_tax_dirs]
+#Ensure Trim Log/FastQC/subset Log output directories not included in taxa list
+trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('trimOutput/')]
+trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('fastqcOutput/')]
+trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('subsetOutput/')]
 
-    #Calculate subset depth
-    rtn += [int((10*genomeSize)/len(trim_read_tax_dirs))]
+#Calculate subset depth
+subsetDepth = int((10*genomeSize)/len(trim_read_tax_dirs))
 
-    #Initialize Pandas DF to get base counts and lists of paired and single-end files
-    rtn += [pd.DataFrame(columns=['Taxon','Dataset','Basecount'])]
-    rtn += [list()]
-    rtn += [list()]
+#Initialize Pandas DF to get base counts and lists of paired and single-end files
+df = pd.DataFrame(columns=['Taxon','Dataset','Basecount'])
+compiled_paired = list()
+compiled_single_end = list()
 
-    return rtn
-
-'''
-This function is designed to break up the load that is careied by countBasePair.
-'''
-def countHelper(tax_dir,compiled_paired,compiled_single_end):
-
+#For each taxa directory...
+for tax_dir in trim_read_tax_dirs:
     #List all files and set output dir
     files = sorted(glob(tax_dir+"*.fastq.gz"))
     taxon_ID = path.basename(tax_dir[:-1])
@@ -114,216 +92,117 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
     right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
-    # This return statement looks this way because of an erro that is assosicated
-    # with turning it into a list. I will attempt to fix it again later
-    return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_list,dataset_list,basecount_list,taxon_ID
+    #Count bases in single-end files if present...
+    if len(single_end) > 0:
+        for x in single_end:
+            count_command = [
+                'reformat.sh',
+                'in={}'.format(x+'.fastq.gz')]
+            proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            o, e = proc.communicate()
 
-'''
-Poorly planned function to execute the first for loop
-'''
-def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
+            #Munge output to get base count
+            count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
+            baseCount = count.group(1)
+            taxon_list.append(taxon_ID)
+            dataset_list.append(path.basename(x))
+            basecount_list.append(baseCount)
 
-    #For each taxa directory...
-    for tax_dir in trim_read_tax_dirs:
+    #Count bases in paired-end files if present...
+    if(len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
+        for x in range(len(left_pairs)):
+            dataset_list.append(path.basename(left_pairs[x]))
+            count_command = [
+                'reformat.sh',
+                'in={}'.format(left_pairs[x]+'_1.fastq.gz'),
+                'in2={}'.format(right_pairs[x]+'_2.fastq.gz')]
+            proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            o, e = proc.communicate()
+            count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
+            baseCount = count.group(1)
+            basecount_list.append(int(baseCount))
+            taxon_list.append(taxon_ID)
+    list_of_tuples = list(zip(taxon_list,dataset_list, basecount_list))
+    df = df.append((pd.DataFrame(list_of_tuples, columns = ['Taxon','Dataset', 'Basecount'])))
 
-        outPut = []
-        outPut += countHelper(tax_dir,compiled_paired,compiled_single_end)
-        compiled_paired = outPut[0]
-        compiled_single_end = outPut[1]
-        left_pairs = outPut[2]
-        right_pairs = outPut[3]
-        single_end = outPut[4]
-        taxon_list = outPut[5]
-        dataset_list = outPut[6]
-        basecount_list = outPut[7]
-        taxon_ID = outPut[8]
+df = df.reset_index(drop=True)
+df["Basecount"] = pd.to_numeric(df["Basecount"])
+df = df.sort_values(by=['Taxon'])
+df["ToSample"] = 0
+taxa_list = sorted(df.Taxon.unique())
 
-        #Count bases in single-end files if present...
-        if len(single_end) > 0:
-            for x in single_end:
-                count_command = [
-                    'reformat.sh',
-                    'in={}'.format(x+'.fastq.gz')]
-                proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                o, e = proc.communicate()
+print("Based on a genome size estimate of " + str(genomeSize) + " bp, and with " + str(len(trim_read_tax_dirs)) + " species, the requested subset depth is " + str(subsetDepth) + " bp per species")
 
-                #Munge output to get base count
-                count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
-                baseCount = count.group(1)
-                taxon_list.append(taxon_ID)
-                dataset_list.append(path.basename(x))
-                basecount_list.append(baseCount)
+for taxa in taxa_list:
+    taxaDF = df[df['Taxon']==taxa]
 
-        #Count bases in paired-end files if present...
-        if(len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
-            for x in range(len(left_pairs)):
-                dataset_list.append(path.basename(left_pairs[x]))
-                count_command = [
-                    'reformat.sh',
-                    'in={}'.format(left_pairs[x]+'_1.fastq.gz'),
-                    'in2={}'.format(right_pairs[x]+'_2.fastq.gz')]
-                proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                o, e = proc.communicate()
+    #Check if taxa has enough total coverage. If not, use all reads and warn user.
+    if(taxaDF["Basecount"].sum() < subsetDepth):
+        print("NOTE: " + taxa + " samples only have a total of " + str(taxaDF["Basecount"].sum()) + " bp. All " + taxa + " reads will be used.\nWARNING: Having under the required read threshold will have negative consequences on composite genome assembly and site calling.\n")
+        df.loc[df["Taxon"] == taxa, ["ToSample"]] = list(df[df["Taxon"] == taxa].Basecount)
 
-                count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
-                baseCount = count.group(1)
-                basecount_list.append(int(baseCount))
-                taxon_list.append(taxon_ID)
-        list_of_tuples = list(zip(taxon_list,dataset_list, basecount_list))
+    elif(taxaDF["Basecount"].sum() >= subsetDepth):
+        #If there is enough total data, check sample values to optimize sampling
+        dataset_count = taxaDF.shape[0] #Count samples for taxa
+        per_dataset = subsetDepth/dataset_count #Calculate bases needed per sample if evenly distributed
+        s = pd.Series(taxaDF["Basecount"]) #Grab basecount colulmn
 
-        df = df.append((pd.DataFrame(list_of_tuples, columns = ['Taxon','Dataset', 'Basecount'])))
+        if((s < per_dataset).any()):
+            subset_countdown =  subsetDepth #Create countdown variable
 
-    return df, compiled_paired, compiled_single_end
+            while((s < per_dataset).any()):
 
-'''
-Poorly planned function to execute the second for loop
-'''
-def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
+                low_datasets = list(taxaDF[taxaDF.Basecount<per_dataset]["Dataset"]) #Find datasets with too few bases
+                high_datasets = list(taxaDF[taxaDF.Basecount>=per_dataset]["Dataset"]) #Find datasets with enough bases (currently)
 
-    df = df.reset_index(drop=True)
-    df["Basecount"] = pd.to_numeric(df["Basecount"])
-    df = df.sort_values(by=['Taxon'])
-    df["ToSample"] = 0
-    taxa_list = sorted(df.Taxon.unique())
+                sum_low = taxaDF[taxaDF.Basecount<per_dataset].Basecount.sum() #Sum the bases of the low datasets
 
-    for taxa in taxa_list:
-        taxaDF = df[df['Taxon']==taxa]
+                print("Not all " + taxa + " samples have enough for even read sampling (" + ",".join(low_datasets) + "). Will take all reads from data poor samples and compensate from larger samples...")
+                df.loc[df.Dataset.isin(low_datasets), ["ToSample"]] = list(df[df.Dataset.isin(low_datasets)].Basecount) #Set low datasets to use all reads
 
-        #Check if taxa has enough total coverage. If not, use all reads and warn user.
-        if(taxaDF["Basecount"].sum() < subsetDepth):
-            print("NOTE: " + taxa + " samples only have a total of " + str(taxaDF["Basecount"].sum()) + " bp. All " + taxa + " reads will be used.\nWARNING: Having under the required read threshold will have negative consequences on composite genome assembly and site calling.\n")
-            df.loc[df["Taxon"] == taxa, ["ToSample"]] = list(df[df["Taxon"] == taxa].Basecount)
+                taxaDF = taxaDF[taxaDF.Dataset.isin(high_datasets)] #Reset taxa DF to remove low samples
+                dataset_count = taxaDF.shape[0] #Count remaining datasets
+                subset_countdown = subset_countdown - sum_low
 
-        elif(taxaDF["Basecount"].sum() >= subsetDepth):
-            #If there is enough total data, check sample values to optimize sampling
-            dataset_count = taxaDF.shape[0] #Count samples for taxa
-            per_dataset = subsetDepth/dataset_count #Calculate bases needed per sample if evenly distributed
-            s = pd.Series(taxaDF["Basecount"]) #Grab basecount colulmn
+                per_dataset = int(subset_countdown/dataset_count) #Reset per_dataset
 
-            if((s < per_dataset).any()):
-                subset_countdown =  subsetDepth #Create countdown variable
+                s = pd.Series(taxaDF.Basecount) #Recount basecounts for while loop
 
-                while((s < per_dataset).any()):
-
-                    low_datasets = list(taxaDF[taxaDF.Basecount<per_dataset]["Dataset"]) #Find datasets with too few bases
-                    high_datasets = list(taxaDF[taxaDF.Basecount>=per_dataset]["Dataset"]) #Find datasets with enough bases (currently)
-
-                    sum_low = taxaDF[taxaDF.Basecount<per_dataset].Basecount.sum() #Sum the bases of the low datasets
-
-                    print("Not all " + taxa + " samples have enough for even read sampling (" + ",".join(low_datasets) + "). Will take all reads from data poor samples and compensate from larger samples...")
-                    df.loc[df.Dataset.isin(low_datasets), ["ToSample"]] = list(df[df.Dataset.isin(low_datasets)].Basecount) #Set low datasets to use all reads
-
-                    taxaDF = taxaDF[taxaDF.Dataset.isin(high_datasets)] #Reset taxa DF to remove low samples
-                    dataset_count = taxaDF.shape[0] #Count remaining datasets
-                    subset_countdown = subset_countdown - sum_low
-
-                    per_dataset = int(subset_countdown/dataset_count) #Reset per_dataset
-
-                    s = pd.Series(taxaDF.Basecount) #Recount basecounts for while loop
-
-                df.loc[df.Dataset.isin(high_datasets), ["ToSample"]] = per_dataset
-            else:
-                df.loc[df.Taxon == taxa, ["ToSample"]] = per_dataset
-
-    df.to_csv(subset_output_dir+"/Subset_Scheme.csv",index=False)
-
-    compiled_paired = [path.basename(x).replace('_1.fastq.gz', '') for x in compiled_paired]
-    compiled_paired = [path.basename(x).replace('_2.fastq.gz', '') for x in compiled_paired]
-    compiled_single_end = [path.basename(x).replace('.fastq.gz', '') for x in compiled_single_end]
-
-    out = []
-    # Return the three necessary pieces of information
-    out += [compiled_paired]
-    out += [compiled_single_end]
-    out += [df]
-
-    return out
-
-'''
-This function is designed to help strip the list of files that are going to be
-subsetted. They will be stripped of the file path, file extension, and if there
-is paired files the _1 and _2 will also be stripped
-'''
-def stripFiles(aList):
-    nList = []
-    for item in aList:
-        fName = os.path.basename(item)
-        save = fName.strip('.fastq.gz')
-        if '_1' in save:
-            nList += [save.strip('_1')]
-        elif '_2' in save:
-            nList += [save.strip('_2')]
+            df.loc[df.Dataset.isin(high_datasets), ["ToSample"]] = per_dataset
         else:
-            nList += [save]
-    return nList
+            df.loc[df.Taxon == taxa, ["ToSample"]] = per_dataset
 
-'''
-Function to do all of the subsetting the is needed by sisrs. This is a general
-function and can handle single and paired ends genomes.
-'''
-def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
-    cList = stripFiles(compiledList)
+df.to_csv(subset_output_dir+"/Subset_Scheme.csv",index=False)
 
-    if len(cList) > 0:
+compiled_paired = [path.basename(x).replace('_1.fastq.gz', '') for x in compiled_paired]
+compiled_paired = [path.basename(x).replace('_2.fastq.gz', '') for x in compiled_paired]
+compiled_single_end = [path.basename(x).replace('.fastq.gz', '') for x in compiled_single_end]
 
-        end_DF = df[df.Dataset.isin(cList)]
+#Subset bases in single-end files if present...
+if len(compiled_single_end) > 0:
+    single_end_DF = df[df.Dataset.isin(compiled_single_end)]
+    for row in single_end_DF.itertuples():
+        subset_command = [
+            'reformat.sh',
+            'in={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+".fastq.gz"),
+            'out={}'.format(subset_output_dir+str(row.Dataset).replace('Trim','GenomeReads.fastq.gz')),
+            'samplebasestarget={}'.format(int(row.ToSample)),
+            'ow=t',
+            '&>',
+            '{outDir}out_{fileName}_Trim'.format(outDir=subset_log_dir,fileName=row.Dataset)]
+        check_call(subset_command)
 
-        for row in end_DF.itertuples():
-
-            subset_command = []
-            if paired:
-
-                subset_command = [
-                    'reformat.sh',
-                    'in={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+"_1.fastq.gz"),
-                    'in2={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+"_2.fastq.gz"),
-                    'out={}'.format(subset_output_dir+str(row.Dataset).replace('Trim','GenomeReads_1.fastq.gz')),
-                    'out2={}'.format(subset_output_dir+str(row.Dataset).replace('Trim','GenomeReads_2.fastq.gz')),
-                    'samplebasestarget={}'.format(int(row.ToSample)),
-                    'ow=t',
-                    '&>',
-                    '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=row.Dataset)]
-            else:
-                subset_command = [
-                    'reformat.sh',
-                    'in={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+".fastq.gz"),
-                    'out={}'.format(subset_output_dir+str(row.Dataset).replace('Trim','GenomeReads.fastq.gz')),
-                    'samplebasestarget={}'.format(int(row.ToSample)),
-                    'ow=t',
-                    '&>',
-                    '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=row.Dataset)]
-            check_call(subset_command)
-
-if __name__ == '__main__':
-
-    cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
-
-    if len(cmd) < 3:
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")
-        exit()
-
-    gs = 0
-    if '-gs' in cmd:
-        try:
-            gs = int(cmd[cmd.index('-gs') + 1])
-        except:
-            print("INVALID GENOME SIZE")
-            exit()
-    else:
-        print("GENOME SIZE REQUIERED FOR THIS SCRIPT")
-        exit()
-
-    setupInfo = setupDir(sis,gs)
-
-    df, compiled_paired, compiled_single_end = countBasePair(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
-
-    print("Based on a genome size estimate of " + str(gs) + " bp, and with " + str(len(setupInfo[3])) + " species, the requested subset depth is " + str(setupInfo[4]) + " bp per species")
-
-    out = checkCoverage(df,setupInfo[4],setupInfo[1],compiled_paired, compiled_single_end)
-
-    # Subset Single End
-    subset(compiled_single_end,out[2],setupInfo[0],setupInfo[1],setupInfo[2],False)
-
-    #Subset paired ends
-    subset(compiled_paired,out[2],setupInfo[0],setupInfo[1],setupInfo[2],True)
+if len(compiled_paired) > 0:
+    paired_DF = df[df.Dataset.isin(compiled_paired)]
+    for row in paired_DF.itertuples():
+        subset_command = [
+            'reformat.sh',
+            'in={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+"_1.fastq.gz"),
+            'in2={}'.format(trim_read_dir+"/"+str(row.Taxon)+"/"+str(row.Dataset)+"_2.fastq.gz"),
+            'out={}'.format(subset_output_dir+str(row.Dataset).replace('Trim','GenomeReads_1.fastq.gz')),
+            'out2={}'.format(subset_output_dir+str(row.Dataset).replace('Trim','GenomeReads_2.fastq.gz')),
+            'samplebasestarget={}'.format(int(row.ToSample)),
+            'ow=t',
+            '&>',
+            '{outDir}out_{fileName}_Trim'.format(outDir=subset_log_dir,fileName=row.Dataset)]
+        check_call(subset_command)

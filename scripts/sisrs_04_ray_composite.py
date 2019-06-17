@@ -15,52 +15,27 @@ import subprocess
 from subprocess import check_call
 
 
-'''
-This function is designed to obtain the neccessary file paths and data that is
-needed for the Ray command. It only requeires the working directory for were all
-of the sisrs information is stationed.
-'''
-def getDirs(sisrs_dir):
-    #Set SubsetRead and Genome directories based off of script folder location
-    subset_read_dir = sisrs_dir+"/Reads/SubsetReads"
-    ray_genome_dir = sisrs_dir+"/Ray_Composite_Genome"
+#Set cwd to script location
+script_dir = sys.path[0]
 
-    subset_reads = glob(subset_read_dir+"/*.gz")
+node_count = int(sys.argv[1])
+processors_per_node = int(sys.argv[2])
 
-    return ray_genome_dir, subset_reads
+mpi_processor = node_count*processors_per_node
 
-'''
-This function is designed to run ray on all files that are found in the subset
-folders. Requieres the output folder developed, number of threads, and the files.
-'''
-def runRay(ray_genome_dir,subset_reads,threads):
-    ray_command = [
-        'mpirun',
-        '-n','{}'.format(str(threads)),
-        'Ray',
-        '-k',
-        '31',
-        '{}'.format("-s " + " -s ".join(subset_reads)),
-        '-o',
-        '{}'.format(ray_genome_dir)]
-    os.system(" ".join(ray_command))
+#Set SubsetRead and Genome directories based off of script folder location
+subset_read_dir = path.dirname(path.abspath(script_dir))+"/Reads/SubsetReads"
+ray_genome_dir = path.dirname(path.abspath(script_dir))+"/Ray_Composite_Genome"
 
-if __name__ == '__main__':
+subset_reads = glob(subset_read_dir+"/*.gz")
 
-    cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
-
-    proc = 1
-    if '-th' in cmd:
-        try:
-            proc = int(cmd[1])
-        except:
-            proc = 1
-    else:
-        print("SWITCHING TO DEFAULT THREAD OF 1")
-
-    # obtain the directories and files needed for Ray
-    ray_genome_dir, subset_reads = getDirs(sis)
-
-    # Run the ray command
-    runRay(ray_genome_dir,subset_reads,proc)
+ray_command = [
+    'mpirun',
+    '-n','{}'.format(str(mpi_processor)),
+    'Ray',
+    '-k',
+    '31',
+    '{}'.format("-s " + " -s ".join(subset_reads)),
+    '-o',
+    '{}'.format(ray_genome_dir)]
+os.system(" ".join(ray_command))
