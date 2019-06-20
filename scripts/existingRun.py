@@ -12,8 +12,6 @@ from sisrs_01_folder_setup import *
 '''
 Fucntion to examine the folder structure of where the user specfies the SISRS_DIR
 will beself.
-
-Return True or false depending on if the structre is there
 '''
 def folderStruct(sisrs_dir):
 
@@ -29,7 +27,7 @@ def folderStruct(sisrs_dir):
 Function to check for the .nex files and read the alignment.nex file.
 This function will be used to extract the taxon list for further data exploration
 
-Return true or false depdning on the presence of the files
+Return the list of old taxon names
 '''
 def getOldTaxons(sisrs_dir):
     sis_dir = sisrs_dir + '/SISRS_Run/'
@@ -65,6 +63,8 @@ def getOldTaxons(sisrs_dir):
 '''
 This function is deisgned to move the old data to a seperate location and zip it
 in order to reduce space.
+
+Return the list of nex taxons
 '''
 def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
 

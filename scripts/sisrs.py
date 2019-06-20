@@ -110,6 +110,7 @@ if __name__ == '__main__':
 
     if rtn[8] == True or rtn[9] == True:
         previousRun(rtn)
+        exit()
 
     sisrs01(rtn[1],rtn[0],rtn[2])
     sisrs2(rtn[2],rtn[3],rtn[0])

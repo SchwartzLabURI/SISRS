@@ -107,7 +107,7 @@ Example Commands:
 
 > python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -trm
 
-> python sisrs.py -id TaxonIDs -gs 100000000 -th 20 -thrs .66 -mr 2 -ms 1
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -thrs .66 -mr 2 -ms 1
 ```
 
 ### REQUIREMENTS FOR SPLIT UP SISRS RUN
