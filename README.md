@@ -33,8 +33,9 @@
     1) (Taxon)_1/_2.fastq.gz for paired end reads
     2) (Taxon)_SE.fastq.gz for single end reads
 
-5) Sample Data Set SISRS_Small.zip:
-    1) It has the correct naming convention and folder setup
+5) Sample Data Set:
+    1) SISRS_Small.zip
+    2) It has the correct naming convention and folder setup
 
 ## **Instructions for Running SISRS**
 
