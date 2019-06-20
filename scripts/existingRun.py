@@ -21,13 +21,9 @@ def folderStruct(sisrs_dir):
                 "/Reads", "/Reference_Genome", "/Reference_Topology", "/SISRS_Run"]
     rtn = ""
     for f in folders:
-        if path.isdir(sisrs_dir+f):
-            rtn = True
-        else:
+        if not path.isdir(sisrs_dir+f):
             print("SISRS FOLDER STRUCTURE NOT COMPLETE.\n NO PREVIOUS SISRS RUN FOUND.\n EXITING")
             exit()
-
-    return rtn
 
 '''
 Function to check for the .nex files and read the alignment.nex file.
@@ -118,10 +114,9 @@ if __name__ == '__main__':
     data = sys.argv[2]
     addingTaxon = True if '-aT' in sys.argv else False
     addingData = True if '-aD' in sys.argv else False
-    tList = []
-    booVal = folderStruct(sis)
 
-    if booVal:
-        tList = getOldTaxons(sis)
+    folderStruct(sis)
 
-    moveFiles(tList,sis,data, addingTaxon, addingData)
+    tList = getOldTaxons(sis)
+
+    taxon = moveFiles(tList,sis,data, addingTaxon, addingData)
