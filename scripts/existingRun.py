@@ -4,8 +4,11 @@ This script needs the -dir flag as input.
 
 import os
 import sys
+import subprocess
 from os import path
+from sisrs_01_folder_setup import *
 
+# ****************DETERMINING IF SISRS RUN EXISTS******************************
 '''
 Fucntion to examine the folder structure of where the user specfies the SISRS_DIR
 will beself.
@@ -21,7 +24,9 @@ def folderStruct(sisrs_dir):
         if path.isdir(sisrs_dir+f):
             rtn = True
         else:
-            return False
+            print("SISRS FOLDER STRUCTURE NOT COMPLETE.\n NO PREVIOUS SISRS RUN FOUND.\n EXITING")
+            exit()
+            
     return rtn
 
 '''
@@ -37,7 +42,8 @@ def getOldTaxons(sisrs_dir):
 
     for f in files:
         if not path.isfile(sis_dir+f):
-            return False
+            print(f + " : is missing.\n PREVIOUS SISRS RUN NOT COMPLETE! EXITING")
+            exit()
 
     # Examine alignment.nex file
     taxons = []
@@ -53,38 +59,64 @@ def getOldTaxons(sisrs_dir):
             taxons += [data[0]]
 
             if len(data[1]) == 0:
-                return False
+                print("alignment.nex file is missing data.\n PREVIOUS SISRS RUN NOT COMPLETE! EXITING")
+                exit()
 
         i += 1
 
     return taxons
 
 '''
-Function to verify/ grab the RawReads/TrimReads data
-This function will need to determine if there is duplicate data.
+This function is deisgned to move the old data to a seperate location and zip it
+in order to reduce space.
 '''
+def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
 
-'''
-Function ot check for subset reads
+    run = sisrs_dir+'/SISRS_Run/'
+    newTaxon = readTaxaFromFolders(data_list)
 
-Return True or False if they are missing
-'''
+    taxon = []
+    if addTaxon:
+        taxon = [n for n in newTaxon if n not in taxonList]
+    else:
+        for n in newTaxon:
+            if n in taxonList:
+                taxon += [n]
+            else:
+                print("NEW TAXON DETECTED. PLEASE CHECK DATA! EXITING.")
+                exit()
 
-'''
-Function to look at SH file from sisrs_05 and all of its output
-'''
+    print(taxon)
 
-'''
-FUnction to look at sh file from sisrs_07 and all of its output
-'''
+    exit()
+    #Create folder for BBDuk StdOut
+    if not path.isdir(sisrs_dir+"/backup"):
+        os.mkdir(sisrs_dir+"/backup")
+
+    subprocess.call("mv {0}alignment* {1}/backup".format(run,sisrs_dir),shell=True)
+    subprocess.call("mv {0}out_SISRS* {1}/backup".format(run,sisrs_dir),shell=True)
+    subprocess.call("mv {0}Output_Alignment.sh {1}/backup".format(run,sisrs_dir),shell=True)
+    if addData:
+        for item in taxon:
+            subprocess.call("mv {0}{1} {2}/backup".format(run,item,sisrs_dir),shell=True)
+
+    return taxon
+
+# ***************** ADDING A TAXA MODE **************************************
+
+
+# ***************** ADDING DATA MODE **************************************
+
 
 if __name__ == '__main__':
     sis = sys.argv[1]
+    data = sys.argv[2]
+    addingTaxon = True if '-aT' in sys.argv else False
+    addingData = True if '-aD' in sys.argv else False
+    tList = []
     booVal = folderStruct(sis)
 
-    if booVal == False:
-        print("NO SISRS RUN FOUND/COMPLETE SISRS RUN FOUND!")
-
     if booVal:
-        b = getOldTaxons(sis)
-        print(b)
+        tList = getOldTaxons(sis)
+
+    moveFiles(tList,sis,data, addingTaxon, addingData)
