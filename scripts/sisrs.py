@@ -13,6 +13,9 @@ from sisrs_06_run_sisrs import *
 from sisrs_07_output_sisrs import *
 from cmdCheck import *
 
+def previousRun(aList):
+    
+
 '''
 Function to run all of the first script
 '''
@@ -101,6 +104,10 @@ def sisrs07(outPath,missing):
 if __name__ == '__main__':
     cmdln = sys.argv
     rtn = commandLine(cmdln,os.path.dirname(sys.path[0]))
+
+    if rtn[8] == True or rtn[9] == True:
+        previousRun(rtn)
+
     sisrs01(rtn[1],rtn[0],rtn[2])
     sisrs2(rtn[2],rtn[3],rtn[0])
     sisrs3(rtn[4],rtn[0])

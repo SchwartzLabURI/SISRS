@@ -36,7 +36,9 @@ def commandLine(cmdln,script_dir):
     # threshold = 1       --> 5
     # minRead = 3         --> 6
     # missing = 0         --> 7
-    rtn = [ "" for i in range(9)]
+    # addTaxon = False    --> 8
+    #addData = False      --> 9
+    rtn = [ "" for i in range(10)]
 
     # Variablese used throughout if's
     bool = True
@@ -113,5 +115,11 @@ def commandLine(cmdln,script_dir):
     else:
         print("THE DEFAULT AMOUNT OF MISSING DATA IS BEING USED TO RUN SISRS: 0")
         rtn[7] = 0
+
+    # Deal with adding a taxon
+    rtn[8] = True if '-aT' in cmdln else False
+
+    # Deal with adding new data to an existing taxon
+    rtn[9] = True if '-aD' in cmdln else False
 
     return rtn
