@@ -26,7 +26,7 @@ def folderStruct(sisrs_dir):
         else:
             print("SISRS FOLDER STRUCTURE NOT COMPLETE.\n NO PREVIOUS SISRS RUN FOUND.\n EXITING")
             exit()
-            
+
     return rtn
 
 '''
@@ -86,9 +86,6 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
                 print("NEW TAXON DETECTED. PLEASE CHECK DATA! EXITING.")
                 exit()
 
-    print(taxon)
-
-    exit()
     #Create folder for BBDuk StdOut
     if not path.isdir(sisrs_dir+"/backup"):
         os.mkdir(sisrs_dir+"/backup")
@@ -99,6 +96,14 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
     if addData:
         for item in taxon:
             subprocess.call("mv {0}{1} {2}/backup".format(run,item,sisrs_dir),shell=True)
+            command = [
+                'zip -1',
+                '{0}/backup/{1}.zip'.format(sisrs_dir,item),
+                '{0}/backup/{1}'.format(sisrs_dir,item),
+                ';',
+                'rm -r',
+                '{0}/backup/{1}'.format(sisrs_dir,item)]
+            os.system(" ".join(command))
 
     return taxon
 
