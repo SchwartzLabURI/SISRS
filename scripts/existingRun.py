@@ -102,3 +102,8 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
             os.system(" ".join(command))
 
     return taxon
+
+'''
+Running the trimmer if needed
+'''
+def existingTrimmer(sisrs_dir, taxonList):
