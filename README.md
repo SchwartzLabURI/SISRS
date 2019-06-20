@@ -34,7 +34,7 @@
     2) (Taxon)_SE.fastq.gz for single end reads
 
 5) Sample Data Set:
-    There is a sample data set provided with the correct naming convention and folder setup
+    1) It has the correct naming convention and folder setup
 
 ## **Instructions for Running SISRS**
 
