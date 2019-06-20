@@ -102,21 +102,3 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
             os.system(" ".join(command))
 
     return taxon
-
-# ***************** ADDING A TAXA MODE **************************************
-
-
-# ***************** ADDING DATA MODE **************************************
-
-
-if __name__ == '__main__':
-    sis = sys.argv[1]
-    data = sys.argv[2]
-    addingTaxon = True if '-aT' in sys.argv else False
-    addingData = True if '-aD' in sys.argv else False
-
-    folderStruct(sis)
-
-    tList = getOldTaxons(sis)
-
-    taxon = moveFiles(tList,sis,data, addingTaxon, addingData)
