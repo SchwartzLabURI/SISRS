@@ -11,6 +11,7 @@ import os
 from os import path
 import sys
 from glob import glob
+from cmdCheck import *
 import subprocess
 from subprocess import check_call
 
@@ -51,9 +52,9 @@ if __name__ == '__main__':
     sis = os.path.dirname(sys.path[0])
 
     proc = 1
-    if '-th' in cmd:
+    if '-p' in cmd or '--processors' in cmd:
         try:
-            proc = int(cmd[1])
+            proc = int(isFound('-p','--processors',cmd))
         except:
             proc = 1
     else:

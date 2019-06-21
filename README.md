@@ -57,7 +57,7 @@ There are two way to run SISRS
 ### Flags to run SISRS
 #### Some flags can only be used for the continuous run of SISRS
 
-* -dir --> Specify where the SISRS output will go. DEFAULT: The directory preceding where the scripts are located
+* -dir; --directory --> Specify where the SISRS output will go. DEFAULT: The directory preceding where the scripts are located
     * This option is only available for the continuous run. The default is used in the individual scripts
 * -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files.
     * This option is only available for the individual run
@@ -78,13 +78,13 @@ PanTro
 PapAnu
 PapCyn
 ```
-* -rd --> Specify the path where all the data is. Providing this path will make links to the correct locations for you
-* -trm --> Tell's SISRS the data has been trimmed if it is present. It will link the files files in Reads/RawReads if this flag is not present and if it is present the links go in Reads/TrimReads. In the continues run it skips the trimming step. DEFAULT: untrimmed
-* -th --> Specify the number of threads. DEFAULT: 1
-* -gs --> Specify the approximate genome size estimate for group  
-* -thrs --> Specify the threshold for the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1
-* -mr --> Specify the minimum read coverage to call a SISRS site, must be 1-3. Default: 3
-* -ms --> Specify the number of taxa to leave out. DEFAULT: 0
+* -rd; --rawData --> Specify the path where all the data is. Providing this path will make links to the correct locations for you
+* -trm; --trimmed --> Tell's SISRS the data has been trimmed if it is present. It will link the files files in Reads/RawReads if this flag is not present and if it is present the links go in Reads/TrimReads. In the continues run it skips the trimming step. DEFAULT: untrimmed
+* -p; --processors --> Specify the number of threads. DEFAULT: 1
+* -gs; --genomeSize --> Specify the approximate genome size estimate for group  
+* -thresh; --threshold --> Specify the threshold for the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1
+* -mr; --minread --> Specify the minimum read coverage to call a SISRS site, must be 1-3. Default: 3
+* -ms; --missing --> Specify the number of taxa to leave out. DEFAULT: 0
 
 ### REQUIREMENTS FOR CONTINUOUS SISRS RUN
 In order to run SISRS you need to use the minimum of two flags, -id or -rd and -gs, without the use of these two flags the software will not run. All other flags will move to the default.
@@ -109,9 +109,9 @@ Example Commands:
 ```
 > python sisrs.py -rd ./SISRS_Small/ -gs 100000000
 
-> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -trm
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -p 20 -trm
 
-> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -thrs .66 -mr 2 -ms 1
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -p 20 -thresh .66 -mr 2 -ms 1
 ```
 
 ### REQUIREMENTS FOR SPLIT UP SISRS RUN
@@ -150,7 +150,7 @@ Flags (Optional): -th
 
 Example:
 ```
-python scripts/rsisrs_02_read_trimmer.py -th <# processors>
+python scripts/sisrs_02_read_trimmer.py -p <# processors>
 ```  
 
 ----
@@ -182,11 +182,11 @@ Flags needed: -gs
 * SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together  
 * The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in few species   
 
-Flags (Optioanl): -th
+Flags (Optioanl): -p
 
 ```
 #1 node, 20 processors per node
-> python scripts/sisrs_04_ray_composite.py -th <# processors>
+> python scripts/sisrs_04_ray_composite.py -p <# processors>
 ```
 
 ##### 5) Setting up the SISRS run with sisrs_05_setup_sisrs.py
@@ -197,11 +197,11 @@ Flags (Optioanl): -th
   * Indexing and processing the composite genome  
   * Creating SISRS runs scripts for each species  
 
- Flags (Optional): -th, -mr, and -thrs
+ Flags (Optional): -p, -mr, and -thresh
 
 ```
 # 20 processors, 3 reads required to call a site, 100% homozygosity per species
-> python scripts/sisrs_05_setup_sisrs.py -th 20 -mr 3 -thrs 1  
+> python scripts/sisrs_05_setup_sisrs.py -p 20 -mr 3 -thresh 1  
 
 # 10 processors, 5 reads required to call a site, 99% homozygosity per species
 > python scripts/sisrs_05_setup_sisrs.py

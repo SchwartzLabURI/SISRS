@@ -17,6 +17,16 @@ def isFloat(number):
         return False
 
 '''
+This function is used to determine which version of a flag was used
+'''
+def isFound(first,second,cmdln):
+    data = ''
+    try:
+        data = cmdln[cmdln.index(first) + 1]
+    except:
+        data = cmdln[cmdln.index(second) + 1]
+    return data
+'''
 Function that will parse the command line arguments. This might be better served
 as a seperate file so this file does not get to large.
 '''
@@ -44,33 +54,36 @@ def commandLine(cmdln,script_dir):
     bool = True
 
     # Let the user specify where to place the sisrs output
-    if '-dir' in cmdln:
-        rtn[0] = cmdln[cmdln.index('-dir') + 1]
+    if '-dir' in cmdln or '--directory' in cmdln:
+        rtn[0] = isFound('-dir','--directory',cmdln)
     else:
         rtn[0] = script_dir
 
     # Flag to tell us were the raw data is stored
-    if '-rd' in cmdln:
-        rtn[1] = cmdln[cmdln.index('-rd') + 1]
+    if '-rd' in cmdln or '--rawData' in cmdln:
+        rtn[1] = isFound('-rd','--rawData',cmdln)
     else:
         print("MISSING TAXA INFORMATION")
         exit()
 
-    # Determine if the data has been pretrimed or not
-    rtn[2] = True if '-trm' in cmdln else False
+    # Determine if the data has been pretrimmed or not
+    if '-trm' in cmdln or '--trimmed' in cmdln:
+        rtn[2] = True
+    else:
+        rtn[2] = False
 
     # Determine the number of the threads to use
-    if '-th' in cmdln:
-        bool = isInt(cmdln[cmdln.index('-th') + 1])
-        rtn[3] = int(cmdln[cmdln.index('-th') + 1]) if bool else 1
+    if '-p' in cmdln or '--processors' in cmdln:
+        bool = isInt(isFound('-p','--processors',cmdln))
+        rtn[3] = int(isFound('-p','--processors',cmdln)) if bool else 1
     else:
         print("DEFAULT NUMBER OF THREADS BEING USED: 1")
         rtn[3] = 1
 
     # Obtain the genomeSize estimation for script 3
-    if '-gs' in cmdln:
-        bool = isInt(cmdln[cmdln.index('-gs') + 1])
-        rtn[4] = int(cmdln[cmdln.index('-gs') + 1]) if bool else 0
+    if '-gs' in cmdln or '--genomeSize' in cmdln:
+        bool = isInt(isFound('-gs','--genomeSize',cmdln))
+        rtn[4] = int(isFound('-gs','--genomeSize',cmdln)) if bool else 0
     else:
         if bool == False:
             print("GENOME SIZE ESTIMATION IS NOT A VALID NUMBER")
@@ -79,9 +92,9 @@ def commandLine(cmdln,script_dir):
         exit()
 
     # Get threshold for script 5
-    if '-thrs' in cmdln:
-        bool = isFloat(cmdln[cmdln.index('-thrs') + 1])
-        rtn[5] = float(cmdln[cmdln.index('-thrs') + 1]) if bool else 1
+    if '-thresh' in cmdln or '--threshold' in cmdln:
+        bool = isFloat(isFound('-thresh','--threshold',cmdln))
+        rtn[5] = float(isFound('-thresh','--threshold',cmdln)) if bool else 1
         if bool == False:
             print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES WAS NOT" +
                         "A VALID NUMBER --> SWITCHED TO 1")
@@ -93,9 +106,9 @@ def commandLine(cmdln,script_dir):
         rtn[5] = 1
 
     # Gets the minread need to run the 5 script
-    if '-mr' in cmdln:
-        bool = isInt(cmdln[cmdln.index('-mr') + 1])
-        rtn[6] = int(cmdln[cmdln.index('-mr') + 1]) if bool else 3
+    if '-mr' in cmdln or '--minread' in cmdln:
+        bool = isInt(isFound('-mr','--minread',cmdln))
+        rtn[6] = int(isFound('-mr','--minread',cmdln)) if bool else 3
 
         if bool == False:
             print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
@@ -106,9 +119,9 @@ def commandLine(cmdln,script_dir):
         rtn[6] = 3
 
     # Gets the allowed amount of missing data from the files
-    if '-ms' in cmdln:
-        bool = isInt(cmdln[cmdln.index('-ms') + 1])
-        rtn[7] = int(cmdln[cmdln.index('-ms') + 1]) if bool else 0
+    if '-ms' in cmdln or '--missing' in cmdln:
+        bool = isInt(isFound('-ms','--missing',cmdln))
+        rtn[7] = int(isFound('-ms','--missing',cmdln)) if bool else 0
         if bool == False:
             print("THE ALLOWED AMOUNT OF MISSING DATA MUST BE A VALID NUMBER")
             exit()

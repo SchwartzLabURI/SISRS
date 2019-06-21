@@ -11,6 +11,7 @@ import sys
 from glob import glob
 import subprocess
 from subprocess import Popen
+from cmdCheck import *
 from itertools import islice
 
 '''
@@ -61,13 +62,13 @@ the folders that contain sh scripts.
 def runBash(sisrs_dir,sisrs_tax_dirs):
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment.sh'
-        p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output)
-        print(err)
-        print(rc)
-        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+        #p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
+        #output, err = p.communicate()
+        #rc = p.returncode
+        #print(output)
+        #print(err)
+        #print(rc)
+        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
 
     with open(sisrs_dir+"/out_SISRS_Log","w") as file:
         file.write("\nRead Mapping and SISRS Site Selection:\n")
@@ -96,9 +97,9 @@ if __name__ == '__main__':
 
     md = 0
 
-    if '-ms' in cmd:
+    if '-ms' in cmd or '--missing' in cmd:
         try:
-            md = int(cmd[cmd.index('-ms') + 1])
+            md = int(isFound('-ms','--missing',cmd))
         except:
             print("INVALID NUMBER OF MISSING: RESTING ALLOWED MISSING COUNT TO 0")
             md = 0

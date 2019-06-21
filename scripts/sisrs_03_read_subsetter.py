@@ -13,6 +13,7 @@ from os import path
 import sys
 from glob import glob
 import subprocess
+from cmdCheck import *
 from subprocess import check_call
 import pandas as pd
 import re
@@ -304,9 +305,9 @@ if __name__ == '__main__':
         exit()
 
     gs = 0
-    if '-gs' in cmd:
+    if '-gs' in cmd or '--genomeSize' in cmd:
         try:
-            gs = int(cmd[cmd.index('-gs') + 1])
+            gs = int(isFound('-gs','--genomeSize',cmd))
         except:
             print("INVALID GENOME SIZE")
             exit()
