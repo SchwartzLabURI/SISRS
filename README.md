@@ -109,9 +109,9 @@ Example Commands:
 ```
 > python sisrs.py -rd ./SISRS_Small/ -gs 100000000
 
-> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -trm
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -p 20 -trm
 
-> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -th 20 -thrs .66 -mr 2 -ms 1
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -p 20 -thresh .66 -mr 2 -ms 1
 ```
 
 ### REQUIREMENTS FOR SPLIT UP SISRS RUN
@@ -150,7 +150,7 @@ Flags (Optional): -th
 
 Example:
 ```
-python scripts/sisrs_02_read_trimmer.py -th <# processors>
+python scripts/sisrs_02_read_trimmer.py -p <# processors>
 ```  
 
 ----
@@ -182,11 +182,11 @@ Flags needed: -gs
 * SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together  
 * The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in few species   
 
-Flags (Optioanl): -th
+Flags (Optioanl): -p
 
 ```
 #1 node, 20 processors per node
-> python scripts/sisrs_04_ray_composite.py -th <# processors>
+> python scripts/sisrs_04_ray_composite.py -p <# processors>
 ```
 
 ##### 5) Setting up the SISRS run with sisrs_05_setup_sisrs.py
@@ -197,11 +197,11 @@ Flags (Optioanl): -th
   * Indexing and processing the composite genome  
   * Creating SISRS runs scripts for each species  
 
- Flags (Optional): -th, -mr, and -thrs
+ Flags (Optional): -p, -mr, and -thresh
 
 ```
 # 20 processors, 3 reads required to call a site, 100% homozygosity per species
-> python scripts/sisrs_05_setup_sisrs.py -th 20 -mr 3 -thrs 1  
+> python scripts/sisrs_05_setup_sisrs.py -p 20 -mr 3 -thresh 1  
 
 # 10 processors, 5 reads required to call a site, 99% homozygosity per species
 > python scripts/sisrs_05_setup_sisrs.py

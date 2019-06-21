@@ -7,9 +7,9 @@
 
 import os
 from os import path
-from cmdCheck import isFound
 import sys
 from glob import glob
+from cmdCheck import *
 import pandas as pd
 
 '''
@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
     if '-thresh' in cmd or '--threshold' in cmd:
         try:
-            thres = int(isFound('-thresh','--threshold',cmdln))
+            thres = int(isFound('-thresh','--threshold',cmd))
         except:
             print("INVALID NUMBER OF THRESHOLD: RESTING THREAD COUNT TO 1")
             thres = 1

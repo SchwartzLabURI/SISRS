@@ -12,8 +12,8 @@ import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import isFound
 import subprocess
+from cmdCheck import *
 from subprocess import check_call
 import pandas as pd
 import re

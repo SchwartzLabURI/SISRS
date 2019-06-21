@@ -9,9 +9,9 @@
 
 import os
 from os import path
-from cmdCheck import isFound
 import sys
 from glob import glob
+from cmdCheck import *
 import subprocess
 from subprocess import check_call
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     proc = 1
     if '-p' in cmd or '--processors' in cmd:
         try:
-            proc = int(isFound('-p','--processors',cmdln))
+            proc = int(isFound('-p','--processors',cmd))
         except:
             proc = 1
     else:

@@ -11,9 +11,10 @@ Last edit: Devin McConnell May 23, 2019
 # Output: Script will create lots of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
 
 import sys
+import cProfile
 import os
 from os import listdir,path
-from cmdCheck import isFound
+from cmdCheck import *
 from os.path import isdir, isfile, join
 
 '''
@@ -123,7 +124,7 @@ if __name__ == "__main__":
     fileStructure(sisrs, tl)
 
     if rd != "":
-        if '-trm' in cmd or '--trimmed':
+        if '-trm' in cmd or '--trimmed' in cmd:
             makeLinks(rd, sisrs, tl, True)
         else:
             makeLinks(rd, sisrs, tl, False)
