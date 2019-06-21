@@ -13,12 +13,6 @@ from sisrs_06_run_sisrs import *
 from sisrs_07_output_sisrs import *
 from cmdCheck import *
 
-def previousRun(cmd):
-    folderStruct(cmd[0])
-    taxons = getOldTaxons(cmd[0])
-    newTaxons = moveFiles(taxons, cmd[0], cmd[1], cmd[8], cmd[9])
-
-
 '''
 Function to run all of the first script
 '''

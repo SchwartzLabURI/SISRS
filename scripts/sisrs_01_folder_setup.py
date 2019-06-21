@@ -11,7 +11,6 @@ Last edit: Devin McConnell May 23, 2019
 # Output: Script will create lots of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
 
 import sys
-import cProfile
 import os
 from os import listdir,path
 from os.path import isdir, isfile, join

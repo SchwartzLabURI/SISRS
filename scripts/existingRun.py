@@ -107,3 +107,12 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
 Running the trimmer if needed
 '''
 def existingTrimmer(sisrs_dir, taxonList):
+    print("NOT IMPLEMENTED YET")
+
+
+def previousRun(cmd):
+    folderStruct(cmd[0])
+    taxons = getOldTaxons(cmd[0])
+    newTaxons = moveFiles(taxons, cmd[0], cmd[1], cmd[8], cmd[9])
+
+    existingTrimmer()
