@@ -7,6 +7,7 @@
 
 import os
 from os import path
+from cmdCheck import isFound
 import sys
 from glob import glob
 import subprocess
@@ -96,9 +97,9 @@ if __name__ == '__main__':
 
     md = 0
 
-    if '-ms' in cmd:
+    if '-ms' in cmd or '--missing' in cmd:
         try:
-            md = int(cmd[cmd.index('-ms') + 1])
+            md = int(isFound('-ms','--missing',cmdln))
         except:
             print("INVALID NUMBER OF MISSING: RESTING ALLOWED MISSING COUNT TO 0")
             md = 0

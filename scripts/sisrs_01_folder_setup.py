@@ -13,6 +13,7 @@ Last edit: Devin McConnell May 23, 2019
 import sys
 import os
 from os import listdir,path
+from cmdCheck import isFound
 from os.path import isdir, isfile, join
 
 '''
@@ -105,8 +106,8 @@ if __name__ == "__main__":
     rd = ""
     if '-id' in cmd:
         id = cmd[cmd.index('-id') + 1]
-    elif '-rd' in cmd:
-        rd = cmd[cmd.index('-rd') + 1]
+    elif '-rd' in cmd or '--rawData' in cmd:
+        rd = isFound('-rd','--rawData',cmd)
     else:
         print("MISSING TAXA INFORMATION")
         exit()
@@ -122,7 +123,7 @@ if __name__ == "__main__":
     fileStructure(sisrs, tl)
 
     if rd != "":
-        if '-trm' in cmd:
+        if '-trm' in cmd or '--trimmed':
             makeLinks(rd, sisrs, tl, True)
         else:
             makeLinks(rd, sisrs, tl, False)

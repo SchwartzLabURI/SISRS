@@ -7,6 +7,7 @@
 
 import os
 from os import path
+from cmdCheck import isFound
 import sys
 from glob import glob
 import pandas as pd
@@ -159,9 +160,9 @@ if __name__ == '__main__':
     proc = 1
     mr = 3
     thres = 1
-    if '-th' in cmd:
+    if '-p' in cmd or '--processors' in cmd:
         try:
-            proc = int(cmd[cmd.index('-th') + 1])
+            proc = int(isFound('-p','--processors',cmd))
         except:
             print("INVALID NUMBER OF THREADS: RESTING THREAD COUNT TO 1")
             proc = 1
@@ -169,9 +170,9 @@ if __name__ == '__main__':
         print("SETTING THREAD COUNT TO 1")
         proc = 1
 
-    if '-mr' in cmd:
+    if '-mr' in cmd or '--minread' in cmd:
         try:
-            mr = int(cmd[cmd.index('-mr') + 1])
+            mr = int(isFound('-mr','--minread',cmd))
         except:
             print("INVALID NUMBER OF MINREAD: RESTING THREAD COUNT TO 3")
             mr = 3
@@ -179,9 +180,9 @@ if __name__ == '__main__':
         print("SETTING THREAD COUNT TO 3")
         mr = 3
 
-    if '-thrs' in cmd:
+    if '-thresh' in cmd or '--threshold' in cmd:
         try:
-            thres = int(cmd[cmd.index('-thrs') + 1])
+            thres = int(isFound('-thresh','--threshold',cmdln))
         except:
             print("INVALID NUMBER OF THRESHOLD: RESTING THREAD COUNT TO 1")
             thres = 1
