@@ -1,12 +1,11 @@
-# **SISRS**
-##### Dr. Rachel Schwartz, Dr. Robert Literman
-##### Code Development: Devin McConnell  
-##### University of Rhode Island
+# **SISRS v2.0**
+#### Dr. Rachel Schwartz, Dr. Robert Literman
+###### Code Development: Devin McConnell  
 
-## Getting Started
 **Note:** This repo contains a small sample set (SISRS_Small.zip). We provide this as a model for setting up data for a SISRS run, and also as a way to ensure all necessary software is installed prior to running with your data.
 
-### **Software Requirements**:
+### **Software Requirements**  
+The following programs must be installed and in your path prior to running SISRS:
 * Python3 (3.6.4)
   * Biopython
   * Numpy
@@ -15,8 +14,7 @@
 * BBMap Suite (37.40)  
 *  Ray - 2.3.2-devel  
   *  Ray requires a working version of MPI, even if running on a single node
-* FastQC (0.11.5) (If trimming)
-* RAxML (8.2.11)
+* FastQC (0.11.5) (Only if trimming)
 
 ### **Data Requirements:**
 1) Approximate genome size estimate for group  
