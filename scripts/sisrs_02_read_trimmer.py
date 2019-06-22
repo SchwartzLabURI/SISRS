@@ -210,7 +210,7 @@ if __name__ == "__main__":
         except:
             proc = 1
     else:
-        print("SWITCHING TO DEFAULT THREAD OF 1")
+        print("SWITCHING TO DEFAULT 1 PROCESSOR (-p,--processors)")
 
     bba = findAdapter()
     out = setup(sis)
