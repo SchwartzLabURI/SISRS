@@ -1,6 +1,8 @@
 # **SISRS v2.0**
 #### Dr. Rachel Schwartz, Dr. Robert Literman
-##### Code Development: Devin McConnell  
+#### Code Development: Devin McConnell  
+
+----
 
 ### **Software Requirements**  
 The following programs must be installed and in your path prior to running SISRS:
@@ -12,7 +14,9 @@ The following programs must be installed and in your path prior to running SISRS
 * BBMap Suite (37.40)  
 *  Ray - 2.3.2-devel  
   *  Ray requires a working version of MPI, even if running on a single node
-* FastQC (0.11.5) (Only if trimming)
+* FastQC (0.11.5) (Only if trimming)  
+
+----
 
 ### **Data Requirements:**
 1) Approximate genome size estimate for group  
@@ -24,6 +28,8 @@ The following programs must be installed and in your path prior to running SISRS
 * SISRS default parameters require 3X depth to call a site, so higher per-taxa coverage is ideal. As a **minimum we recommend at least 10X coverage**. The pipeline can be run with less, but site recovery will become  reduced as coverage drops.
 * All read files should be of the same 'type' (e.g. Don't mix DNA-seq + RNA-seq)
 * Ensure high sequence data quality prior to analysis (low read quality and high sequence duplication levels are both red flags for analysis). Note that the built-in trimming scripts are fairly conservative.
+
+----
 
 ### **Instructions for Running SISRS**
 
@@ -214,7 +220,10 @@ Flags: NONE
 
 ```
 > python scripts/sisrs_06_run_sisrs.py
-```
+```  
+
+----
+
 
 ##### 7) Complete SISRS Run and output alignments with sisrs_07_output_sisrs.py
 
