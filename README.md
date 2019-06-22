@@ -74,7 +74,7 @@ Example Commands:
 
 #Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing one taxon to be missing for any given site in the final alignment
 > python sisrs.py -rd ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1
-> python sisrs.py --rrwData ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
+> python sisrs.py --rawData ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
 
 ```
 
