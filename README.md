@@ -2,8 +2,6 @@
 #### Dr. Rachel Schwartz, Dr. Robert Literman
 ###### Code Development: Devin McConnell  
 
-**Note:** This repo contains a small sample set (SISRS_Small.zip). We provide this as a model for setting up data for a SISRS run, and also as a way to ensure all necessary software is installed prior to running with your data.
-
 ### **Software Requirements**  
 The following programs must be installed and in your path prior to running SISRS:
 * Python3 (3.6.4)
@@ -27,7 +25,7 @@ The following programs must be installed and in your path prior to running SISRS
 * All read files should be of the same 'type' (e.g. Don't mix DNA-seq + RNA-seq)
 * Ensure high sequence data quality prior to analysis (low read quality and high sequence duplication levels are both red flags for analysis). Note that the built-in trimming scripts are fairly conservative.
 
-## **Instructions for Running SISRS**
+### **Instructions for Running SISRS**
 
 Currently there are two way to run SISRS:  
 
@@ -36,43 +34,51 @@ Currently there are two way to run SISRS:
 
 2) Run SISRS as **individual scripts** (allowing independent steps to be run on multiple cores if available, e.g. in an **HPC environment**)  
 
-#### **Continuous Run Instruction**  
+### **Continuous Run Instruction**  
 Continuous SISRS is run as
-```python scripts/sisrs.py```, and requires at least two arguments:
+```python scripts/sisrs.py```, and requires at least two arguments:  
 
-1) **Genome Size Estimate** (-gs):  Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
+**Required Arguments**  
 
-2) **Specifying starting data** (-rd): Path to directory where reads are already split into folders by taxon (these can be linked files).  
+**1) Genome Size Estimate** (*-gs, --genomeSize*):  Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
+
+**2) Specifying starting data** (*-rd, --rawData*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
   - **Note 1:** No spaces or special characters are allowed when naming taxon directories.  
-  -**Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step
+  -**Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
 
 **Optional Flags**  
 
-**Output Directory** (-dir): Path to desired SISRS output directory. DEFAULT: The directory preceding where the scripts are located  
+**Output Directory** (*-dir,--directory*): Path to desired SISRS output directory. DEFAULT: The directory preceding where the scripts are located  
 
-**Processors** (*-p*): Specify the number of available processors. DEFAULT: 1  
+**Processors** (*-p,--processors*): Specify the number of available processors. DEFAULT: 1  
   - Note: If running this on a multi-core machine, specify the number of processors per node here.  
 
-**Homozygosity Threshold** (-thresh): Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1 (SISRS sites have support for only a single base within taxa)  
+**Homozygosity Threshold** (*-thresh,--threshold*): Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1 (SISRS sites have support for only a single base within taxa)  
 
-**Minimum Coverage Threshold** (-minread): Specify the minimum read coverage to call a SISRS site. DEFAULT: 3  (Three reads required to call a site)
+**Minimum Coverage Threshold** (*-mr,--minread*): Specify the minimum read coverage to call a SISRS site. DEFAULT: 3  (Three reads required to call a site)
 
-**Missing Taxa Allowed** (-missing): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. DEFAULT: 0 (Coverage for all taxa for all sites)  
+**Missing Taxa Allowed** (*-ms,--missing*): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. DEFAULT: 0 (Coverage for all taxa for all sites)  
 
 Example Commands:
 
 ```
 #Run SISRS with a genome size estimate of 100 MB
 > python sisrs.py -rd ./SISRS_Small/ -gs 100000000
+> python sisrs.py --rawData ./SISRS_Small/ -genomeSize 100000000
+
 
 #Run SISRS with a genome size estimate of 2GB, 20 processors, and pre-trimmed reads
 > python sisrs.py -rd ./SISRS_Small/ -gs 2000000000 -p 20 -trm
+> python sisrs.py --rawData ./SISRS_Small/ -genomeSize 2000000000 --processors 20 -trm
+
 
 #Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing one taxon to be missing for any given site in the final alignment
-> python sisrs.py -rd ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -minread 2 -missing 1
+> python sisrs.py -rd ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1
+> python sisrs.py --rrwData ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
+
 ```
 
-#### **Split Run Instruction**  
+### **Split Run Instruction**  
 
  1) Clone repo  
  2) Edit TaxonIDs file so that includes each Taxon ID on a new line. ex)  
