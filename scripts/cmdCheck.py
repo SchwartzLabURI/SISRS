@@ -63,7 +63,7 @@ def commandLine(cmdln,script_dir):
     if '-rd' in cmdln or '--rawData' in cmdln:
         rtn[1] = isFound('-rd','--rawData',cmdln)
     else:
-        print("MISSING TAXA INFORMATION")
+        print("MISSING PATH TO RAW DATA (-rd,--rawData)")
         exit()
 
     # Determine if the data has been pretrimmed or not
@@ -77,7 +77,7 @@ def commandLine(cmdln,script_dir):
         bool = isInt(isFound('-p','--processors',cmdln))
         rtn[3] = int(isFound('-p','--processors',cmdln)) if bool else 1
     else:
-        print("DEFAULT NUMBER OF THREADS BEING USED: 1")
+        print("DEFAULT NUMBER OF PROCESSORS (-p,--processors) BEING USED: 1")
         rtn[3] = 1
 
     # Obtain the genomeSize estimation for script 3
@@ -86,9 +86,9 @@ def commandLine(cmdln,script_dir):
         rtn[4] = int(isFound('-gs','--genomeSize',cmdln)) if bool else 0
     else:
         if bool == False:
-            print("GENOME SIZE ESTIMATION IS NOT A VALID NUMBER")
+            print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS NOT A VALID NUMBER")
         else:
-            print("GENOME SIZE ESTIMATION IS REQUEIRED FOR SISRS")
+            print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS REQUEIRED FOR SISRS")
         exit()
 
     # Get threshold for script 5
@@ -96,11 +96,10 @@ def commandLine(cmdln,script_dir):
         bool = isFloat(isFound('-thresh','--threshold',cmdln))
         rtn[5] = float(isFound('-thresh','--threshold',cmdln)) if bool else 1
         if bool == False:
-            print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES WAS NOT" +
-                        "A VALID NUMBER --> SWITCHED TO 1")
-        elif rtn[5] <= 0 and rtn[5] >= 1:
-            print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES MUST BE " +
-                        "BETWEEN 0 AND 1  --> SWITCHED TO 1")
+            print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES WAS NOT A VALID NUMBER --> SWITCHED TO 1")
+        elif rtn[5] <= 0 or rtn[5] > 1:
+            print("MINIMUM SITE HOMOZYGOSITY FOR SISRS SITES MUST BE BETWEEN 0 AND 1  --> SWITCHED TO 1")
+            rtn[5] = 1
     else:
         print("DEFAULT THRESHOLD IS BEING USED: 1")
         rtn[5] = 1
@@ -111,9 +110,10 @@ def commandLine(cmdln,script_dir):
         rtn[6] = int(isFound('-mr','--minread',cmdln)) if bool else 3
 
         if bool == False:
-            print("MINREAD COVERAGE MUST BE A VALID INTEGER --> SWITCHED TO 3")
-        elif rtn[6] < 1 or rtn[6] > 3:
-            print("MINREAD COVERAGE MUST BE BETWEEN 1 AND 3 --> SWITCHED TO 3")
+            print("MINREAD COVERAGE (-mr,--minread) MUST BE A VALID INTEGER --> SWITCHED TO 3")
+        elif rtn[6] < 1:
+            print("MINREAD COVERAGE (-mr,--minread) MUST BE GREATER THAN 1 --> SWITCHED TO 3")
+            rtn[6]=3
     else:
         print("DEFAULT MINREAD IS BEING USED: 3")
         rtn[6] = 3
@@ -123,10 +123,10 @@ def commandLine(cmdln,script_dir):
         bool = isInt(isFound('-ms','--missing',cmdln))
         rtn[7] = int(isFound('-ms','--missing',cmdln)) if bool else 0
         if bool == False:
-            print("THE ALLOWED AMOUNT OF MISSING DATA MUST BE A VALID NUMBER")
-            exit()
+            print("THE ALLOWED AMOUNT OF MISSING DATA (-ms/--missing) MUST BE A VALID NUMBER --> SWITCHED TO 0")
+            rtn[7] = 0
     else:
-        print("THE DEFAULT AMOUNT OF MISSING DATA IS BEING USED TO RUN SISRS: 0")
+        print("THE DEFAULT AMOUNT OF MISSING DATA(-ms/--missing) IS BEING USED TO RUN SISRS: 0")
         rtn[7] = 0
 
     # Deal with adding a taxon

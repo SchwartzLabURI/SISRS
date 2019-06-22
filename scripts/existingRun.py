@@ -15,8 +15,7 @@ will beself.
 '''
 def folderStruct(sisrs_dir):
 
-    folders = ["/Post_SISRS_Processing", "/R_Analyses", "/Ray_Composite_Genome",
-                "/Reads", "/Reference_Genome", "/Reference_Topology", "/SISRS_Run"]
+    folders = ["/Ray_Composite_Genome","/Reads", "/SISRS_Run"]
     rtn = ""
     for f in folders:
         if not path.isdir(sisrs_dir+f):
@@ -26,7 +25,6 @@ def folderStruct(sisrs_dir):
 '''
 Function to check for the .nex files and read the alignment.nex file.
 This function will be used to extract the taxon list for further data exploration
-
 Return the list of old taxon names
 '''
 def getOldTaxons(sisrs_dir):
@@ -63,7 +61,6 @@ def getOldTaxons(sisrs_dir):
 '''
 This function is deisgned to move the old data to a seperate location and zip it
 in order to reduce space.
-
 Return the list of nex taxons
 '''
 def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
