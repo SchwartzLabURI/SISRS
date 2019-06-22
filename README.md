@@ -44,7 +44,7 @@ Continuous SISRS is run as
 
 **2) Specifying starting data** (*-rd, --rawData*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
   - **Note 1:** No spaces or special characters are allowed when naming taxon directories.  
-  -**Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
+  - **Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
 
 **Optional Flags**  
 
