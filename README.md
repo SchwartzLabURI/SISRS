@@ -1,6 +1,6 @@
 # **SISRS v2.0**
 #### Dr. Rachel Schwartz, Dr. Robert Literman
-##### Code Development: Devin McConnell  
+#### Code Development: Devin McConnell  
 
 ----
 
