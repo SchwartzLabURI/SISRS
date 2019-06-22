@@ -51,6 +51,7 @@ if __name__ == '__main__':
     cmd = sys.argv
     sis = os.path.dirname(sys.path[0])
 
+    #BECAUSE RAY RUNS ON MPI, IT MAY NEED IT'S OWN PROCESSOR VARIABLE 
     proc = 1
     if '-p' in cmd or '--processors' in cmd:
         try:
