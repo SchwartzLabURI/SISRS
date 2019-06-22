@@ -1,12 +1,13 @@
 # **SISRS**
-##### Dr. Rachel Schwartz, Dr. Robert Literman, Devin McConnell  
+##### Dr. Rachel Schwartz, Dr. Robert Literman
+##### Code Development: Devin McConnell  
 ##### University of Rhode Island
 
 ## Getting Started
 **Note:** This repo contains a small sample set (SISRS_Small.zip). We provide this as a model for setting up data for a SISRS run, and also as a way to ensure all necessary software is installed prior to running with your data.
 
 ### **Software Requirements**:
-* Python3 (3.6.1)
+* Python3 (3.6.4)
   * Biopython
   * Numpy
 * Bowtie2 (2.3.4)  
@@ -16,8 +17,6 @@
   *  Ray requires a working version of MPI, even if running on a single node
 * FastQC (0.11.5) (If trimming)
 * RAxML (8.2.11)
-* MAFFT (7.310)
-* BEDTools (2.26.0)
 
 ### **Data Requirements:**
 1) Approximate genome size estimate for group  
