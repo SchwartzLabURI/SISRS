@@ -16,7 +16,7 @@ from cmdCheck import *
 '''
 Function to run all of the first script
 '''
-def sisrs01(data_path,sisrs_dir,trimed):
+def sisrs01(data_path,sisrs_dir,trimmed):
     taxa_list = []
 
     taxa_list = readTaxaFromFolders(data_path)
@@ -24,7 +24,7 @@ def sisrs01(data_path,sisrs_dir,trimed):
     fileStructure(sisrs_dir, taxa_list)
 
 
-    if trimed:
+    if trimmed:
         makeLinks(data_path, sisrs_dir, taxa_list, True)
     else:
         makeLinks(data_path, sisrs_dir, taxa_list, False)
@@ -32,8 +32,8 @@ def sisrs01(data_path,sisrs_dir,trimed):
 '''
 Function to run all of the second script
 '''
-def sisrs2(trimed,processors,sisrs_dir):
-    if not trimed:
+def sisrs2(trimmed,processors,sisrs_dir):
+    if not trimmed:
         bbduk_adapter = findAdapter()
         out = setup(sisrs_dir)
 

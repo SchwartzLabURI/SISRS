@@ -101,10 +101,10 @@ if __name__ == '__main__':
         try:
             md = int(isFound('-ms','--missing',cmd))
         except:
-            print("INVALID NUMBER OF MISSING: RESTING ALLOWED MISSING COUNT TO 0")
+            print("INVALID NUMBER OF MISSING (-ms,--missing): RESTING ALLOWED MISSING COUNT TO 0")
             md = 0
     else:
-        print("USING DEFAUL MISSING DATA: 0")
+        print("USING DEFAULT MISSING (-ms,--missing) DATA: 0")
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
     createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])
