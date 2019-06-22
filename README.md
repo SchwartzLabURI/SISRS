@@ -82,7 +82,7 @@ Example Commands:
 
 **1A) Specifying starting data with directory** (*-rd, --rawData*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
   - **Note 1:** No spaces or special characters are allowed when naming taxon directories.  
-  -**Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
+  - **Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
 
 ```
 python scripts/sisrs_01_folder_setup.py -rd /SISRS_Small/
