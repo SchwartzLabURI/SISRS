@@ -1,6 +1,6 @@
 # **SISRS v2.0**
 #### Dr. Rachel Schwartz, Dr. Robert Literman
-###### Code Development: Devin McConnell  
+##### Code Development: Devin McConnell  
 
 ### **Software Requirements**  
 The following programs must be installed and in your path prior to running SISRS:
