@@ -1,20 +1,19 @@
-# **SISRS**
-##### Dr. Rachel Schwartz, Dr. Robert Literman, Devin McConnell  
-##### University of Rhode Island
+# **SISRS - PhyloSignal (Literman and Schwartz, 2019)**
+##### This GitHub repo contains all the necessary scripts to run analyses from *McConnell, Literman, and Schwartz* (June 2019)
 
 ## Getting Started
-**Note:** This repo contains a small sample set (SISRS_Small.zip). We provide this as a model for setting up data for a SISRS run, and also as a way to ensure all necessary software is installed prior to running with your data.
 
-### **Software Requirements**:
+### **Software Requirements** (Manuscript Version):
 * Python3 (3.6.1)
-  * Biopython
-  * Numpy
+  * Add packages  
 * Bowtie2 (2.3.4)  
 * Samtools (1.3.1)  
 * BBMap Suite (37.40)  
-*  Ray - 2.3.2-devel  
+* Genome assembler of your choosing (Ray - 2.3.2-devel)  
   *  Ray requires a working version of MPI, even if running on a single node
-* FastQC (0.11.5) (If trimming)
+* R (3.5.3)  
+  * Add packages  
+* FastQC (0.11.5)
 * RAxML (8.2.11)
 * MAFFT (7.310)
 * BEDTools (2.26.0)
@@ -24,73 +23,104 @@
 * Note: If genome size estimates vary greatly within your group, use an estimate on the larger side    
 
 2) Raw or Trimmed NGS reads for each taxa  
-* Currently, starting NGS reads should either be **all untrimmed or all trimmed**. We plan to implement mixed trim status in an upcoming release.  
-* Paired-end reads must have the same basename and end in _1/_2.fastq.gz to be recognized as paired end. Any other naming convention will trigger single-end assignment
-* SISRS default parameters require 3X depth to call a site, so higher per-taxa coverage is ideal. As a **minimum we recommend at least 10X coverage**. The pipeline can be run with less, but site recovery will become  reduced as coverage drops.
+* SISRS default parameters require 3X depth to call a site, so higher per-taxa coverage is ideal. In the associated manuscript, we required 20X coverage per taxa. The pipeline can be run with less, but site recovery will become  reduced as coverage drops.
 * All read files should be of the same 'type' (e.g. Don't mix DNA-seq + RNA-seq)
-* Ensure high sequence data quality prior to analysis (low read quality and high sequence duplication levels are both red flags for analysis). Note that the built-in trimming scripts are fairly conservative.
+* Ensure high sequence data quality prior to analysis (low read quality and high sequence duplication levels are both red flags for analysis). Scripts are provided to run FastQC.
+
+3) Reference genome (.fasta) with associated annotations (.bed)
+
+4) All RawReads must be labeled accordingly:
+    1) (Taxon)_1/_2.fastq.gz for paired end reads
+    2) (Taxon)_SE.fastq.gz for single end reads
+
+5) Sample Data Set:
+    1) SISRS_Small.zip
+    2) It has the correct naming convention and folder setup
 
 ## **Instructions for Running SISRS**
 
-Currently there are two way to run SISRS:  
+There are two way to run SISRS
 
-1) Run SISRS as a **continuous program**  
-  * **WARNING:** Depending on the size of the dataset, running SISRS in serial mode may take days or weeks to run.
+1) Run SISRS as a continuous program
+    * Only script that needs to be ran directly: sisrs.py
+    * WARNING: DEPENDING ON DATA SIZE THIS CAN TAKE A LONG AMOUNT OF TIME
+2) Run SISRS as individual scripts
+    * Scripts that need to be run directly
+        * sisrs_01_folder_setup.py
+        * sisrs_02_read_trimmer.py --> (OPTIONAL BASED ON DATA)
+        * sisrs_03_read_subsetter.py
+        * sisrs_04_ray_composite.py
+        * sisrs_05_setup_sisrs.py
+        * sisrs_06_run_sisrs.py
+        * sisrs_07_output_sisrs.py
 
-2) Run SISRS as **individual scripts** (allowing independent steps to be run on multiple cores if available, e.g. in an **HPC environment**)  
+### Flags to run SISRS
+#### Some flags can only be used for the continuous run of SISRS
 
-#### **Continuous Run Instruction**  
-Continuous SISRS is run as
-```python scripts/sisrs.py```, and requires at least two arguments:
+* -dir; --directory --> Specify where the SISRS output will go. DEFAULT: The directory preceding where the scripts are located
+    * This option is only available for the continuous run. The default is used in the individual scripts
+* -id --> Specify the file that has all of the Taxon IDs. Providing this file requires the user to manually move the files.
+    * This option is only available for the individual run
+    * FILE MUST LOOK LIKE
+```
+> cat TaxonIDs
 
-1) **Genome Size Estimate** (-gs):  Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
+AotNan
+CalJac
+ColAng
+GorGor
+HomSap
+HylMol
+MacMul
+MacNem
+PanPan
+PanTro
+PapAnu
+PapCyn
+```
+* -rd; --rawData --> Specify the path where all the data is. Providing this path will make links to the correct locations for you
+* -trm; --trimmed --> Tell's SISRS the data has been trimmed if it is present. It will link the files files in Reads/RawReads if this flag is not present and if it is present the links go in Reads/TrimReads. In the continues run it skips the trimming step. DEFAULT: untrimmed
+* -p; --processors --> Specify the number of threads. DEFAULT: 1
+* -gs; --genomeSize --> Specify the approximate genome size estimate for group  
+* -thresh; --threshold --> Specify the threshold for the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1
+* -mr; --minread --> Specify the minimum read coverage to call a SISRS site, must be 1-3. Default: 3
+* -ms; --missing --> Specify the number of taxa to leave out. DEFAULT: 0
 
-2) **Specifying starting data** (-rd): Path to directory where reads are already split into folders by taxon (these can be linked files).  
-  - **Note 1:** No spaces or special characters are allowed when naming taxon directories.  
-  -**Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step
+### REQUIREMENTS FOR CONTINUOUS SISRS RUN
+In order to run SISRS you need to use the minimum of two flags, -id or -rd and -gs, without the use of these two flags the software will not run. All other flags will move to the default.
 
-**Optional Flags**  
+Data organization:
 
-**Output Directory** (-dir): Path to desired SISRS output directory. DEFAULT: The directory preceding where the scripts are located  
+Your data must be stored in a folder consisting of sub-directories that are labeled after the taxon names and nothing else. Inside each folder there can only be files labeled (taxa)_1,_2,or _SE.fastq.gz (*which is required for every version of SISRS*).
 
-**Processors** (*-p*): Specify the number of available processors. DEFAULT: 1  
-  - Note: If running this on a multi-core machine, specify the number of processors per node here.  
+Ex:
 
-**Homozygosity Threshold** (-thresh): Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1. DEFAULT: 1 (SISRS sites have support for only a single base within taxa)  
-
-**Minimum Coverage Threshold** (-minread): Specify the minimum read coverage to call a SISRS site. DEFAULT: 3  (Three reads required to call a site)
-
-**Missing Taxa Allowed** (-missing): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. DEFAULT: 0 (Coverage for all taxa for all sites)  
+```
+> cd SISRS/ ; ls
+> README.md	SISRS_Small	TaxonIDs scripts
+> cd SISRS_Small/ ; ls
+> AotNan CalJac	ColAng	GorGor	HomSap	HylMol	MacMul	MacNem	PanPan	PanTro	PapAnu	PapCyn
+> cd AotNan ; ls
+> AotNan_1.fastq.gz	AotNan_2.fastq.gz	AotNan_SE.fastq.gz
+```
 
 Example Commands:
 
 ```
-#Run SISRS with a genome size estimate of 100 MB
 > python sisrs.py -rd ./SISRS_Small/ -gs 100000000
 
-#Run SISRS with a genome size estimate of 2GB, 20 processors, and pre-trimmed reads
-> python sisrs.py -rd ./SISRS_Small/ -gs 2000000000 -p 20 -trm
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -p 20 -trm
 
-#Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing one taxon to be missing for any given site in the final alignment
-> python sisrs.py -rd ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -minread 2 -missing 1
+> python sisrs.py -rd ./SISRS_Small/ -gs 100000000 -p 20 -thresh .66 -mr 2 -ms 1
 ```
 
-#### **Split Run Instruction**  
+### REQUIREMENTS FOR SPLIT UP SISRS RUN
 
- 1) Clone repo  
- 2) Edit TaxonIDs file so that includes each Taxon ID on a new line. ex)  
- ```
- > cat TaxonIDs
- Homo_sapiens
- Pan_troglodytes
- Mus_musculus
- etc.
- ```
-  * Note: Abbreviated taxon IDs may be easier to work with downstream (e.g. HomSap vs. Homo_sapiens)
+##### 1) Set up folder structure using sisrs_01_folder_setup.py
 
-
-
-3) When TaxonIDs file is ready, running ```python scripts/sisrs_01_folder_setup.py Taxon``` will create taxon folders in the RawReads, TrimReads, and SISRS_Run directories  
+* In the main directory (e.g. /home/dmcconnell/SISRS) edit the included blank text file (TaxonIDs), adding each of your taxon IDs on a new line or place the directory with all of your data here organized as specified above in the Data organization section of the requirements for continuous run of SISRS.  
+  * Note: Six-letter taxon IDs and folder names may be easier to work with (e.g. HomSap vs. Homo_sapiens)
+* sisrs_01_folder_setup.py will create taxon folders in the RawReads, TrimReads, and SISRS_Run directories  
 
 Flags needed: -rd and -trm is optional. It is important to note that if you use the -id flag you are expected to manually move your data into the correct folder.
 
@@ -120,7 +150,7 @@ Flags (Optional): -th
 
 Example:
 ```
-python scripts/rsisrs_02_read_trimmer.py -th <# processors>
+python scripts/sisrs_02_read_trimmer.py -p <# processors>
 ```  
 
 ----
@@ -152,11 +182,11 @@ Flags needed: -gs
 * SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together  
 * The subsampling step above ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in few species   
 
-Flags (Optioanl): -th
+Flags (Optioanl): -p
 
 ```
 #1 node, 20 processors per node
-> python scripts/sisrs_04_ray_composite.py -th <# processors>
+> python scripts/sisrs_04_ray_composite.py -p <# processors>
 ```
 
 ##### 5) Setting up the SISRS run with sisrs_05_setup_sisrs.py
@@ -167,11 +197,11 @@ Flags (Optioanl): -th
   * Indexing and processing the composite genome  
   * Creating SISRS runs scripts for each species  
 
- Flags (Optional): -th, -mr, and -thrs
+ Flags (Optional): -p, -mr, and -thresh
 
 ```
 # 20 processors, 3 reads required to call a site, 100% homozygosity per species
-> python scripts/sisrs_05_setup_sisrs.py -th 20 -mr 3 -thrs 1  
+> python scripts/sisrs_05_setup_sisrs.py -p 20 -mr 3 -thresh 1  
 
 # 10 processors, 5 reads required to call a site, 99% homozygosity per species
 > python scripts/sisrs_05_setup_sisrs.py
