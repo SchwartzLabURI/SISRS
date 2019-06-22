@@ -164,30 +164,30 @@ if __name__ == '__main__':
         try:
             proc = int(isFound('-p','--processors',cmd))
         except:
-            print("INVALID NUMBER OF THREADS: RESTING THREAD COUNT TO 1")
+            print("INVALID NUMBER OF PROCESSORS (-p,--processors): DEFAULT PROCESSOR COUNT TO 1")
             proc = 1
     else:
-        print("SETTING THREAD COUNT TO 1")
+        print("SETTING PROCESSORS COUNT (-p,--processors) TO 1")
         proc = 1
 
     if '-mr' in cmd or '--minread' in cmd:
         try:
             mr = int(isFound('-mr','--minread',cmd))
         except:
-            print("INVALID NUMBER OF MINREAD: RESTING THREAD COUNT TO 3")
+            print("INVALID NUMBER OF MINREAD (-mr,--minread): DEFAULT THREAD COUNT TO 3")
             mr = 3
     else:
-        print("SETTING THREAD COUNT TO 3")
+        print("SETTING MINREAD (-mr,--minreads TO 3")
         mr = 3
 
     if '-thresh' in cmd or '--threshold' in cmd:
         try:
             thres = int(isFound('-thresh','--threshold',cmd))
         except:
-            print("INVALID NUMBER OF THRESHOLD: RESTING THREAD COUNT TO 1")
+            print("INVALID NUMBER OF THRESHOLD (-thresh,--threshold): DEFAULT THRESHOLD COUNT TO 1")
             thres = 1
     else:
-        print("SETTING THRESHOLD COUNT TO 1")
+        print("SETTING THRESHOLD COUNT (-thresh,--threshold) TO 1")
         thres = 1
 
     trim_read_tax_dirs,ray_dir,sisrs,composite_dir = obtainDir(sis)
