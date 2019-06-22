@@ -15,8 +15,7 @@ will beself.
 '''
 def folderStruct(sisrs_dir):
 
-    folders = ["/Post_SISRS_Processing", "/R_Analyses", "/Ray_Composite_Genome",
-                "/Reads", "/Reference_Genome", "/Reference_Topology", "/SISRS_Run"]
+    folders = ["/Ray_Composite_Genome","/Reads","/SISRS_Run"]
     rtn = ""
     for f in folders:
         if not path.isdir(sisrs_dir+f):
