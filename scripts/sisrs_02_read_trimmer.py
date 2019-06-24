@@ -77,6 +77,26 @@ def setup(sisrs_dir):
     return rtn
 
 '''
+This function is designed to run the fastqc command with new data only. Modified
+to run both the raw and the trimmed data, takes the number of processors, the
+output directory, and the read directory.
+'''
+def newdFastqc(processors,fastqc_output,data_dir):
+    #Run FastQC on all trimmed files, using all available processors
+    fastqc_command = [
+        'fastqc',
+        '-t',
+        '{}'.format(processors),
+        '-o',
+        '{}'.format(fastqc_output)]
+
+    for item in data_dir:
+        for x in glob(item+"/*.fastq.gz"):
+            fastqc_command.append(x)
+
+    check_call(fastqc_command)
+
+'''
 This function is designed to run the fastqc command. Modified to run both the raw
 and the trimmed data, takes the number of processors, the output directory, and
 the read directory.

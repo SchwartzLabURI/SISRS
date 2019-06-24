@@ -7,6 +7,7 @@ import sys
 import subprocess
 from os import path
 from sisrs_01_folder_setup import *
+from sisrs_02_read_trimmer import *
 
 # ****************DETERMINING IF SISRS RUN EXISTS******************************
 '''
@@ -100,11 +101,39 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
 
     return taxon
 
+# *************************** RUNNING TRIMMER **********************************
+'''
+Move new data to the taxon folder
+'''
+def moveData(taxonList,sisrs_dir,data):
+    for item in taxonList:
+        if isdir(sisrs_dir+"/Reads/RawReads/"+item) == False:
+            os.mkdir(sisrs_dir+"/Reads/RawReads/"+item)
+
+    for x in taxonList:
+        # Only batins the files that are not starting with '.'
+        l = [f for f in listdir(data + '/' + x) if not f.startswith('.')]
+        for i in l:
+            # Creates the soft link to the files
+            os.link(data + '/' + x + '/' + i,
+                sisrs_dir+"/Reads/RawReads/%s/"%x + '/' + i)
+
 '''
 Running the trimmer if needed
 '''
-def existingTrimmer(sisrs_dir, taxonList):
-    print("NOT IMPLEMENTED YET")
+def existingTrimmer(sisrs_dir, taxonList,data_path,threads):
+    moveData(taxonList,sisrs_dir,data_path)
+    bb = findAdapter()
+    rtn = setup(sisrs_dir)
+    rtn[5] = [item for item in rtn[5] for item1 in taxonList if item1 in item]
+
+    # raw_fastqc_command
+    newdFastqc(threads,rtn[3],rtn[5])
+
+    trim(rtn[5],rtn[1],bb,rtn[2])
+
+    # trim_fastqc_command
+    newdFastqc(threads,rtn[4],rtn[5])
 
 
 def previousRun(cmd):
@@ -112,4 +141,5 @@ def previousRun(cmd):
     taxons = getOldTaxons(cmd[0])
     newTaxons = moveFiles(taxons, cmd[0], cmd[1], cmd[8], cmd[9])
 
-    existingTrimmer()
+    if not cmd[2]:
+        existingTrimmer(cmd[0],newTaxons,cmd[1],cmd[3])
