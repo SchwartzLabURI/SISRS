@@ -62,13 +62,13 @@ the folders that contain sh scripts.
 def runBash(sisrs_dir,sisrs_tax_dirs):
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment.sh'
-        #p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
-        #output, err = p.communicate()
-        #rc = p.returncode
-        #print(output)
-        #print(err)
-        #print(rc)
-        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+        p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
+        output, err = p.communicate()
+        rc = p.returncode
+        print(output)
+        print(err)
+        print(rc)
+        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
 
     with open(sisrs_dir+"/out_SISRS_Log","w") as file:
         file.write("\nRead Mapping and SISRS Site Selection:\n")

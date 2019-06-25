@@ -47,7 +47,7 @@ def commandLine(cmdln,script_dir):
     # minRead = 3         --> 6
     # missing = 0         --> 7
     # addTaxon = False    --> 8
-    #addData = False      --> 9
+    # addData = False      --> 9
     rtn = [ "" for i in range(10)]
 
     # Variablese used throughout if's

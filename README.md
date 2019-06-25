@@ -1,6 +1,6 @@
 # **SISRS v2.0**
 #### Dr. Rachel Schwartz, Dr. Robert Literman
-#### Code Development: Devin McConnell  
+#### Code Development: Devin J. McConnell  
 
 ----
 
@@ -75,7 +75,7 @@ Example Commands:
 
 #Run SISRS with a genome size estimate of 2GB, 20 processors, and pre-trimmed reads
 > python sisrs.py -rd ./SISRS_Small/ -gs 2000000000 -p 20 -trm
-> python sisrs.py --rawData ./SISRS_Small/ -genomeSize 2000000000 --processors 20 -trm
+> python sisrs.py --rawData ./SISRS_Small/ --genomeSize 2000000000 --processors 20 -trm
 
 
 #Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing one taxon to be missing for any given site in the final alignment

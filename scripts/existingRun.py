@@ -8,6 +8,9 @@ import subprocess
 from os import path
 from sisrs_01_folder_setup import *
 from sisrs_02_read_trimmer import *
+from sisrs_05_setup_sisrs import *
+from sisrs_06_run_sisrs import *
+from sisrs_07_output_sisrs import *
 
 # ****************DETERMINING IF SISRS RUN EXISTS******************************
 '''
@@ -99,6 +102,11 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
                 '{0}/backup/{1}'.format(sisrs_dir,item)]
             os.system(" ".join(command))
 
+    # Add all of the empty output directiers back into the SISRS_Run folder
+    for item in taxon:
+        if isdir(sisrs_dir+"/SISRS_Run/"+item) == False:
+            os.mkdir(sisrs_dir+"/SISRS_Run/"+item)
+
     return taxon
 
 # *************************** RUNNING TRIMMER **********************************
@@ -135,7 +143,42 @@ def existingTrimmer(sisrs_dir, taxonList,data_path,threads):
     # trim_fastqc_command
     newdFastqc(threads,rtn[4],rtn[5])
 
+# ********************** RUNNING SISRS SETUP ***********************************
+'''
+This function is designed to go through and and setup excatly what is needed for
+a sisrs run. It will only go through and setup up the new data that has been
+added.
+'''
+def runSetup(outPath,threads,minread,threshold,newTaxons):
+    trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
+    trim_read_tax_dirs = [item for item in trim_read_tax_dirs for item1 in newTaxons if item1 in item]
+    fileChanges(ray_dir,composite_dir)
+    indexCompGenome(composite_dir,threads)
+    sisrs_template = beginSetUp(composite_dir,sys.path[0])
+    copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
 
+# ************************** Running SISRS *************************************
+'''
+This function is desinged to run all of the sisrs 6 script. It will only run the
+new data tha has been added.
+'''
+def runSISRS(sisrs_dir,newTaxons):
+    sisrs_tax_dirs = sisrsSetup(sisrs_dir)
+    sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
+    runSisrs(sisrs_tax_dirs)
+
+# ***************************** Output SISRS ***********************************
+'''
+This function is desinged to run all of the sisrs 7 script. It will only run the
+new data tha has been added.
+'''
+def outputSISRS(outPath,missing,newTaxons):
+    composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
+    sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
+    createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
+    runBash(sisrs_dir,sisrs_tax_dirs)
+
+# ********************** PREVIOUS RUN CALLER ***********************************
 def previousRun(cmd):
     folderStruct(cmd[0])
     taxons = getOldTaxons(cmd[0])
@@ -143,3 +186,7 @@ def previousRun(cmd):
 
     if not cmd[2]:
         existingTrimmer(cmd[0],newTaxons,cmd[1],cmd[3])
+
+    runSetup(cmd[0],cmd[3],cmd[6],cmd[5],newTaxons)
+    runSISRS(cmd[0],newTaxons)
+    outputSISRS(cmd[0],cmd[7],newTaxons)
