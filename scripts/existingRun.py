@@ -113,10 +113,16 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
 '''
 Move new data to the taxon folder
 '''
-def moveData(taxonList,sisrs_dir,data):
+def moveData(taxonList,sisrs_dir,data,trim):
+    dest = ""
+    if trim:
+        dest = "TrimReads"
+    else:
+        dest = "RawReads"
+
     for item in taxonList:
-        if isdir(sisrs_dir+"/Reads/RawReads/"+item) == False:
-            os.mkdir(sisrs_dir+"/Reads/RawReads/"+item)
+        if isdir(sisrs_dir+"/Reads/%s/"%dest+item) == False:
+            os.mkdir(sisrs_dir+"/Reads/%s/"%dest+item)
 
     for x in taxonList:
         # Only batins the files that are not starting with '.'
@@ -124,13 +130,13 @@ def moveData(taxonList,sisrs_dir,data):
         for i in l:
             # Creates the soft link to the files
             os.link(data + '/' + x + '/' + i,
-                sisrs_dir+"/Reads/RawReads/%s/"%x + '/' + i)
+                sisrs_dir+"/Reads/%s/%s/"%(dest,x) + '/' + i)
 
 '''
 Running the trimmer if needed
 '''
-def existingTrimmer(sisrs_dir, taxonList,data_path,threads):
-    moveData(taxonList,sisrs_dir,data_path)
+def existingTrimmer(sisrs_dir,taxonList,data_path,threads,notTrimmed):
+    moveData(taxonList,sisrs_dir,data_path,notTrimmed)
     bb = findAdapter()
     rtn = setup(sisrs_dir)
     rtn[5] = [item for item in rtn[5] for item1 in taxonList if item1 in item]
@@ -185,7 +191,9 @@ def previousRun(cmd):
     newTaxons = moveFiles(taxons, cmd[0], cmd[1], cmd[8], cmd[9])
 
     if not cmd[2]:
-        existingTrimmer(cmd[0],newTaxons,cmd[1],cmd[3])
+        existingTrimmer(cmd[0],newTaxons,cmd[1],cmd[3],cmd[2])
+    else:
+        moveData(taxonList, cmd[0], cmd[1], cmd[2])
 
     runSetup(cmd[0],cmd[3],cmd[6],cmd[5],newTaxons)
     runSISRS(cmd[0],newTaxons)
