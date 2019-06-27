@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
-# This script prepares data for a SISRS run by setting the data up and creating mapping scripts
-# Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
-# The composite genome is indexed by Bowtie2 and Samtools
-# SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
+'''
+This script prepares data for a SISRS run by setting the data up and creating mapping scripts
+Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
+The composite genome is indexed by Bowtie2 and Samtools
+SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
+Input: -ms/--missing
+'''
+
 
 import os
 from os import path

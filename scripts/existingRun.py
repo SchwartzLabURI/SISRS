@@ -1,4 +1,17 @@
 '''
+This script is designed to determine if the a previous SISRS run has been done in
+the directory that is going to be used for output. This script will determine if
+there has been a previous run based on the folder structure in that directory and
+if '.nex' files exist with appropriate corresponding data. After this script has
+determined if there is a previous run it will backup all of the old alignment*,
+out_SISRS*, Output_Alignment.sh, and if you were adding new data to a taxon
+the taxon folder will be moved and zipped. After everything is backedup appropriatly
+when adding data we will: trim reads if needed, generate <SPP>.sh scripts that map
+to the previous runs refrence genome, and then rerun sisrs_07_output_sisrs.py
+'''
+
+
+'''
 This script needs the -dir flag as input.
 '''
 
@@ -197,4 +210,4 @@ def previousRun(cmd):
 
     runSetup(cmd[0],cmd[3],cmd[6],cmd[5],newTaxons)
     runSISRS(cmd[0],newTaxons)
-    outputSISRS(cmd[0],cmd[7],newTaxons)
+    outputSISRS(cmd[0],cmd[7],taxons)

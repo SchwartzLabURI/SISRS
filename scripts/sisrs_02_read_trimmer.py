@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
 
-# This is a wrapper script for trimming reads for use in SISRS
-# This script calls bbduk.sh, which must be installed and in your path
-# All reads for all taxa should be in .fastq.gz format (To change this, find/replace this script, replacing '.fastq.gz' with your chosen extension)
-# Paired-end read files must be identically basenamed and end in _1/_2
-# Input: (Optional) Number of available processors for FastQC (Default: 1, For 10 processors: python /home/Literman_PhyloSignal/scripts/raw_trim_script.py 10)
+'''
+This is a wrapper script for trimming reads for use in SISRS
+This script calls bbduk.sh, which must be installed and in your path
+
+************************************WARNING*************************************
+Adding something to your path can be difficult please make sure that things are
+added in the correct order.
+Example: We are looking for the bbduk.sh file in your system and if bbduk is installed
+here: /usr/bin/anaconda3/opt/bbmap-38.51-0/
+but you also need /usr/bin/anaconda3/bin/
+in your path make sure you have the ordering as followedself.
+export PATH='/usr/bin/anaconda3/opt/bbmap-38.51-0/:/usr/bin/anaconda3/bin/:$PATH'
+********************************************************************************
+
+All reads for all taxa should be in .fastq.gz format (To change this, find/replace
+this script, replacing '.fastq.gz' with your chosen extension).
+Paired-end read files must be identically basenamed and end in _1/_2
+Input: (Optional) -p/--processors Number of available processors for FastQC
+(Default: 1, For 10 processors: python /home/Documents/scripts/sisrs_02_read_trimmer.py -p 10)
 # Output: (1) Trimmed Reads (in <base_dir>/Reads/TrimReads/<Taxon>/<Read_Basename>_Trim.fastq.gz
 # Output: (2) Trim Log (in <base_dir>/Reads/RawReads/trimOutput)
 # Output: (3) FastQC output for all raw + trimmed read sets (in <base_dir>/Reads/RawReads/fastqcOutput & <base_dir>/Reads/TrimReads/fastqcOutput)
+'''
 
 import os
 from os import path
