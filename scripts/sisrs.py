@@ -40,7 +40,7 @@ def sisrs2(trimmed,processors,sisrs_dir):
         # raw_fastqc_command
         fastqcCommand(processors,out[3],out[0])
 
-        trim(out[5],out[1],bbduk_adapter,out[2])
+        trim(out[5],out[1],bbduk_adapter,out[2],[])
 
         # trim_fastqc_command
         fastqcCommand(processors,out[4],out[1])

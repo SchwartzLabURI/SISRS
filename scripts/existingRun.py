@@ -137,30 +137,34 @@ def moveData(taxonList,sisrs_dir,data,trim):
         if isdir(sisrs_dir+"/Reads/%s/"%dest+item) == False:
             os.mkdir(sisrs_dir+"/Reads/%s/"%dest+item)
 
+    newFiles = []
     for x in taxonList:
         # Only batins the files that are not starting with '.'
         l = [f for f in listdir(data + '/' + x) if not f.startswith('.')]
+        newFiles += l
         for i in l:
             # Creates the soft link to the files
             os.link(data + '/' + x + '/' + i,
                 sisrs_dir+"/Reads/%s/%s/"%(dest,x) + '/' + i)
 
+    return newFiles
+
 '''
 Running the trimmer if needed
 '''
 def existingTrimmer(sisrs_dir,taxonList,data_path,threads,notTrimmed):
-    moveData(taxonList,sisrs_dir,data_path,notTrimmed)
+    newFiles = moveData(taxonList,sisrs_dir,data_path,notTrimmed)
     bb = findAdapter()
     rtn = setup(sisrs_dir)
     rtn[5] = [item for item in rtn[5] for item1 in taxonList if item1 in item]
 
     # raw_fastqc_command
-    newdFastqc(threads,rtn[3],rtn[5])
+    newdFastqc(threads,rtn[3],rtn[5],newFiles)
 
-    trim(rtn[5],rtn[1],bb,rtn[2])
+    trim(rtn[5],rtn[1],bb,rtn[2],newFiles)
 
     # trim_fastqc_command
-    newdFastqc(threads,rtn[4],rtn[5])
+    newdFastqc(threads,rtn[4],rtn[5],newFiles)
 
 # ********************** RUNNING SISRS SETUP ***********************************
 '''
