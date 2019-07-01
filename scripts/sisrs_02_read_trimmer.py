@@ -119,7 +119,7 @@ This function is designed to run the fastqc command. Modified to run both the ra
 and the trimmed data, takes the number of processors, the output directory, and
 the read directory.
 '''
-def fastqcCommand(processors,fastqc_output,read_dir,newFileList):
+def fastqcCommand(processors,fastqc_output,read_dir):
     #Run FastQC on all trimmed files, using all available processors
     fastqc_command = [
         'fastqc',

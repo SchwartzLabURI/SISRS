@@ -100,8 +100,6 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
     if not path.isdir(sisrs_dir+"/backup"):
         os.mkdir(sisrs_dir+"/backup")
 
-    cw = os.getcwd()
-
     subprocess.call("mv {0}alignment* {1}/backup".format(run,sisrs_dir),shell=True)
     subprocess.call("mv {0}out_SISRS* {1}/backup".format(run,sisrs_dir),shell=True)
     subprocess.call("mv {0}Output_Alignment.sh {1}/backup".format(run,sisrs_dir),shell=True)
