@@ -100,20 +100,20 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
     if not path.isdir(sisrs_dir+"/backup"):
         os.mkdir(sisrs_dir+"/backup")
 
+    cw = os.getcwd()
+
     subprocess.call("mv {0}alignment* {1}/backup".format(run,sisrs_dir),shell=True)
     subprocess.call("mv {0}out_SISRS* {1}/backup".format(run,sisrs_dir),shell=True)
     subprocess.call("mv {0}Output_Alignment.sh {1}/backup".format(run,sisrs_dir),shell=True)
     if addData:
         for item in taxon:
-            subprocess.call("mv {0}{1} {2}/backup".format(run,item,sisrs_dir),shell=True)
-            command = [
-                'zip -1',
-                '{0}/backup/{1}.zip'.format(sisrs_dir,item),
-                '{0}/backup/{1}'.format(sisrs_dir,item),
-                ';',
-                'rm -r',
-                '{0}/backup/{1}'.format(sisrs_dir,item)]
-            os.system(" ".join(command))
+            os.mkdir(sisrs_dir+"/backup/"+item)
+            subprocess.call("mv {0}{1}/contigs* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/err* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/out* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/*.sh {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/*.bam* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/*LocList {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
 
     # Add all of the empty output directiers back into the SISRS_Run folder
     for item in taxon:
@@ -210,4 +210,6 @@ def previousRun(cmd):
 
     runSetup(cmd[0],cmd[3],cmd[6],cmd[5],newTaxons)
     runSISRS(cmd[0],newTaxons)
+
+    taxons += [x for x in newTaxons if x not in taxons]
     outputSISRS(cmd[0],cmd[7],taxons)
