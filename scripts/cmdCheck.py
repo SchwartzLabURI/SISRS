@@ -59,11 +59,11 @@ def commandLine(cmdln,script_dir):
     else:
         rtn[0] = script_dir
 
-    # Flag to tell us were the raw data is stored
-    if '-rd' in cmdln or '--rawData' in cmdln:
-        rtn[1] = isFound('-rd','--rawData',cmdln)
+    # Flag to tell us were the data is stored
+    if '-d' in cmdln or '--data' in cmdln:
+        rtn[1] = isFound('-d','--data',cmdln)
     else:
-        print("MISSING PATH TO RAW DATA (-rd,--rawData)")
+        print("MISSING PATH TO RAW DATA (-d,--data)")
         exit()
 
     # Determine if the data has been pretrimmed or not
@@ -130,9 +130,15 @@ def commandLine(cmdln,script_dir):
         rtn[7] = 0
 
     # Deal with adding a taxon
-    rtn[8] = True if '-aT' in cmdln else False
+    if '-aT' in cmdln or '--addTaxon' in cmdln:
+        rtn[8] = True
+    else:
+        rtn[8] = False
 
     # Deal with adding new data to an existing taxon
-    rtn[9] = True if '-aD' in cmdln else False
+    if '-aD' in cmdln or '--addSequence' in cmdln:
+        rtn[9] = True
+    else:
+        rtn[9] = False
 
     return rtn

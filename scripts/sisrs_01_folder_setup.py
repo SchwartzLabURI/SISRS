@@ -110,10 +110,10 @@ if __name__ == "__main__":
     rd = ""
     if '-id' in cmd:
         id = cmd[cmd.index('-id') + 1]
-    elif '-rd' in cmd or '--rawData' in cmd:
-        rd = isFound('-rd','--rawData',cmd)
+    elif '-d' in cmd or '--data' in cmd:
+        rd = isFound('-d','--data',cmd)
     else:
-        print("MISSING TAXA INFORMATION (-rd,--rawData)")
+        print("MISSING TAXA INFORMATION (-d,--data)")
         exit()
 
     # Grab the taxon names
