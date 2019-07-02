@@ -136,7 +136,7 @@ def commandLine(cmdln,script_dir):
         rtn[8] = False
 
     # Deal with adding new data to an existing taxon
-    if '-aD' in cmdln or '--addSequence' in cmdln:
+    if '-aD' in cmdln or '--addData' in cmdln:
         rtn[9] = True
     else:
         rtn[9] = False
