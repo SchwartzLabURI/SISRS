@@ -63,7 +63,7 @@ def commandLine(cmdln,script_dir):
     if '-d' in cmdln or '--data' in cmdln:
         rtn[1] = isFound('-d','--data',cmdln)
     else:
-        print("MISSING PATH TO RAW DATA (-d,--data)")
+        print("MISSING PATH TO DATA (-d,--data)")
         exit()
 
     # Determine if the data has been pretrimmed or not
@@ -88,8 +88,9 @@ def commandLine(cmdln,script_dir):
         if bool == False:
             print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS NOT A VALID NUMBER")
         else:
-            print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS REQUEIRED FOR SISRS")
-        exit()
+            if '-aT' not in cmdln and '--addTaxon' not in cmdln and '-aD' not in cmdln and '--addData' not in cmdln:
+                print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS REQUEIRED FOR SISRS")
+                exit()
 
     # Get threshold for script 5
     if '-thresh' in cmdln or '--threshold' in cmdln:
