@@ -1,6 +1,6 @@
 # **SISRS v2.0**
 #### Dr. Rachel Schwartz, Dr. Robert Literman
-#### Code Development: Devin McConnell  
+#### Code Development: Devin J. McConnell  
 
 ----
 
@@ -48,9 +48,9 @@ Continuous SISRS is run as
 
 **1) Genome Size Estimate** (*-gs, --genomeSize*):  Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
 
-**2) Specifying starting data** (*-rd, --rawData*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
+**2) Specifying starting data** (*-d, --data*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
   - **Note 1:** No spaces or special characters are allowed when naming taxon directories.  
-  - **Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
+  - **Note 2:** If using -d option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
 
 **Optional Flags**  
 
@@ -65,36 +65,41 @@ Continuous SISRS is run as
 
 **Missing Taxa Allowed** (*-ms,--missing*): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. DEFAULT: 0 (Coverage for all taxa for all sites)  
 
+**Existing Run**
+This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present. This relies on the -d/--data folder to specify were the new data is located
+1) **Adding a Taxon** (*-aT,--addTaxon*): Adding a new taxon to the previous SISRS run
+2) **Adding Additional Sequences** (*-ad,--addData*): Adding a new file to existing taxons
+
 Example Commands:
 
 ```
 #Run SISRS with a genome size estimate of 100 MB
-> python sisrs.py -rd ./SISRS_Small/ -gs 100000000
-> python sisrs.py --rawData ./SISRS_Small/ -genomeSize 100000000
+> python sisrs.py -d ./SISRS_Small/ -gs 100000000
+> python sisrs.py --data ./SISRS_Small/ -genomeSize 100000000
 
 
 #Run SISRS with a genome size estimate of 2GB, 20 processors, and pre-trimmed reads
-> python sisrs.py -rd ./SISRS_Small/ -gs 2000000000 -p 20 -trm
-> python sisrs.py --rawData ./SISRS_Small/ -genomeSize 2000000000 --processors 20 -trm
+> python sisrs.py -d ./SISRS_Small/ -gs 2000000000 -p 20 -trm
+> python sisrs.py --data ./SISRS_Small/ --genomeSize 2000000000 --processors 20 -trm
 
 
 #Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing one taxon to be missing for any given site in the final alignment
-> python sisrs.py -rd ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1
-> python sisrs.py --rawData ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
+> python sisrs.py -d ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1
+> python sisrs.py --data ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
 
 ```
 
 ### **Split Run Instruction**  
 
-**1A) Specifying starting data with directory** (*-rd, --rawData*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
+**1A) Specifying starting data with directory** (*-d, --data*): Path to directory where reads are already split into folders by taxon (these can be linked files).  
   - **Note 1:** No spaces or special characters are allowed when naming taxon directories.  
-  - **Note 2:** If using -rd option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
+  - **Note 2:** If using -d option with **pre-trimmed reads**, you should also use the **-trm** flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)  
 
 ```
-python scripts/sisrs_01_folder_setup.py -rd /SISRS_Small/
+python scripts/sisrs_01_folder_setup.py -d /SISRS_Small/
 
 #If data in already trimmed...
-python scripts/sisrs_01_folder_setup.py -rd /SISRS_Small/ -trm
+python scripts/sisrs_01_folder_setup.py -d /SISRS_Small/ -trm
 ```  
 
 **1B) Specifying starting data with taxon list** (*-id*): Edit TaxonIDs file so that includes each Taxon ID on a new line. ex for SISRS_Small.zip)  

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-# This script calls a Ray genome assembly on all reads in the SubsetReads directory
-# Ray requires working MPI via mpirun, even if running on  one node
-# This script also calls Bowtie2 and Samtools for genome indexing
-# Ensure Ray and Bowtie2 are compiled  with gzip support
-# Input: (1) Number of nodes for Ray. (2) Number of processors per node.
-# Output: Ray assembly will be built in <basedir>/Ray_Composite_Genome (Contigs.fasta)
+'''
+This script calls a Ray genome assembly on all reads in the SubsetReads directory
+Ray requires working MPI via mpirun, even if running on  one node
+This script also calls Bowtie2 and Samtools for genome indexing
+Ensure Ray and Bowtie2 are compiled  with gzip support
+Input: (1) -p/--processors Number of processors
+Output: Ray assembly will be built in <basedir>/Ray_Composite_Genome (Contigs.fasta)
+'''
 
 import os
 from os import path
@@ -51,7 +53,7 @@ if __name__ == '__main__':
     cmd = sys.argv
     sis = os.path.dirname(sys.path[0])
 
-    #BECAUSE RAY RUNS ON MPI, IT MAY NEED IT'S OWN PROCESSOR VARIABLE 
+    #BECAUSE RAY RUNS ON MPI, IT MAY NEED IT'S OWN PROCESSOR VARIABLE
     proc = 1
     if '-p' in cmd or '--processors' in cmd:
         try:

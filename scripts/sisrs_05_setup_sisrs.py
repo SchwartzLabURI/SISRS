@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
-# This script prepares data for a SISRS run by setting the data up and creating mapping scripts
-# Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
-# The composite genome is indexed by Bowtie2 and Samtools
-# SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
+'''
+This script prepares data for a SISRS run by setting the data up and creating
+mapping scripts
+Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
+The composite genome is indexed by Bowtie2 and Samtools
+SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
+Input: -p/--processors Number of processors, -mr/--minRead, and -thresh/--threshold
+'''
 
 import os
 from os import path
@@ -160,6 +164,7 @@ if __name__ == '__main__':
     proc = 1
     mr = 3
     thres = 1
+
     if '-p' in cmd or '--processors' in cmd:
         try:
             proc = int(isFound('-p','--processors',cmd))

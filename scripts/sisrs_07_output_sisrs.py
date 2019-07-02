@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
-# This script prepares data for a SISRS run by setting the data up and creating mapping scripts
-# Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
-# The composite genome is indexed by Bowtie2 and Samtools
-# SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
+'''
+This script prepares data for a SISRS run by setting the data up and creating mapping scripts
+Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
+The composite genome is indexed by Bowtie2 and Samtools
+SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
+Input: -ms/--missing
+'''
+
 
 import os
 from os import path
@@ -62,13 +66,13 @@ the folders that contain sh scripts.
 def runBash(sisrs_dir,sisrs_tax_dirs):
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment.sh'
-        #p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
-        #output, err = p.communicate()
-        #rc = p.returncode
-        #print(output)
-        #print(err)
-        #print(rc)
-        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+        p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
+        output, err = p.communicate()
+        rc = p.returncode
+        print(output)
+        print(err)
+        print(rc)
+        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
 
     with open(sisrs_dir+"/out_SISRS_Log","w") as file:
         file.write("\nRead Mapping and SISRS Site Selection:\n")

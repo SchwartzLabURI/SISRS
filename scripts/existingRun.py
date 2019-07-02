@@ -1,4 +1,17 @@
 '''
+This script is designed to determine if the a previous SISRS run has been done in
+the directory that is going to be used for output. This script will determine if
+there has been a previous run based on the folder structure in that directory and
+if '.nex' files exist with appropriate corresponding data. After this script has
+determined if there is a previous run it will backup all of the old alignment*,
+out_SISRS*, Output_Alignment.sh, and if you were adding new data to a taxon
+the taxon folder will be moved and zipped. After everything is backedup appropriatly
+when adding data we will: trim reads if needed, generate <SPP>.sh scripts that map
+to the previous runs refrence genome, and then rerun sisrs_07_output_sisrs.py
+'''
+
+
+'''
 This script needs the -dir flag as input.
 '''
 
@@ -7,6 +20,10 @@ import sys
 import subprocess
 from os import path
 from sisrs_01_folder_setup import *
+from sisrs_02_read_trimmer import *
+from sisrs_05_setup_sisrs import *
+from sisrs_06_run_sisrs import *
+from sisrs_07_output_sisrs import *
 
 # ****************DETERMINING IF SISRS RUN EXISTS******************************
 '''
@@ -88,28 +105,113 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
     subprocess.call("mv {0}Output_Alignment.sh {1}/backup".format(run,sisrs_dir),shell=True)
     if addData:
         for item in taxon:
-            subprocess.call("mv {0}{1} {2}/backup".format(run,item,sisrs_dir),shell=True)
-            command = [
-                'zip -1',
-                '{0}/backup/{1}.zip'.format(sisrs_dir,item),
-                '{0}/backup/{1}'.format(sisrs_dir,item),
-                ';',
-                'rm -r',
-                '{0}/backup/{1}'.format(sisrs_dir,item)]
-            os.system(" ".join(command))
+            os.mkdir(sisrs_dir+"/backup/"+item)
+            subprocess.call("mv {0}{1}/contigs* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/err* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/out* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/*.sh {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/*.bam* {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+            subprocess.call("mv {0}{1}/*LocList {2}/backup/{1}".format(run,item,sisrs_dir),shell=True)
+
+    # Add all of the empty output directiers back into the SISRS_Run folder
+    for item in taxon:
+        if isdir(sisrs_dir+"/SISRS_Run/"+item) == False:
+            os.mkdir(sisrs_dir+"/SISRS_Run/"+item)
 
     return taxon
+
+# *************************** RUNNING TRIMMER **********************************
+'''
+Move new data to the taxon folder
+'''
+def moveData(taxonList,sisrs_dir,data,trim):
+    dest = ""
+    if trim:
+        dest = "TrimReads"
+    else:
+        dest = "RawReads"
+
+    for item in taxonList:
+        if isdir(sisrs_dir+"/Reads/%s/"%dest+item) == False:
+            os.mkdir(sisrs_dir+"/Reads/%s/"%dest+item)
+
+    newFiles = []
+    for x in taxonList:
+        # Only batins the files that are not starting with '.'
+        l = [f for f in listdir(data + '/' + x) if not f.startswith('.')]
+        newFiles += l
+        for i in l:
+            # Creates the soft link to the files
+            os.link(data + '/' + x + '/' + i,
+                sisrs_dir+"/Reads/%s/%s/"%(dest,x) + '/' + i)
+
+    return newFiles
 
 '''
 Running the trimmer if needed
 '''
-def existingTrimmer(sisrs_dir, taxonList):
-    print("NOT IMPLEMENTED YET")
+def existingTrimmer(sisrs_dir,taxonList,data_path,threads,notTrimmed):
+    newFiles = moveData(taxonList,sisrs_dir,data_path,notTrimmed)
+    bb = findAdapter()
+    rtn = setup(sisrs_dir)
+    rtn[5] = [item for item in rtn[5] for item1 in taxonList if item1 in item]
 
+    # raw_fastqc_command
+    newdFastqc(threads,rtn[3],rtn[5],newFiles)
 
+    trim(rtn[5],rtn[1],bb,rtn[2],newFiles)
+
+    # trim_fastqc_command
+    newdFastqc(threads,rtn[4],rtn[5],newFiles)
+
+# ********************** RUNNING SISRS SETUP ***********************************
+'''
+This function is designed to go through and and setup excatly what is needed for
+a sisrs run. It will only go through and setup up the new data that has been
+added.
+'''
+def runSetup(outPath,threads,minread,threshold,newTaxons):
+    trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
+    trim_read_tax_dirs = [item for item in trim_read_tax_dirs for item1 in newTaxons if item1 in item]
+    fileChanges(ray_dir,composite_dir)
+    indexCompGenome(composite_dir,threads)
+    sisrs_template = beginSetUp(composite_dir,sys.path[0])
+    copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
+
+# ************************** Running SISRS *************************************
+'''
+This function is desinged to run all of the sisrs 6 script. It will only run the
+new data tha has been added.
+'''
+def runSISRS(sisrs_dir,newTaxons):
+    sisrs_tax_dirs = sisrsSetup(sisrs_dir)
+    sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
+    runSisrs(sisrs_tax_dirs)
+
+# ***************************** Output SISRS ***********************************
+'''
+This function is desinged to run all of the sisrs 7 script. It will only run the
+new data tha has been added.
+'''
+def outputSISRS(outPath,missing,newTaxons):
+    composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
+    sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
+    createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
+    runBash(sisrs_dir,sisrs_tax_dirs)
+
+# ********************** PREVIOUS RUN CALLER ***********************************
 def previousRun(cmd):
     folderStruct(cmd[0])
     taxons = getOldTaxons(cmd[0])
     newTaxons = moveFiles(taxons, cmd[0], cmd[1], cmd[8], cmd[9])
 
-    existingTrimmer()
+    if not cmd[2]:
+        existingTrimmer(cmd[0],newTaxons,cmd[1],cmd[3],cmd[2])
+    else:
+        moveData(taxonList, cmd[0], cmd[1], cmd[2])
+
+    runSetup(cmd[0],cmd[3],cmd[6],cmd[5],newTaxons)
+    runSISRS(cmd[0],newTaxons)
+
+    taxons += [x for x in newTaxons if x not in taxons]
+    outputSISRS(cmd[0],cmd[7],taxons)

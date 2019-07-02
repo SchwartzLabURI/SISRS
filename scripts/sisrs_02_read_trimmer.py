@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
 
-# This is a wrapper script for trimming reads for use in SISRS
-# This script calls bbduk.sh, which must be installed and in your path
-# All reads for all taxa should be in .fastq.gz format (To change this, find/replace this script, replacing '.fastq.gz' with your chosen extension)
-# Paired-end read files must be identically basenamed and end in _1/_2
-# Input: (Optional) Number of available processors for FastQC (Default: 1, For 10 processors: python /home/Literman_PhyloSignal/scripts/raw_trim_script.py 10)
+'''
+This is a wrapper script for trimming reads for use in SISRS
+This script calls bbduk.sh, which must be installed and in your path
+
+************************************WARNING*************************************
+Adding something to your path can be difficult please make sure that things are
+added in the correct order.
+Example: We are looking for the bbduk.sh file in your system and if bbduk is installed
+here: /usr/bin/anaconda3/opt/bbmap-38.51-0/
+but you also need /usr/bin/anaconda3/bin/
+in your path make sure you have the ordering as followedself.
+export PATH='/usr/bin/anaconda3/opt/bbmap-38.51-0/:/usr/bin/anaconda3/bin/:$PATH'
+********************************************************************************
+
+All reads for all taxa should be in .fastq.gz format (To change this, find/replace
+this script, replacing '.fastq.gz' with your chosen extension).
+Paired-end read files must be identically basenamed and end in _1/_2
+Input: (Optional) -p/--processors Number of available processors for FastQC
+(Default: 1, For 10 processors: python /home/Documents/scripts/sisrs_02_read_trimmer.py -p 10)
 # Output: (1) Trimmed Reads (in <base_dir>/Reads/TrimReads/<Taxon>/<Read_Basename>_Trim.fastq.gz
 # Output: (2) Trim Log (in <base_dir>/Reads/RawReads/trimOutput)
 # Output: (3) FastQC output for all raw + trimmed read sets (in <base_dir>/Reads/RawReads/fastqcOutput & <base_dir>/Reads/TrimReads/fastqcOutput)
+'''
 
 import os
 from os import path
@@ -77,6 +92,29 @@ def setup(sisrs_dir):
     return rtn
 
 '''
+This function is designed to run the fastqc command with new data only. Modified
+to run both the raw and the trimmed data, takes the number of processors, the
+output directory, and the read directory.
+'''
+def newdFastqc(processors,fastqc_output,data_dir,newFiles):
+    #Run FastQC on all trimmed files, using all available processors
+    fastqc_command = [
+        'fastqc',
+        '-t',
+        '{}'.format(processors),
+        '-o',
+        '{}'.format(fastqc_output)]
+
+    for item in data_dir:
+        for x in glob(item+"/*.fastq.gz"):
+            f = x.split('/')
+
+            if f[-1] in newFiles:
+                fastqc_command.append(x)
+
+    check_call(fastqc_command)
+
+'''
 This function is designed to run the fastqc command. Modified to run both the raw
 and the trimmed data, takes the number of processors, the output directory, and
 the read directory.
@@ -101,7 +139,7 @@ single read and pair read files. Its main purpose is to clean up the large for
 loop that is seem below in the trim function. It only needs the current working
 raw read directory and the matching trim read directory as arguments.
 '''
-def trimHelper(tax_dir,trim_read_dir):
+def trimHelper(tax_dir,trim_read_dir,newData):
 
     #List all files and set output dir
     files = sorted(glob(tax_dir+"*.fastq.gz"))
@@ -116,9 +154,24 @@ def trimHelper(tax_dir,trim_read_dir):
     left_files = [s for s in files if "_1.fastq.gz" in s]
     right_files = [s for s in files if "_2.fastq.gz" in s]
 
+    lf = []
+    rf = []
+    if newData != []:
+        for f in left_files:
+            o = f.split('/')
+            if o[-1] in newData:
+                lf += [f]
+        left_files = lf
+        for f in right_files:
+            o = f.split('/')
+            if o[-1] in newData:
+                rf += [f]
+        right_files = rf
+
     #Strip _1.fastq.gz/_2.fastq.gz and identify pairs based on file name
     left_files = [x.replace('_1.fastq.gz', '') for x in left_files]
     right_files = [x.replace('_2.fastq.gz', '') for x in right_files]
+
     paired_files = list(set(left_files).intersection(right_files))
 
     #Reset file names and filter out single-end files
@@ -128,6 +181,14 @@ def trimHelper(tax_dir,trim_read_dir):
     paired_files = sorted(left_pairs + right_pairs)
 
     single_end = [x for x in files if x not in paired_files]
+
+    se = []
+    if newData != []:
+        for f in single_end:
+            o = f.split('/')
+            if o[-1] in newData:
+                se += [f]
+        single_end = se
 
     #Remove .fastq.gz from lists to make naming easier
     left_pairs = [x.replace('_1.fastq.gz', '') for x in left_pairs]
@@ -142,12 +203,12 @@ This function is designed to trim all of the rawdata that has been provided to
 the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
 bbduk_adapter file.
 '''
-def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output):
+def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
 
     #For each taxa directory...
     for tax_dir in raw_read_tax_dirs:
 
-        out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir)
+        out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir,newData)
 
         #Trim single-end files if present...
         if len(single_end) > 0:
@@ -218,7 +279,7 @@ if __name__ == "__main__":
     # raw_fastqc_command
     fastqcCommand(proc,out[3],out[0])
 
-    trim(out[5],out[1],bba,out[2])
+    trim(out[5],out[1],bba,out[2],[])
 
     # trim_fastqc_command
     fastqcCommand(proc,out[4],out[1])

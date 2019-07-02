@@ -47,7 +47,7 @@ def commandLine(cmdln,script_dir):
     # minRead = 3         --> 6
     # missing = 0         --> 7
     # addTaxon = False    --> 8
-    #addData = False      --> 9
+    # addData = False      --> 9
     rtn = [ "" for i in range(10)]
 
     # Variablese used throughout if's
@@ -59,11 +59,11 @@ def commandLine(cmdln,script_dir):
     else:
         rtn[0] = script_dir
 
-    # Flag to tell us were the raw data is stored
-    if '-rd' in cmdln or '--rawData' in cmdln:
-        rtn[1] = isFound('-rd','--rawData',cmdln)
+    # Flag to tell us were the data is stored
+    if '-d' in cmdln or '--data' in cmdln:
+        rtn[1] = isFound('-d','--data',cmdln)
     else:
-        print("MISSING PATH TO RAW DATA (-rd,--rawData)")
+        print("MISSING PATH TO DATA (-d,--data)")
         exit()
 
     # Determine if the data has been pretrimmed or not
@@ -88,8 +88,9 @@ def commandLine(cmdln,script_dir):
         if bool == False:
             print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS NOT A VALID NUMBER")
         else:
-            print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS REQUEIRED FOR SISRS")
-        exit()
+            if '-aT' not in cmdln and '--addTaxon' not in cmdln and '-aD' not in cmdln and '--addData' not in cmdln:
+                print("GENOME SIZE ESTIMATION (-gs,--genomeSize) IS REQUEIRED FOR SISRS")
+                exit()
 
     # Get threshold for script 5
     if '-thresh' in cmdln or '--threshold' in cmdln:
@@ -130,9 +131,15 @@ def commandLine(cmdln,script_dir):
         rtn[7] = 0
 
     # Deal with adding a taxon
-    rtn[8] = True if '-aT' in cmdln else False
+    if '-aT' in cmdln or '--addTaxon' in cmdln:
+        rtn[8] = True
+    else:
+        rtn[8] = False
 
     # Deal with adding new data to an existing taxon
-    rtn[9] = True if '-aD' in cmdln else False
+    if '-aD' in cmdln or '--addData' in cmdln:
+        rtn[9] = True
+    else:
+        rtn[9] = False
 
     return rtn

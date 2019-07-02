@@ -1,12 +1,30 @@
 #!/usr/bin/env python3
 
-# TRIMMED READS SHOULD BE QC CHECKED PRIOR TO THIS STEP TO REMOVE DATASETS WITH LOW QUALITY OR HIGH DUPLICATION RATES
-# This script performs read subsetting for a SISRS composite genome assembly
-# This script calls reformat.sh  (part of BBMap Suite), which must be installed and in your path
-# All reads for all taxa should be in .fastq.gz format (To change this, find/replace this script, replacing '.fastq.gz' with your chosen extension)
-# Paired-end read files must be identically basenamed and end in _Trim_1.fastq.gz/_Trim_2.fastq.gz
-# Input: (1) Genome size estimate in basepairs (e.g. Human: 3500000000)
-# Output: For an analysis with X taxa and a genome size estimate of Y bp,  this script will subset each taxons reads down to (10*Y)/X bases (~10X total coverage when summed)
+'''
+IMPORTANT: Trimmed reads should be QC checked prior to this step to remove
+datasets with low quality or high deplication rates
+This script performs read subsetting for a SISRS composite genome assembly
+This script calls reformat.sh  (part of BBMap Suite), which must be installed and in your path
+
+************************************WARNING*************************************
+Adding something to your path can be difficult please make sure that things are
+added in the correct order.
+Example: We are looking for the bbduk.sh file in your system and if bbduk is installed
+here: /usr/bin/anaconda3/opt/bbmap-38.51-0/
+but you also need /usr/bin/anaconda3/bin/
+in your path make sure you have the ordering as followedself.
+export PATH='/usr/bin/anaconda3/opt/bbmap-38.51-0/:/usr/bin/anaconda3/bin/:$PATH'
+********************************************************************************
+
+All reads for all taxa should be in .fastq.gz format (To change this, find/replace
+this script, replacing '.fastq.gz' with your chosen extension)
+Paired-end read files must be identically basenamed and end in _Trim_1.fastq.gz/_Trim_2.fastq.gz
+Input: (1) -gs/--genomesize Genome size estimate in basepairs (e.g. Human: 3500000000)
+Output: For an analysis with X taxa and a genome size estimate of Y bp,  this script
+will subset each taxons reads down to (10*Y)/X bases (~10X total coverage when summed)
+
+
+'''
 
 import os
 from os import path
