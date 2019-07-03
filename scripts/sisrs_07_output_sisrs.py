@@ -55,7 +55,7 @@ def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
                'COMPOSITE_DIR':composite_dir}
     for key in keyList:
         sisrs_output_template = sisrs_output_template.replace(key,keyDict[key])
-    with open(sisrs_dir+"/Output_Alignment.sh", "w") as text_file:
+    with open(sisrs_dir+"/Output_Alignment_m{}.sh".format(missing), "w") as text_file:
         print(sisrs_output_template, file=text_file)
 
 '''
@@ -63,9 +63,9 @@ This function is designed to run all of the newly created bash scripts. It
 requiers as input the path to the SISRS_Run directory and the path to all of
 the folders that contain sh scripts.
 '''
-def runBash(sisrs_dir,sisrs_tax_dirs):
+def runBash(sisrs_dir,sisrs_tax_dirs,missing):
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
-        cmd = sisrs_dir+'/Output_Alignment.sh'
+        cmd = sisrs_dir+'/Output_Alignment_m{}.sh'.format(missing)
         p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
         output, err = p.communicate()
         rc = p.returncode

@@ -9,6 +9,18 @@ def isInt(number):
     except:
         return False
 
+def isRange(i):
+    if '-' not in i:
+        return False
+    items = i.split('-')
+    l = isInt(items[0])
+    r = isInt(items[1])
+
+    if l == False or r == False:
+        return False
+    else:
+        return True
+
 def isFloat(number):
     try:
         float(number)
@@ -124,8 +136,11 @@ def commandLine(cmdln,script_dir):
         bool = isInt(isFound('-ms','--missing',cmdln))
         rtn[7] = int(isFound('-ms','--missing',cmdln)) if bool else 0
         if bool == False:
-            print("THE ALLOWED AMOUNT OF MISSING DATA (-ms/--missing) MUST BE A VALID NUMBER --> SWITCHED TO 0")
-            rtn[7] = 0
+            bool2 = isRange(isFound('-ms','--missing',cmdln))
+            rtn[7] = isFound('-ms','--missing',cmdln) if bool2 else 0
+            if bool2 == False:
+                print("THE ALLOWED AMOUNT OF MISSING DATA (-ms/--missing) MUST BE A VALID NUMBER --> SWITCHED TO 0")
+                rtn[7] = 0
     else:
         print("THE DEFAULT AMOUNT OF MISSING DATA(-ms/--missing) IS BEING USED TO RUN SISRS: 0")
         rtn[7] = 0
