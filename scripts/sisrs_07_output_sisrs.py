@@ -101,15 +101,41 @@ if __name__ == '__main__':
 
     md = 0
 
+    # Gets the allowed amount of missing data from the files
     if '-ms' in cmd or '--missing' in cmd:
-        try:
-            md = int(isFound('-ms','--missing',cmd))
-        except:
-            print("INVALID NUMBER OF MISSING (-ms,--missing): RESTING ALLOWED MISSING COUNT TO 0")
-            md = 0
+        bool = isInt(isFound('-ms','--missing',cmd))
+        md = int(isFound('-ms','--missing',cmd)) if bool else 0
+        if bool == False:
+            bool2 = isRange(isFound('-ms','--missing',cmd))
+            md = isFound('-ms','--missing',cmd) if bool2 else 0
+            if bool2 == False:
+                print("THE ALLOWED AMOUNT OF MISSING DATA (-ms/--missing) MUST BE A VALID NUMBER --> SWITCHED TO 0")
+                md = 0
     else:
         print("USING DEFAULT MISSING (-ms,--missing) DATA: 0")
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
-    createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])
-    runBash(sisrs,sisrs_tax_dirs)
+
+    if '-' in md:
+        ms = missing.split('-')
+        ms[0] = int(ms[0])
+        ms[1] = int(ms[1])
+
+        for i in range(ms[0],ms[1]+1):
+            # Create the bash script to run sisrs as we need it to
+            createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,i,sys.path[0])
+
+            #RunSisrs
+            runBash(sisrs,sisrs_tax_dirs,i)
+
+            subprocess.call("mkdir {0}/missing_{1}".format(sis,i),shell=True)
+            subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sis,i),shell=True)
+            subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sis,i),shell=True)
+            subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sis,i),shell=True)
+
+    else:
+        # Create the bash script to run sisrs as we need it to
+        createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])
+
+        # Run sisrs
+        runBash(sisrs,sisrs_tax_dirs,md)
