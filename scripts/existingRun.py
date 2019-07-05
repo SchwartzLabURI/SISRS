@@ -52,6 +52,7 @@ def oldTaxonHelper(directory):
     i = 0
     nexFile = open(directory+"alignment.nex")
 
+    # Pullout all of the old taxons that were used
     for line in nexFile:
         if i >= 7:
             line = line.strip()
@@ -105,13 +106,14 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
                 print("NEW TAXON DETECTED. PLEASE CHECK DATA! EXITING.")
                 exit()
 
-    #Create folder for BBDuk StdOut
+    #Create folder for backup data
     if not path.isdir(sisrs_dir+"/backup"):
         os.mkdir(sisrs_dir+"/backup")
 
     files = listdir(run)
     f = [x for x in files if 'missing_' in x]
 
+    # If the files were moves into subdircotries of missing taxons move by folders
     if f != []:
         for item in f:
             subprocess.call("mv {0}{1} {2}/backup".format(run,item,sisrs_dir),shell=True)
@@ -188,11 +190,23 @@ a sisrs run. It will only go through and setup up the new data that has been
 added.
 '''
 def runSetup(outPath,threads,minread,threshold,newTaxons):
+
+    # Grab the folders and files that are needed to setup sisrs
     trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
+
+    # Only the new data
     trim_read_tax_dirs = [item for item in trim_read_tax_dirs for item1 in newTaxons if item1 in item]
+
+    # Make the neccessary changes to the files
     fileChanges(ray_dir,composite_dir)
+
+    # index the genomes
     indexCompGenome(composite_dir,threads)
+
+    # Create the template bash script
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
+
+    # Make a bash script for all Taxons
     copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
 
 # ************************** Running SISRS *************************************
@@ -201,8 +215,14 @@ This function is desinged to run all of the sisrs 6 script. It will only run the
 new data tha has been added.
 '''
 def runSISRS(sisrs_dir,newTaxons):
+
+    # Get all folders and files needed to run sisrs
     sisrs_tax_dirs = sisrsSetup(sisrs_dir)
+
+    # Only the new data
     sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
+
+    # Run all the SISRS bash scripts that were created
     runSisrs(sisrs_tax_dirs)
 
 # ***************************** Output SISRS ***********************************
