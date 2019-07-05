@@ -214,6 +214,7 @@ def outputSISRS(outPath,missing,newTaxons):
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
     sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
 
+    # If there is a range of allowed missing species do them all
     if '-' in str(missing):
         ms = missing.split('-')
         ms[0] = int(ms[0])

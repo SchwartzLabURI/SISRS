@@ -184,6 +184,7 @@ def commandLine(cmdln,script_dir):
     else:
         rtn[9] = False
 
+    # Call to create the needed log file
     logFile(cmdln,rtn)
 
     return rtn

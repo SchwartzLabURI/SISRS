@@ -63,7 +63,7 @@ Continuous SISRS is run as
 
 **Minimum Coverage Threshold** (*-mr,--minread*): Specify the minimum read coverage to call a SISRS site. DEFAULT: 3  (Three reads required to call a site)
 
-**Missing Taxa Allowed** (*-ms,--missing*): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. DEFAULT: 0 (Coverage for all taxa for all sites)  
+**Missing Taxa Allowed** (*-ms,--missing*): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. You can give it a single number or give it a range of numbers, such as 0-6 and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 separating all the data out into folders labeled missing_(#) DEFAULT: 0 (Coverage for all taxa for all sites)  
 
 **Existing Run**
 This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present. This relies on the -d/--data folder to specify were the new data is located
