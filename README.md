@@ -68,7 +68,7 @@ Continuous SISRS is run as
 **Existing Run**
 This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present. This relies on the -d/--data folder to specify were the new data is located
 1) **Adding a Taxon** (*-aT,--addTaxon*): Adding a new taxon to the previous SISRS run
-2) **Adding Additional Sequences** (*-ad,--addData*): Adding a new file to existing taxons
+2) **Adding Additional Sequences** (*-aD,--addData*): Adding a new file to existing taxons
 
 Example Commands:
 

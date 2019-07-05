@@ -116,8 +116,8 @@ if __name__ == '__main__':
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
 
-    if '-' in md:
-        ms = missing.split('-')
+    if '-' in str(md):
+        ms = md.split('-')
         ms[0] = int(ms[0])
         ms[1] = int(ms[1])
 
@@ -128,10 +128,10 @@ if __name__ == '__main__':
             #RunSisrs
             runBash(sisrs,sisrs_tax_dirs,i)
 
-            subprocess.call("mkdir {0}/missing_{1}".format(sis,i),shell=True)
-            subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sis,i),shell=True)
-            subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sis,i),shell=True)
-            subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sis,i),shell=True)
+            subprocess.call("mkdir {0}/missing_{1}".format(sisrs,i),shell=True)
+            subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs,i),shell=True)
+            subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs,i),shell=True)
+            subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs,i),shell=True)
 
     else:
         # Create the bash script to run sisrs as we need it to

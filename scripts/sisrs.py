@@ -112,7 +112,7 @@ def sisrs07(outPath,missing):
     # Grab the neccessary folders and files
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
 
-    if '-' in missing:
+    if '-' in str(missing):
         ms = missing.split('-')
         ms[0] = int(ms[0])
         ms[1] = int(ms[1])
