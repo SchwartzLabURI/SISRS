@@ -87,6 +87,10 @@ Example Commands:
 > python sisrs.py -d ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1
 > python sisrs.py --data ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
 
+#Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing 1-6 taxon to be missing for any given site in the final alignment
+> python sisrs.py -d ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1-6
+> python sisrs.py --data ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1-6
+
 ```
 
 ### **Split Run Instruction**  
@@ -242,5 +246,6 @@ Flags (Optional): -ms,--missing
 ```
 > python scripts/sisrs_07_output_sisrs.py        #0 missing taxa allowed
 > python scripts/sisrs_07_output_sisrs.py -ms 3  #3 missing taxa allowed
+> python scripts/sisrs_07_output_sisrs.py -ms 3-6  #3 missing taxa allowed
 
 ```
