@@ -80,23 +80,61 @@ def sisrs4(sisrs_dir,threads):
 Function to run all of the fifth script
 '''
 def sisrs05(outPath,threads,minread,threshold):
+
+    # Grab the folders and files that are needed to setup sisrs
     trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
+
+    # Make the neccessary changes to the files
     fileChanges(ray_dir,composite_dir)
+
+    # index the genomes
     indexCompGenome(composite_dir,threads)
+
+    # Create the template bash script
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
+
+    # Make a bash script for all Taxons
     copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
 
 '''
 Function to run all of the sixth script
 '''
 def sisrs06(sisrs_dir):
+
+    # Get all folders and files needed to run sisrs
     sisrs_tax_dirs = sisrsSetup(sisrs_dir)
+
+    # Run all the SISRS bash scripts that were created
     runSisrs(sisrs_tax_dirs)
 
 def sisrs07(outPath,missing):
+
+    # Grab the neccessary folders and files
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
-    createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
-    runBash(sisrs_dir,sisrs_tax_dirs)
+
+    if '-' in str(missing):
+        ms = missing.split('-')
+        ms[0] = int(ms[0])
+        ms[1] = int(ms[1])
+
+        for i in range(ms[0],ms[1]+1):
+            # Create the bash script to run sisrs as we need it to
+            createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,i,sys.path[0])
+
+            #RunSisrs
+            runBash(sisrs_dir,sisrs_tax_dirs,i)
+
+            subprocess.call("mkdir {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+            subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+            subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+            subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+
+    else:
+        # Create the bash script to run sisrs as we need it to
+        createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
+
+        # Run sisrs
+        runBash(sisrs_dir,sisrs_tax_dirs,missing)
 
 if __name__ == '__main__':
     cmdln = sys.argv

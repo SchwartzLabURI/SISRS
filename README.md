@@ -63,12 +63,12 @@ Continuous SISRS is run as
 
 **Minimum Coverage Threshold** (*-mr,--minread*): Specify the minimum read coverage to call a SISRS site. DEFAULT: 3  (Three reads required to call a site)
 
-**Missing Taxa Allowed** (*-ms,--missing*): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. DEFAULT: 0 (Coverage for all taxa for all sites)  
+**Missing Taxa Allowed** (*-ms,--missing*): When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column. You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column. It will also separate all the data out into folders labeled missing_(#). DEFAULT: 0 (Coverage for all taxa for all sites)  
 
 **Existing Run**
 This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present. This relies on the -d/--data folder to specify were the new data is located
 1) **Adding a Taxon** (*-aT,--addTaxon*): Adding a new taxon to the previous SISRS run
-2) **Adding Additional Sequences** (*-ad,--addData*): Adding a new file to existing taxons
+2) **Adding Additional Sequences** (*-aD,--addData*): Adding a new file to existing taxons
 
 Example Commands:
 
@@ -86,6 +86,10 @@ Example Commands:
 #Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing one taxon to be missing for any given site in the final alignment
 > python sisrs.py -d ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1
 > python sisrs.py --data ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1
+
+#Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity, a minimum read coverage of two reads, and allowing 1-6 taxon to be missing for any given site in the final alignment
+> python sisrs.py -d ./SISRS_Small/ -gs 100 -p 10 -thresh .66 -mr 2 -ms 1-6
+> python sisrs.py --data ./SISRS_Small/ --genomeSize 100 --processors 10 --threshold .66 --minread 2 --missing 1-6
 
 ```
 
@@ -242,5 +246,6 @@ Flags (Optional): -ms,--missing
 ```
 > python scripts/sisrs_07_output_sisrs.py        #0 missing taxa allowed
 > python scripts/sisrs_07_output_sisrs.py -ms 3  #3 missing taxa allowed
+> python scripts/sisrs_07_output_sisrs.py -ms 3-6  #3 missing taxa allowed
 
 ```

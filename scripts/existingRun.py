@@ -39,26 +39,20 @@ def folderStruct(sisrs_dir):
             print("SISRS FOLDER STRUCTURE NOT COMPLETE.\n NO PREVIOUS SISRS RUN FOUND.\n EXITING")
             exit()
 
-'''
-Function to check for the .nex files and read the alignment.nex file.
-This function will be used to extract the taxon list for further data exploration
-Return the list of old taxon names
-'''
-def getOldTaxons(sisrs_dir):
-    sis_dir = sisrs_dir + '/SISRS_Run/'
-
+def oldTaxonHelper(directory):
     files = ["alignment_bi.nex", "alignment.nex", "alignment_pi.nex"]
 
     for f in files:
-        if not path.isfile(sis_dir+f):
+        if not path.isfile(directory+f):
             print(f + " : is missing.\n PREVIOUS SISRS RUN NOT COMPLETE! EXITING")
             exit()
 
     # Examine alignment.nex file
     taxons = []
     i = 0
-    nexFile = open(sis_dir+"alignment.nex")
+    nexFile = open(directory+"alignment.nex")
 
+    # Pullout all of the old taxons that were used
     for line in nexFile:
         if i >= 7:
             line = line.strip()
@@ -74,6 +68,22 @@ def getOldTaxons(sisrs_dir):
         i += 1
 
     return taxons
+
+'''
+Function to check for the .nex files and read the alignment.nex file.
+This function will be used to extract the taxon list for further data exploration
+Return the list of old taxon names
+'''
+def getOldTaxons(sisrs_dir):
+    sis_dir = sisrs_dir + '/SISRS_Run/'
+    data = listdir(sis_dir)
+
+    miss = [x for x in data if 'missing_' in x]
+
+    if miss == []:
+        return oldTaxonHelper(sis_dir)
+    else:
+        return oldTaxonHelper(sis_dir + miss[0] +'/')
 
 '''
 This function is deisgned to move the old data to a seperate location and zip it
@@ -96,13 +106,22 @@ def moveFiles(taxonList, sisrs_dir, data_list, addTaxon, addData):
                 print("NEW TAXON DETECTED. PLEASE CHECK DATA! EXITING.")
                 exit()
 
-    #Create folder for BBDuk StdOut
+    #Create folder for backup data
     if not path.isdir(sisrs_dir+"/backup"):
         os.mkdir(sisrs_dir+"/backup")
 
-    subprocess.call("mv {0}alignment* {1}/backup".format(run,sisrs_dir),shell=True)
-    subprocess.call("mv {0}out_SISRS* {1}/backup".format(run,sisrs_dir),shell=True)
-    subprocess.call("mv {0}Output_Alignment.sh {1}/backup".format(run,sisrs_dir),shell=True)
+    files = listdir(run)
+    f = [x for x in files if 'missing_' in x]
+
+    # If the files were moves into subdircotries of missing taxons move by folders
+    if f != []:
+        for item in f:
+            subprocess.call("mv {0}{1} {2}/backup".format(run,item,sisrs_dir),shell=True)
+    else:
+        subprocess.call("mv {0}alignment* {1}/backup".format(run,sisrs_dir),shell=True)
+        subprocess.call("mv {0}out_SISRS* {1}/backup".format(run,sisrs_dir),shell=True)
+        subprocess.call("mv {0}Output_Alignment*.sh {1}/backup".format(run,sisrs_dir),shell=True)
+
     if addData:
         for item in taxon:
             os.mkdir(sisrs_dir+"/backup/"+item)
@@ -171,11 +190,23 @@ a sisrs run. It will only go through and setup up the new data that has been
 added.
 '''
 def runSetup(outPath,threads,minread,threshold,newTaxons):
+
+    # Grab the folders and files that are needed to setup sisrs
     trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
+
+    # Only the new data
     trim_read_tax_dirs = [item for item in trim_read_tax_dirs for item1 in newTaxons if item1 in item]
+
+    # Make the neccessary changes to the files
     fileChanges(ray_dir,composite_dir)
+
+    # index the genomes
     indexCompGenome(composite_dir,threads)
+
+    # Create the template bash script
     sisrs_template = beginSetUp(composite_dir,sys.path[0])
+
+    # Make a bash script for all Taxons
     copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
 
 # ************************** Running SISRS *************************************
@@ -184,8 +215,14 @@ This function is desinged to run all of the sisrs 6 script. It will only run the
 new data tha has been added.
 '''
 def runSISRS(sisrs_dir,newTaxons):
+
+    # Get all folders and files needed to run sisrs
     sisrs_tax_dirs = sisrsSetup(sisrs_dir)
+
+    # Only the new data
     sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
+
+    # Run all the SISRS bash scripts that were created
     runSisrs(sisrs_tax_dirs)
 
 # ***************************** Output SISRS ***********************************
@@ -196,8 +233,31 @@ new data tha has been added.
 def outputSISRS(outPath,missing,newTaxons):
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)
     sisrs_tax_dirs = [item for item in sisrs_tax_dirs for item1 in newTaxons if item1 in item]
-    createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
-    runBash(sisrs_dir,sisrs_tax_dirs)
+
+    # If there is a range of allowed missing species do them all
+    if '-' in str(missing):
+        ms = missing.split('-')
+        ms[0] = int(ms[0])
+        ms[1] = int(ms[1])
+
+        for i in range(ms[0],ms[1]+1):
+            # Create the bash script to run sisrs as we need it to
+            createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,i,sys.path[0])
+
+            #RunSisrs
+            runBash(sisrs_dir,sisrs_tax_dirs,i)
+
+            subprocess.call("mkdir {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+            subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+            subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+            subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs_dir,i),shell=True)
+
+    else:
+        # Create the bash script to run sisrs as we need it to
+        createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,sys.path[0])
+
+        # Run sisrs
+        runBash(sisrs_dir,sisrs_tax_dirs,missing)
 
 # ********************** PREVIOUS RUN CALLER ***********************************
 def previousRun(cmd):
