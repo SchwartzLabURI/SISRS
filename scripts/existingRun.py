@@ -268,7 +268,7 @@ def previousRun(cmd):
     if not cmd[2]:
         existingTrimmer(cmd[0],newTaxons,cmd[1],cmd[3],cmd[2])
     else:
-        moveData(taxonList, cmd[0], cmd[1], cmd[2])
+        moveData(newTaxons, cmd[0], cmd[1], cmd[2])
 
     runSetup(cmd[0],cmd[3],cmd[6],cmd[5],newTaxons)
     runSISRS(cmd[0],newTaxons)
