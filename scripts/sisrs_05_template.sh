@@ -10,7 +10,7 @@ rm SISRS_DIR/TAXA/TAXA_Header.sam
 
 samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
 
-python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
+python3 SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
 
 samtools faidx SISRS_DIR/TAXA/contigs.fa
 bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs -p PROCESSORS
@@ -27,4 +27,4 @@ samtools index SISRS_DIR/TAXA/TAXA.bam
 
 samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
 
-python SCRIPT_DIR/get_pruned_dict.py SISRS_DIR/TAXA COMPOSITE_DIR MINREAD THRESHOLD
+python3 SCRIPT_DIR/get_pruned_dict.py SISRS_DIR/TAXA COMPOSITE_DIR MINREAD THRESHOLD

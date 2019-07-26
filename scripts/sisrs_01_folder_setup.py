@@ -80,16 +80,23 @@ def fileStructure(sisrs_dir,taxa_list):
 
     if isdir(sisrs_dir) == False:
         os.mkdir(sisrs_dir)
-    os.mkdir(sisrs_dir+"/Reads")
-    os.mkdir(sisrs_dir+"/Reads/RawReads")
-    os.mkdir(sisrs_dir+"/Reads/TrimReads")
-    os.mkdir(sisrs_dir+"/Reads/SubsetReads")
-    os.mkdir(sisrs_dir+"/SISRS_Run")
-    #os.mkdir(sisrs_dir+"/Reference_Genome")
-    #os.mkdir(sisrs_dir+"/Reference_Genome/Annotations")
-    #os.mkdir(sisrs_dir+"/Post_SISRS_Processing")
-    #os.mkdir(sisrs_dir+"/R_Analyses")
-    #os.mkdir(sisrs_dir+"/Reference_Topology")
+
+    try:
+        os.mkdir(sisrs_dir+"/Reads")
+        os.mkdir(sisrs_dir+"/Reads/RawReads")
+        os.mkdir(sisrs_dir+"/Reads/TrimReads")
+        os.mkdir(sisrs_dir+"/Reads/SubsetReads")
+        os.mkdir(sisrs_dir+"/SISRS_Run")
+        #os.mkdir(sisrs_dir+"/Reference_Genome")
+        #os.mkdir(sisrs_dir+"/Reference_Genome/Annotations")
+        #os.mkdir(sisrs_dir+"/Post_SISRS_Processing")
+        #os.mkdir(sisrs_dir+"/R_Analyses")
+        #os.mkdir(sisrs_dir+"/Reference_Topology")
+    except:
+        print("SISRS RUN ALREADY EXISTS HERE! IF YOU ARE ADDING NEW DATA USE FLAG -aD or -aT.\n")
+        print("OTHERWISE CHANGE DIRECTORIES AND TRY AGAIN. PROGRAM EXITING!")
+        exit()
+
 
     for x in taxa_list:
         os.mkdir(sisrs_dir+"/Reads/RawReads/"+x)
