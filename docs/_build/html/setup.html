@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>SISRS2.0 Setup &#8212; SISRS2.0 2.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SISRS2.0 Tutorial" href="tutorial.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="SISRS2.0 Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sisrs2-0-setup">
+<h1>SISRS2.0 Setup<a class="headerlink" href="#sisrs2-0-setup" title="Permalink to this headline">¶</a></h1>
+<p><strong>Software Requirements</strong></p>
+<blockquote>
+<div><p>The following programs must be installed and in your path prior to running SISRS:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>Python3 (3.6.4)</dt>
+<dd><ul class="first last">
+<li>Biopython</li>
+<li>Numpy</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Bowtie2 (2.3.4)</li>
+<li>Samtools (1.3.1)</li>
+<li>BBMap Suite (37.40)</li>
+<li>Ray - 2.3.2-devel</li>
+<li>Ray requires a working version of MPI, even if running on a single node</li>
+<li>FastQC (0.11.5) (Only if trimming)</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p>What type of machine do you plan on running <em>SISRS2.0</em> on?</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Research Cluster</p>
+<blockquote>
+<div><p>Check for the following modules on your machine:</p>
+<blockquote>
+<div><ol class="lowerroman simple">
+<li>Python/3.6.4-foss-2018a</li>
+<li>SAMtools/1..3.1-foss-2016b</li>
+<li>bio/FastQC/0.151.5-Java-1.8.0_92</li>
+<li>Bowtie2/2.3.4.1-intel-2018a</li>
+</ol>
+</div></blockquote>
+<dl class="docutils">
+<dt>Other Installs Needed:</dt>
+<dd><ol class="first lowerroman">
+<li><p class="first">MPI - OPENMPI</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget http://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.1.tar.gz
+tar xzvf openmpi-2.1.1.tar.gz
+<span class="nb">cd</span> openmpi-2.1.1
+./configure
+make -j4
+make install
+
+<span class="c1"># pwd the current location</span>
+<span class="nv">pwd</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+
+<span class="c1"># Place program into path</span>
+<span class="nb">echo</span> <span class="s2">&quot;export PATH=</span><span class="nv">$pwd</span><span class="s2">/openmpi-2.1.1:</span>$<span class="s2">&quot;&quot;PATH&quot;</span> &gt;&gt; ~/.bash_profile
+</pre></div>
+</div>
+</li>
+<li><p class="first">Ray</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/sebhtml/RayPlatform.git
+git clone https://github.com/sebhtml/ray.git
+<span class="nb">cd</span> ray
+make <span class="nv">PREFIX</span><span class="o">=</span>ray-build <span class="nv">HAVE_LIBZ</span><span class="o">=</span>y <span class="nv">LDFLAGS</span><span class="o">=</span><span class="s2">&quot;-lpthread -lz&quot;</span>
+make install
+
+<span class="c1"># pwd the current location</span>
+<span class="nv">pwd</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+
+<span class="c1"># Place program into path</span>
+<span class="nb">echo</span> <span class="s2">&quot;export PATH=</span><span class="nv">$pwd</span><span class="s2">/ray-build:</span>$<span class="s2">&quot;&quot;PATH&quot;</span> &gt;&gt; ~/.bash_profile
+</pre></div>
+</div>
+</li>
+<li><p class="first">Biopython/Numpy</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --user biopython
+</pre></div>
+</div>
+</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>Biopython relies heavily on numpy and auto-installs it during the biopython install</li>
+</ul>
+</div></blockquote>
+<ol class="lowerroman" start="4">
+<li><p class="first">BBMap Suite</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget -O BBMap_38.51.tar.gz https://sourceforge.net/projects/bbmap/files/BBMap_38.51.tar.gz/download <span class="se">\</span>
+<span class="o">&amp;&amp;</span> tar -xf BBMap_38.51.tar.gz <span class="se">\</span>
+<span class="o">&amp;&amp;</span> rm BBMap_38.51.tar.gz
+
+<span class="c1"># pwd the current location</span>
+<span class="nv">pwd</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+
+<span class="c1"># build BBTools small C-lib</span>
+<span class="nb">cd</span> bbmap/jni <span class="se">\</span>
+ <span class="o">&amp;&amp;</span> make -f makefile.linux
+
+<span class="c1"># Place program into path</span>
+<span class="nb">echo</span> <span class="s2">&quot;export PATH=</span><span class="nv">$pwd</span><span class="s2">/bbmap:</span>$<span class="s2">&quot;&quot;PATH&quot;</span> &gt;&gt; ~/.bash_profile
+</pre></div>
+</div>
+</li>
+</ol>
+<p class="last"><strong>After all of these things have been installed make sure that BBMap, Ray, and MPI is properly located in your path. This can be done through he last few lines of each code sample.</strong></p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">SISRS2.0 Tutorial</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/setup.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="SISRS2.0 Tutorial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, SchwartzLabURI.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
