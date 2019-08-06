@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>SISRS2.0 Tutorial &#8212; SISRS2.0 2.0 documentation</title>
+    <title>Data Requirements &#8212; SISRS2.0 2.0 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -18,7 +18,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Data Requirements" href="dataReq.html" /> 
+    <link rel="next" title="SISRS2.0 Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Software Setup" href="softwareSetup.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,7 +28,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="dataReq.html" title="Data Requirements"
+          <a href="tutorial.html" title="SISRS2.0 Tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="softwareSetup.html" title="Software Setup"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
       </ul>
@@ -38,8 +42,28 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="sisrs2-0-tutorial">
-<h1>SISRS2.0 Tutorial<a class="headerlink" href="#sisrs2-0-tutorial" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="data-requirements">
+<h1>Data Requirements<a class="headerlink" href="#data-requirements" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic">
+<li><p class="first">You must have an approximate genome size estimate for group</p>
+<blockquote>
+<div><ul class="simple">
+<li>Note: If genome size estimates vary greatly within your group, use an estimate on the larger side</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Raw or Trimmed NGS reads for each taxa</p>
+<blockquote>
+<div><ul class="simple">
+<li>Currently, starting NGS reads should either be all untrimmed or all trimmed. We plan to implement mixed trim status in an upcoming release.</li>
+<li>Paired-end reads must have the same basename and end in _1/_2.fastq.gz to be recognized as paired end. Any other naming convention will trigger single-end assignment</li>
+<li>SISRS default parameters require 3X depth to call a site, so higher per-taxa coverage is ideal. As a minimum we recommend at least 10X coverage. The pipeline can be run with less, but site recovery will become reduced as coverage drops.</li>
+<li>All read files should be of the same ‘type’ (e.g. Don’t mix DNA-seq + RNA-seq)</li>
+<li>Ensure high sequence data quality prior to analysis (low read quality and high sequence duplication levels are both red flags for analysis). Note that the built-in trimming scripts are fairly conservative.</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
 </div>
 
 
@@ -49,12 +73,15 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dataReq.html"
-                        title="previous chapter">Data Requirements</a></p>
+  <p class="topless"><a href="softwareSetup.html"
+                        title="previous chapter">Software Setup</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="next chapter">SISRS2.0 Tutorial</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/tutorial.rst.txt"
+      <li><a href="_sources/dataReq.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -81,7 +108,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="dataReq.html" title="Data Requirements"
+          <a href="tutorial.html" title="SISRS2.0 Tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="softwareSetup.html" title="Software Setup"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
       </ul>
