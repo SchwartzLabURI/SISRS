@@ -1,5 +1,5 @@
-Data Requirements
-=================
+**Data Requirements**
+=====================
 
 
 1. You must have an approximate genome size estimate for group

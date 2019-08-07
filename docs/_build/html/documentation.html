@@ -1,0 +1,399 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Documentation &#8212; SISRS2.0 2.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SISRS2.0 Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Data Requirements" href="dataReq.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="SISRS2.0 Tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="dataReq.html" title="Data Requirements"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation">
+<h1><strong>Documentation</strong><a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>Table of Contents:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="#command-line-arguments">Command Line Arguments</a></li>
+<li><dl class="first docutils">
+<dt><a class="reference internal" href="#about-the-scripts">About the Scripts</a></dt>
+<dd><ul class="first last">
+<li><a class="reference internal" href="#sisrs-01-folder-setup">sisrs_01_folder_setup</a></li>
+<li><a class="reference internal" href="#sisrs-02-read-trimmer">sisrs_02_read_trimmer</a></li>
+<li><a class="reference internal" href="#sisrs-03-read-subsetter">sisrs_03_read_subsetter</a></li>
+<li><a class="reference internal" href="#sisrs-04-ray-composite">sisrs_04_ray_composite</a></li>
+<li><a class="reference internal" href="#sisrs-05-setup-sisrs">sisrs_05_setup_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-06-run-sisrs">sisrs_06_run_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-07-output-sisrs">sisrs_07_output_sisrs</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="command-line-arguments">
+<h2>Command Line Arguments<a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>Genome Size Estimate (-gs, –genomeSize)</dt>
+<dd><ul class="first last simple">
+<li>Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Specifying starting data (-d, –data)</dt>
+<dd><ul class="first last simple">
+<li>Path to directory where reads are already split into folders by taxon (these can be linked files).</li>
+<li><strong>Note 1</strong>: No spaces or special characters are allowed when naming taxon directories.</li>
+<li><strong>Note 2</strong>: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Taxon ID File (-id)</dt>
+<dd><ul class="first last">
+<li><p class="first">Specify the taxon names with the TaxonIDs file. One taxon per line as follows:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; cat TaxonIDs
+AotNan
+CalJac
+ColAng
+GorGor
+HomSap
+HylMol
+MacMul
+MacNem
+PanPan
+PanTro
+PapAnu
+PapCyn
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Output Directory (-dir,–directory)</dt>
+<dd><ul class="first last simple">
+<li>Path to desired SISRS output directory. DEFAULT: The directory preceding where the scripts are located</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Trimmed Data (-trm,–trimmed)</dt>
+<dd><ul class="first last simple">
+<li>Specify if the data has already been trimmed</li>
+<li>DEFAULT: untrimmed</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Processors (-p,–processors)</dt>
+<dd><ul class="first last simple">
+<li>Specify the number of available processors.</li>
+<li>DEFAULT: 1</li>
+<li><strong>Note</strong>: If running this on a multi-core machine, specify the number of processors per node here.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Homozygosity Threshold (-thresh,–threshold)</dt>
+<dd><ul class="first last simple">
+<li>Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1.</li>
+<li>DEFAULT: 1 (SISRS sites have support for only a single base within taxa)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Minimum Coverage Threshold (-mr,–minread)</dt>
+<dd><ul class="first last simple">
+<li>Specify the minimum read coverage to call a SISRS site.</li>
+<li>DEFAULT: 3 (Three reads required to call a site)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Missing Taxa Allowed (-ms,–missing)</dt>
+<dd><ul class="first last simple">
+<li>When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column.</li>
+<li>You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column.</li>
+<li>It will also separate all the data out into folders labeled missing_(#).</li>
+<li>DEFAULT: 0 (Coverage for all taxa for all sites)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present.</p>
+<ol class="lowerroman simple">
+<li>Adding a Taxon (-aT,–addTaxon): Adding a new taxon to the previous <em>SISRS</em> run</li>
+<li>Adding Additional Sequences (-aD,–addData): Adding a new file to existing taxons</li>
+</ol>
+<p><strong>Note</strong>: This relies on the -d/–data folder to specify were the new data is located</p>
+</li>
+</ol>
+</div>
+<div class="section" id="about-the-scripts">
+<h2>About the Scripts<a class="headerlink" href="#about-the-scripts" title="Permalink to this headline">¶</a></h2>
+<p>This section will give a brief over view of what is needed to run each script. This will include the expected input (including flags) and it will also discuss the expected output.</p>
+<p><strong>Note</strong>: <em>SISRS</em> runs on an organized system in which you need to organize your data by taxon. Prior to running our software we ask that you make separate taxon folders for all taxa and move the data to the correct folder.</p>
+<p>For examples please see the tutorial page.</p>
+<div class="section" id="sisrs-01-folder-setup">
+<h3>sisrs_01_folder_setup<a class="headerlink" href="#sisrs-01-folder-setup" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>This script will start the setup of the folder structure needed to run <em>SISRS</em>.</li>
+<li><strong>Required Arguments</strong>: -d/–date or -id</li>
+<li><strong>Optional Arguments</strong>: -trm/–trimmed</li>
+</ul>
+</div>
+<div class="section" id="sisrs-02-read-trimmer">
+<h3>sisrs_02_read_trimmer<a class="headerlink" href="#sisrs-02-read-trimmer" title="Permalink to this headline">¶</a></h3>
+<p>Running this script will:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Trim all reads in RawReads</li>
+<li>Output trimmed reads to the TrimReads directory</li>
+<li>Run FastQC on both trimmed and untrimmed datasets</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Optional Arguments</strong>: -p,–processors</li>
+</ul>
+<p>Other Trimming Options:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Trimming can certainly be done using your preferred methods, but this script is a wrapper around the BBDuk program (part of the BBMap Suite).</li>
+<li>If your reads are already trimmed, ensure they are in the TrimReads directory and move on to Step 3 (Subsetting)</li>
+<li>Multiple read files per taxon is fine, as are mixes of single-end and paired-end reads.</li>
+</ul>
+</div></blockquote>
+<p>Using our Wrapper:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Put all raw reads in (.fastq.gz format) in the appropriate taxon folder in RawReads.</li>
+<li>Raw data files are not modified or used after trimming, so avoid duplication if possible by making links to the fastq.gz files as opposed to copying or moving raw data</li>
+</ul>
+<p><strong>Note</strong>: Check FastQC output for trimmed data. If using ‘random’ DNA-seq data, be especially wary of high sequence duplication levels which could indicate non-random sequencing.</p>
+<ul class="simple">
+<li>Data will eventually be pooled, so best to remove low-quality data early to prevent it from being incorporated into the genome assembly</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="sisrs-03-read-subsetter">
+<h3>sisrs_03_read_subsetter<a class="headerlink" href="#sisrs-03-read-subsetter" title="Permalink to this headline">¶</a></h3>
+<p>Running this script will:</p>
+<blockquote>
+<div><ul class="simple">
+<li>SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together</li>
+<li>The subsampling step ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in few species</li>
+<li>Based on the requested depth [10*Genome Size Estimate/Number of Species], if a species has fewer total reads all reads will be sampled and the user will be notified with a warning message</li>
+<li>For species that do have sufficient total coverage, an attempt is made to sample evenly from each read set.</li>
+<li>If certain read sets lack the required coverage, they are also sampled completely and the deficit is covered by a deeper read set</li>
+</ul>
+</div></blockquote>
+<p>Expectations of data:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Single-end should all end in “_Trim.fastq.gz”</li>
+<li>Paired-end reads should end in “_Trim_1.fastq.gz/_Trim_2.fastq.gz”</li>
+<li>Reads must be in the appropriate TrimReads subfolder by Taxon</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Required Arguments</strong>: -gs,–genomeSize</li>
+</ul>
+</div>
+<div class="section" id="sisrs-04-ray-composite">
+<h3>sisrs_04_ray_composite<a class="headerlink" href="#sisrs-04-ray-composite" title="Permalink to this headline">¶</a></h3>
+<p>This script provides:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A genome assembly script that wraps around Ray, which is fast but requires MPI even on one node. We plan to offer more assembly options in later releases. <em>mpirun must be in your path</em></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Optional Arguments</strong>: -p,–processors</li>
+</ul>
+</div>
+<div class="section" id="sisrs-05-setup-sisrs">
+<h3>sisrs_05_setup_sisrs<a class="headerlink" href="#sisrs-05-setup-sisrs" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>This script will:</dt>
+<dd><ul class="first last simple">
+<li><dl class="first docutils">
+<dt>Place all the files where they need to be for a <em>SISRS</em> run, including:</dt>
+<dd><ul class="first last">
+<li>Renaming scaffolds with <code class="docutils literal notranslate"><span class="pre">SISRS_</span></code> at the front for downstream data handling</li>
+<li>Linking all trim reads to the <em>SISRS</em> analysis folders</li>
+<li>Indexing and processing the composite genome</li>
+<li>Creating <em>SISRS</em> runs scripts for each species</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<ul class="simple">
+<li><strong>Optional Arguments</strong>: -p/–processors, -mr/–minread, and -thrs/–threshold</li>
+</ul>
+</div>
+<div class="section" id="sisrs-06-run-sisrs">
+<h3>sisrs_06_run_sisrs<a class="headerlink" href="#sisrs-06-run-sisrs" title="Permalink to this headline">¶</a></h3>
+<p>This script will:</p>
+<blockquote>
+<div><ul class="simple">
+<li>sisrs_05_setup_sisrs generates a bash script in each taxon folder</li>
+<li>This script will run them serially on one machine (one after another)</li>
+<li><dl class="first docutils">
+<dt>If multiple nodes are available, you likely want to skip this step as these scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs).</dt>
+<dd><ul class="first last">
+<li>Be sure to specify processors accordingly when running sisrs_05_setup_sisrs</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Individual log files are created in each taxon folder</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li>No Arguments needed</li>
+</ul>
+</div>
+<div class="section" id="sisrs-07-output-sisrs">
+<h3>sisrs_07_output_sisrs<a class="headerlink" href="#sisrs-07-output-sisrs" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>This script will:</dt>
+<dd><ul class="first last simple">
+<li>Take the taxon files and find all variable sites</li>
+<li>Sites are filtered into all sites, parsimony-informative sites, and biallelic sites</li>
+<li>This script also filters the biallelic site alignment down to only data with 0 missing taxa (or whatever number or range you choose), both with and without biallelic gaps</li>
+<li>This script also creates a final log with all mapping data and SISRS output in SISRS_Run/out_SISRS_Log</li>
+</ul>
+</dd>
+</dl>
+<ul class="simple">
+<li><strong>Optional Arguments</strong>: -ms,–missing</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>Documentation</strong></a><ul>
+<li><a class="reference internal" href="#command-line-arguments">Command Line Arguments</a></li>
+<li><a class="reference internal" href="#about-the-scripts">About the Scripts</a><ul>
+<li><a class="reference internal" href="#sisrs-01-folder-setup">sisrs_01_folder_setup</a></li>
+<li><a class="reference internal" href="#sisrs-02-read-trimmer">sisrs_02_read_trimmer</a></li>
+<li><a class="reference internal" href="#sisrs-03-read-subsetter">sisrs_03_read_subsetter</a></li>
+<li><a class="reference internal" href="#sisrs-04-ray-composite">sisrs_04_ray_composite</a></li>
+<li><a class="reference internal" href="#sisrs-05-setup-sisrs">sisrs_05_setup_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-06-run-sisrs">sisrs_06_run_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-07-output-sisrs">sisrs_07_output_sisrs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dataReq.html"
+                        title="previous chapter"><strong>Data Requirements</strong></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="next chapter"><strong>SISRS2.0 Tutorial</strong></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/documentation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="SISRS2.0 Tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="dataReq.html" title="Data Requirements"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, SchwartzLabURI.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

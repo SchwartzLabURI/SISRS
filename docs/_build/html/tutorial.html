@@ -18,7 +18,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Data Requirements" href="dataReq.html" /> 
+    <link rel="prev" title="Documentation" href="documentation.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,7 +27,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="dataReq.html" title="Data Requirements"
+          <a href="documentation.html" title="Documentation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
       </ul>
@@ -39,7 +39,161 @@
           <div class="body" role="main">
             
   <div class="section" id="sisrs2-0-tutorial">
-<h1>SISRS2.0 Tutorial<a class="headerlink" href="#sisrs2-0-tutorial" title="Permalink to this headline">¶</a></h1>
+<h1><strong>SISRS2.0 Tutorial</strong><a class="headerlink" href="#sisrs2-0-tutorial" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>SISRS v2.0 can be run in two different ways:</dt>
+<dd><ol class="first last arabic simple">
+<li><dl class="first docutils">
+<dt>Continuous Run</dt>
+<dd><ul class="first last">
+<li>This option may take a longer amount of time to run</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Split Run</dt>
+<dd><ul class="first last">
+<li>This option allows the user to go through and check the output at each step</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+<dt>Table of contents:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="#continuous-run-example">Continuous Run Example</a></li>
+<li><dl class="first docutils">
+<dt><a class="reference internal" href="#split-run-example">Split Run Example</a></dt>
+<dd><ul class="first last">
+<li><a class="reference internal" href="#sisrs-01-folder-setup">sisrs_01_folder_setup</a></li>
+<li><a class="reference internal" href="#sisrs-02-read-trimmer">sisrs_02_read_trimmer</a></li>
+<li><a class="reference internal" href="#sisrs-03-read-subsetter">sisrs_03_read_subsetter</a></li>
+<li><a class="reference internal" href="#sisrs-04-ray-composite">sisrs_04_ray_composite</a></li>
+<li><a class="reference internal" href="#sisrs-05-setup-sisrs">sisrs_05_setup_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-06-run-sisrs">sisrs_06_run_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-07-output-sisrs">sisrs_07_output_sisrs</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p><strong>Note</strong>: All examples are working on the SISRS_Small.zip that was provided in the github. We are assuming that you have allready done a git pull from <a class="reference external" href="github.com/SchwartzLabURI/SISRS">SISRS</a> and unzipped the small data set.</p>
+<div class="section" id="continuous-run-example">
+<h2>Continuous Run Example<a class="headerlink" href="#continuous-run-example" title="Permalink to this headline">¶</a></h2>
+<p>This section will give you an example on how to run <em>SISRS</em> using the continues run option that is implemented.
+As you move down in the list of commands more arguments get added to show more complex examples:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#Run SISRS with a genome size estimate of 100 MB</span>
+&gt; python sisrs.py -d ./SISRS_Small/ -gs <span class="m">100000000</span>
+&gt; python sisrs.py --data ./SISRS_Small/ --genomeSize <span class="m">100000000</span>
+
+
+<span class="c1">#Run SISRS with a genome size estimate of 2GB, 20 processors, and pre-trimmed reads</span>
+&gt; python sisrs.py -d ./SISRS_Small/ -gs <span class="m">2000000000</span> -p <span class="m">20</span> -trm
+&gt; python sisrs.py --data ./SISRS_Small/ --genomeSize <span class="m">2000000000</span> --processors <span class="m">20</span> -trm
+
+
+<span class="c1">#Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity,</span>
+<span class="c1"># a minimum read coverage of two reads, and allowing one taxon to be missing for any given</span>
+<span class="c1"># site in the final alignment</span>
+&gt; python sisrs.py -d ./SISRS_Small/ -gs <span class="m">100</span> -p <span class="m">10</span> -thresh .66 -mr <span class="m">2</span> -ms <span class="m">1</span>
+&gt; python sisrs.py --data ./SISRS_Small/ --genomeSize <span class="m">100</span> --processors <span class="m">10</span> --threshold .66 --minread <span class="m">2</span> --missing <span class="m">1</span>
+
+<span class="c1">#Run SISRS with a genome size estimate of 100bp, 10 processors, allowing 2/3 homozygosity,</span>
+<span class="c1"># a minimum read coverage of two reads, and allowing 1-6 taxon to be missing for any given</span>
+<span class="c1"># site in the final alignment</span>
+&gt; python sisrs.py -d ./SISRS_Small/ -gs <span class="m">100</span> -p <span class="m">10</span> -thresh .66 -mr <span class="m">2</span> -ms <span class="m">1</span>-6
+&gt; python sisrs.py --data ./SISRS_Small/ --genomeSize <span class="m">100</span> --processors <span class="m">10</span> --threshold .66 --minread <span class="m">2</span> --missing <span class="m">1</span>-6
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="split-run-example">
+<h2>Split Run Example<a class="headerlink" href="#split-run-example" title="Permalink to this headline">¶</a></h2>
+<p>The section is split up into subsections based on each of the seven scripts that defines the most important parts of the <em>SISRS</em> software. Each subsection will give you an example on how to run that individual script based on the some general command line options and some more complex options.</p>
+<div class="section" id="sisrs-01-folder-setup">
+<h3>sisrs_01_folder_setup<a class="headerlink" href="#sisrs-01-folder-setup" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python scripts/sisrs_01_folder_setup.py -d /SISRS_Small/
+&gt; python scripts/sisrs_01_folder_setup.py -data /SISRS_Small/
+
+<span class="c1">#If data in already trimmed...</span>
+&gt; python scripts/sisrs_01_folder_setup.py -d /SISRS_Small/ -trm
+&gt; python scripts/sisrs_01_folder_setup.py -data /SISRS_Small/ --trimmed
+</pre></div>
+</div>
+<p>You also have the option of using the -id flag which will require you yo manually move your data to the correct location after the script has completed running.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python scripts/sisrs_01_folder_setup.py -id TaxonIDs
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="sisrs-02-read-trimmer">
+<h3>sisrs_02_read_trimmer<a class="headerlink" href="#sisrs-02-read-trimmer" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python scripts/sisrs_02_read_trimmer.py -p &lt;<span class="c1"># processors&gt;</span>
+&gt; python scripts/sisrs_02_read_trimmer.py --processors &lt;<span class="c1"># processors&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="sisrs-03-read-subsetter">
+<h3>sisrs_03_read_subsetter<a class="headerlink" href="#sisrs-03-read-subsetter" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#For a SISRS run on ape species (with ~3.5Gb genome)</span>
+&gt; python scripts/sisrs_03_read_subsetter.py -gs <span class="m">3500000000</span>
+&gt; python scripts/sisrs_03_read_subsetter.py --genomeSize <span class="m">3500000000</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="sisrs-04-ray-composite">
+<h3>sisrs_04_ray_composite<a class="headerlink" href="#sisrs-04-ray-composite" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#1 node, 20 processors per node</span>
+&gt; python scripts/sisrs_04_ray_composite.py -p <span class="m">20</span>
+&gt; python scripts/sisrs_04_ray_composite.py --processors <span class="m">20</span>
+
+<span class="c1">#3 nodes, 50 processors per node</span>
+&gt; python scripts/sisrs_04_ray_composite.py -p <span class="m">150</span>
+&gt; python scripts/sisrs_04_ray_composite.py --processors <span class="m">150</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="sisrs-05-setup-sisrs">
+<h3>sisrs_05_setup_sisrs<a class="headerlink" href="#sisrs-05-setup-sisrs" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div></div></blockquote>
+</div>
+<div class="section" id="sisrs-06-run-sisrs">
+<h3>sisrs_06_run_sisrs<a class="headerlink" href="#sisrs-06-run-sisrs" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python scripts/sisrs_06_run_sisrs.py
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="sisrs-07-output-sisrs">
+<h3>sisrs_07_output_sisrs<a class="headerlink" href="#sisrs-07-output-sisrs" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#0 missing taxa allowed</span>
+&gt; python scripts/sisrs_07_output_sisrs.py
+
+<span class="c1">#3 missing taxa allowed</span>
+&gt; python scripts/sisrs_07_output_sisrs.py -ms <span class="m">3</span>
+
+<span class="c1"># 3, 4, 5, and 6 missing taxa allowed</span>
+&gt; python scripts/sisrs_07_output_sisrs.py --missing <span class="m">3</span>-6
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
 </div>
 
 
@@ -48,9 +202,27 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>SISRS2.0 Tutorial</strong></a><ul>
+<li><a class="reference internal" href="#continuous-run-example">Continuous Run Example</a></li>
+<li><a class="reference internal" href="#split-run-example">Split Run Example</a><ul>
+<li><a class="reference internal" href="#sisrs-01-folder-setup">sisrs_01_folder_setup</a></li>
+<li><a class="reference internal" href="#sisrs-02-read-trimmer">sisrs_02_read_trimmer</a></li>
+<li><a class="reference internal" href="#sisrs-03-read-subsetter">sisrs_03_read_subsetter</a></li>
+<li><a class="reference internal" href="#sisrs-04-ray-composite">sisrs_04_ray_composite</a></li>
+<li><a class="reference internal" href="#sisrs-05-setup-sisrs">sisrs_05_setup_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-06-run-sisrs">sisrs_06_run_sisrs</a></li>
+<li><a class="reference internal" href="#sisrs-07-output-sisrs">sisrs_07_output_sisrs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="dataReq.html"
-                        title="previous chapter">Data Requirements</a></p>
+  <p class="topless"><a href="documentation.html"
+                        title="previous chapter"><strong>Documentation</strong></a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -81,7 +253,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="dataReq.html" title="Data Requirements"
+          <a href="documentation.html" title="Documentation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">SISRS2.0 2.0 documentation</a> &#187;</li> 
       </ul>

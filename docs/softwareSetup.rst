@@ -1,5 +1,5 @@
-Software Setup
-==============
+**Software Setup**
+==================
 
 **Software Requirements**
 
@@ -15,7 +15,7 @@ Software Setup
         * Ray requires a working version of MPI, even if running on a single node
         * FastQC (0.11.5) (Only if trimming)
 
-What type of machine do you plan on running *SISRS2.0* on?
+What type of machine do you plan on running *SISRS v2.0* on?
 
     1. Research Cluster / HPC - Clusters
 
