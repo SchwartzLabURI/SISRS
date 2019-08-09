@@ -44,9 +44,10 @@
             
   <div class="section" id="software-setup">
 <h1><strong>Software Setup</strong><a class="headerlink" href="#software-setup" title="Permalink to this headline">¶</a></h1>
-<p><strong>Software Requirements</strong></p>
+<div class="section" id="software-requirements">
+<h2>Software Requirements<a class="headerlink" href="#software-requirements" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>The following programs must be installed and in your path prior to running SISRS:</p>
+<div><p>The following programs must be installed and included in your path prior to running SISRS:</p>
 <blockquote>
 <div><ul class="simple">
 <li><dl class="first docutils">
@@ -67,10 +68,14 @@
 </ul>
 </div></blockquote>
 </div></blockquote>
-<p>What type of machine do you plan on running <em>SISRS v2.0</em> on?</p>
+</div>
+<div class="section" id="installations">
+<h2>Installations<a class="headerlink" href="#installations" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><ol class="arabic">
-<li><p class="first">Research Cluster / HPC - Clusters</p>
+<div><em>Before proceeding with the installation of all required prerequisite software, you must establish what type of machine you plan on running SISRS v2.0 on.</em></div></blockquote>
+</div>
+<div class="section" id="research-cluster-hpc-clusters">
+<h2>Research Cluster / HPC - Clusters<a class="headerlink" href="#research-cluster-hpc-clusters" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Check for the following modules on your machine:</p>
 <blockquote>
@@ -147,7 +152,7 @@ make install
 </ol>
 <p><strong>After all of these things have been installed make sure that BBMap, Ray, and MPI is properly located in your path.</strong></p>
 <dl class="last docutils">
-<dt>Entering these software packages into your path can be down through the last few lines under each code sample or it can be done through:</dt>
+<dt>Entering these software packages into your path can be done through the last few lines under each code sample or it can be done through:</dt>
 <dd><div class="first last highlight-bash notranslate"><div class="highlight"><pre><span></span>vim ~/.bash_profile
 <span class="c1"># scroll to bottom of .bash_profile and add new line</span>
 Export <span class="nv">PATH</span><span class="o">=</span><span class="s1">&#39;path/to/software/package:$PATH&#39;</span>
@@ -170,15 +175,15 @@ python3 ...
 </dd>
 </dl>
 </div></blockquote>
-</li>
-<li><p class="first">Running Docker or Singularity</p>
+</div>
+<div class="section" id="docker-or-singularity">
+<h2>Docker or Singularity<a class="headerlink" href="#docker-or-singularity" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="docutils">
 <dt>The Schwartz Lab &#64; URI is proud to also offer a docker image located at:</dt>
-<dd><p class="first last">docker://mcconnell22/sisrs:2.0</p>
-</dd>
+<dd>docker://mcconnell22/sisrs:2.0</dd>
 </dl>
-<p><strong>This image is an interactive image and is designed for users to run commands inside of it.</strong></p>
+<p><em>This image is an interactive image and is designed for users to run commands inside of it.</em></p>
 <p>How to use the image:</p>
 <ol class="lowerroman">
 <li><p class="first">Docker</p>
@@ -196,10 +201,11 @@ docker run -it mcconnell22/sisrs:2.0
 </li>
 </ol>
 </div></blockquote>
-</li>
-<li><p class="first">Install From Nothing</p>
+</div>
+<div class="section" id="install-from-nothing">
+<h2>Install From Nothing<a class="headerlink" href="#install-from-nothing" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p><em>Refer to the section on installing software packages on research clusters to install MPI, Ray, Biopython/Numpy, and BBMap Suite</em></p>
+<div><p><em>Refer to the section on installing software packages on research clusters to install MPI - OPENMPI, Ray, Biopython/Numpy, and BBMap Suite</em></p>
 <ol class="lowerroman">
 <li><p class="first">Bowtie2</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.3.1/bowtie2-2.3.3.1-linux-x86_64.zip/download
@@ -256,9 +262,7 @@ chmod <span class="m">755</span> /opt/FastQC/fastqc
 </li>
 </ol>
 </div></blockquote>
-</li>
-</ol>
-</div></blockquote>
+</div>
 </div>
 
 
@@ -267,6 +271,18 @@ chmod <span class="m">755</span> /opt/FastQC/fastqc
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>Software Setup</strong></a><ul>
+<li><a class="reference internal" href="#software-requirements">Software Requirements</a></li>
+<li><a class="reference internal" href="#installations">Installations</a></li>
+<li><a class="reference internal" href="#research-cluster-hpc-clusters">Research Cluster / HPC - Clusters</a></li>
+<li><a class="reference internal" href="#docker-or-singularity">Docker or Singularity</a></li>
+<li><a class="reference internal" href="#install-from-nothing">Install From Nothing</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">SISRS: SNP Identification from Short Read Sequences</a></p>

@@ -61,27 +61,8 @@
 </li>
 </ol>
 </dd>
-<dt>Table of contents:</dt>
-<dd><ul class="first last simple">
-<li><a class="reference internal" href="#continuous-run-example">Continuous Run Example</a></li>
-<li><dl class="first docutils">
-<dt><a class="reference internal" href="#split-run-example">Split Run Example</a></dt>
-<dd><ul class="first last">
-<li><a class="reference internal" href="#sisrs-01-folder-setup">sisrs_01_folder_setup</a></li>
-<li><a class="reference internal" href="#sisrs-02-read-trimmer">sisrs_02_read_trimmer</a></li>
-<li><a class="reference internal" href="#sisrs-03-read-subsetter">sisrs_03_read_subsetter</a></li>
-<li><a class="reference internal" href="#sisrs-04-ray-composite">sisrs_04_ray_composite</a></li>
-<li><a class="reference internal" href="#sisrs-05-setup-sisrs">sisrs_05_setup_sisrs</a></li>
-<li><a class="reference internal" href="#sisrs-06-run-sisrs">sisrs_06_run_sisrs</a></li>
-<li><a class="reference internal" href="#sisrs-07-output-sisrs">sisrs_07_output_sisrs</a></li>
-</ul>
-</dd>
 </dl>
-</li>
-</ul>
-</dd>
-</dl>
-<p><strong>Note</strong>: All examples are working on the SISRS_Small.zip that was provided in the github. We are assuming that you have allready done a git pull from <a class="reference external" href="github.com/SchwartzLabURI/SISRS">SISRS</a> and unzipped the small data set.</p>
+<p><strong>Note</strong>: All examples are working on the SISRS_Small.zip that was provided in the github. We are assuming that you have already done a git pull from <a class="reference external" href="github.com/SchwartzLabURI/SISRS">SISRS</a> and unzipped the small data set.</p>
 <div class="section" id="continuous-run-example">
 <h2>Continuous Run Example<a class="headerlink" href="#continuous-run-example" title="Permalink to this headline">¶</a></h2>
 <p>This section will give you an example on how to run <em>SISRS</em> using the continues run option that is implemented.
@@ -168,7 +149,14 @@ As you move down in the list of commands more arguments get added to show more c
 <div class="section" id="sisrs-05-setup-sisrs">
 <h3>sisrs_05_setup_sisrs<a class="headerlink" href="#sisrs-05-setup-sisrs" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div></div></blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 20 processors, 3 reads required to call a site, 100% homozygosity per species</span>
+&gt; python scripts/sisrs_05_setup_sisrs.py -p <span class="m">20</span> -mr <span class="m">3</span> -thrs <span class="m">1</span>
+
+<span class="c1"># 10 processors, 5 reads required to call a site, 99% homozygosity per species</span>
+&gt; python scripts/sisrs_05_setup_sisrs.py --processors <span class="m">10</span> --minread <span class="m">5</span> --threshold .99
+</pre></div>
+</div>
+</div></blockquote>
 </div>
 <div class="section" id="sisrs-06-run-sisrs">
 <h3>sisrs_06_run_sisrs<a class="headerlink" href="#sisrs-06-run-sisrs" title="Permalink to this headline">¶</a></h3>

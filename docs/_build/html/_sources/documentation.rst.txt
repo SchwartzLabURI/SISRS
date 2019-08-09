@@ -1,18 +1,6 @@
 **Documentation**
 =================
 
-Table of Contents:
-    * `Command Line Arguments`_
-    * `About the Scripts`_
-       * `sisrs_01_folder_setup`_
-       * `sisrs_02_read_trimmer`_
-       * `sisrs_03_read_subsetter`_
-       * `sisrs_04_ray_composite`_
-       * `sisrs_05_setup_sisrs`_
-       * `sisrs_06_run_sisrs`_
-       * `sisrs_07_output_sisrs`_
-
-
 **********************
 Command Line Arguments
 **********************
@@ -21,8 +9,8 @@ Command Line Arguments
     * Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
 
 2. Specifying starting data (-d, --data)
-    * Path to directory where reads are already split into folders by taxon (these can be linked files).
-    * **Note 1**: No spaces or special characters are allowed when naming taxon directories.
+    * Path to directory where reads are already split into folders by taxon (these can be linked files)
+    * **Note 1**: No spaces or special characters are allowed when naming taxon directories
     * **Note 2**: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
 
 3. Taxon ID File (-id)
@@ -52,28 +40,28 @@ Command Line Arguments
         * DEFAULT: untrimmed
 
 6. Processors (-p,--processors)
-    * Specify the number of available processors.
+    * Specify the number of available processors
     * DEFAULT: 1
-    * **Note**: If running this on a multi-core machine, specify the number of processors per node here.
+    * **Note**: If running this on a multi-core machine, specify the number of processors per node here
 
 7. Homozygosity Threshold (-thresh,--threshold)
-    * Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1.
+    * Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1
     * DEFAULT: 1 (SISRS sites have support for only a single base within taxa)
 
 8. Minimum Coverage Threshold (-mr,--minread)
-    * Specify the minimum read coverage to call a SISRS site.
+    * Specify the minimum read coverage to call a SISRS site
     * DEFAULT: 3 (Three reads required to call a site)
 
 9. Missing Taxa Allowed (-ms,--missing)
-    * When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column.
-    * You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column.
-    *  It will also separate all the data out into folders labeled missing_(#).
+    * When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column
+    * You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column
+    *  It will also separate all the data out into folders labeled missing_(#)
     * DEFAULT: 0 (Coverage for all taxa for all sites)
 
-10. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present.
+10. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present
 
     i. Adding a Taxon (-aT,--addTaxon): Adding a new taxon to the previous *SISRS* run
-    ii. Adding Additional Sequences (-aD,--addData): Adding a new file to existing taxons
+    ii. Adding Additional Sequences (-aD,--addData): Adding a new file to existing taxa
 
     **Note**: This relies on the -d/--data folder to specify were the new data is located
 
@@ -91,7 +79,7 @@ For examples please see the tutorial page.
 sisrs_01_folder_setup
 #####################
 
-* This script will start the setup of the folder structure needed to run *SISRS*.
+* This script will start the setup of the folder structure needed to run *SISRS*
 * **Required Arguments**: -d/--date or -id
 * **Optional Arguments**: -trm/--trimmed
 
@@ -108,19 +96,19 @@ Running this script will:
 
 Other Trimming Options:
 
-    * Trimming can certainly be done using your preferred methods, but this script is a wrapper around the BBDuk program (part of the BBMap Suite).
+    * Trimming can certainly be done using your preferred methods, but this script is a wrapper around the BBDuk program (part of the BBMap Suite)
 
     * If your reads are already trimmed, ensure they are in the TrimReads directory and move on to Step 3 (Subsetting)
 
-    * Multiple read files per taxon is fine, as are mixes of single-end and paired-end reads.
+    * Multiple read files per taxon is fine, as are mixes of single-end and paired-end reads
 
 Using our Wrapper:
 
-    * Put all raw reads in (.fastq.gz format) in the appropriate taxon folder in RawReads.
+    * Put all raw reads in (.fastq.gz format) in the appropriate taxon folder in RawReads
 
     * Raw data files are not modified or used after trimming, so avoid duplication if possible by making links to the fastq.gz files as opposed to copying or moving raw data
 
-    **Note**: Check FastQC output for trimmed data. If using 'random' DNA-seq data, be especially wary of high sequence duplication levels which could indicate non-random sequencing.
+    **Note**: Check FastQC output for trimmed data. If using 'random' DNA-seq data, be especially wary of high sequence duplication levels which could indicate non-random sequencing
 
     * Data will eventually be pooled, so best to remove low-quality data early to prevent it from being incorporated into the genome assembly
 
@@ -132,7 +120,7 @@ Running this script will:
     * SISRS identifies orthologs through a composite genome assembly step, where reads from all taxa are combined and assembled together
     * The subsampling step ensures that no one species dominates the assembly, and also limits the assembly of loci that are present in few species
     * Based on the requested depth [10*Genome Size Estimate/Number of Species], if a species has fewer total reads all reads will be sampled and the user will be notified with a warning message
-    * For species that do have sufficient total coverage, an attempt is made to sample evenly from each read set.
+    * For species that do have sufficient total coverage, an attempt is made to sample evenly from each read set
     * If certain read sets lack the required coverage, they are also sampled completely and the deficit is covered by a deeper read set
 
 Expectations of data:
@@ -171,7 +159,7 @@ This script will:
 
     * sisrs_05_setup_sisrs generates a bash script in each taxon folder
     * This script will run them serially on one machine (one after another)
-    * If multiple nodes are available, you likely want to skip this step as these scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs).
+    * If multiple nodes are available, you likely want to skip this step as these scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs)
         * Be sure to specify processors accordingly when running sisrs_05_setup_sisrs
     * Individual log files are created in each taxon folder
 

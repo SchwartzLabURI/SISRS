@@ -7,18 +7,7 @@ SISRS v2.0 can be run in two different ways:
     2. Split Run
         * This option allows the user to go through and check the output at each step
 
-Table of contents:
-    * `Continuous Run Example`_
-    * `Split Run Example`_
-       * `sisrs_01_folder_setup`_
-       * `sisrs_02_read_trimmer`_
-       * `sisrs_03_read_subsetter`_
-       * `sisrs_04_ray_composite`_
-       * `sisrs_05_setup_sisrs`_
-       * `sisrs_06_run_sisrs`_
-       * `sisrs_07_output_sisrs`_
-
-**Note**: All examples are working on the SISRS_Small.zip that was provided in the github. We are assuming that you have allready done a git pull from `SISRS <github.com/SchwartzLabURI/SISRS>`_ and unzipped the small data set.
+**Note**: All examples are working on the SISRS_Small.zip that was provided in the github. We are assuming that you have already done a git pull from `SISRS <github.com/SchwartzLabURI/SISRS>`_ and unzipped the small data set.
 
 **********************
 Continuous Run Example
@@ -109,7 +98,7 @@ sisrs_04_ray_composite
 sisrs_05_setup_sisrs
 ####################
 
-    .. code-block: bash
+    .. code-block:: bash
 
        # 20 processors, 3 reads required to call a site, 100% homozygosity per species
        > python scripts/sisrs_05_setup_sisrs.py -p 20 -mr 3 -thrs 1
