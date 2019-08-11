@@ -17,7 +17,7 @@ SISRS: SNP Identification from Short Read Sequences
 
 **Authors**:
     This software is written by members of:
-        `Schwartz Lab @ URI <schwartzlaburi.github.io/index.html>`_
+        Schwartz Lab @ URI
     The Developers:
         * Dr. Rachel Schwartz (Original developer)
         * Dr. Robert Literman
@@ -29,9 +29,9 @@ Associated Publications
 
 Publications are shown in revers chronological order:
 
-    1. `Literman, R. and R.S. Schwartz. 2019. Genome-scale profiling reveals higher proportions of phylogenetic signal in non-coding data. BioRxiv Preprint. <www.biorxiv.org/content/10.1101/712646v2>`_
-    2. `Harkins, K.M., R.S. Schwartz, R.A. Cartwright, and A.C. Stone. 2016. Phylogenomic reconstruction supports supercontinent origins for Leishmania. Infection, Genetics and Evolution 38: 101-109. <www.biorxiv.org/content/10.1101/028969v1.full>`_
-    3. `Schwartz, R.S., K.M Harkins, A.C. Stone, and R.A. Cartwright. 2015. A composite genome approach to identify phylogenetically informative data from next-generation sequencing. BMC Bioinformatics. 16:193. <bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-015-0632-y>`_
+    1. Literman, R. and R.S. Schwartz. 2019. Genome-scale profiling reveals higher proportions of phylogenetic signal in non-coding data. BioRxiv Preprint.
+    2. Harkins, K.M., R.S. Schwartz, R.A. Cartwright, and A.C. Stone. 2016. Phylogenomic reconstruction supports supercontinent origins for Leishmania. Infection, Genetics and Evolution 38: 101-109.
+    3. Schwartz, R.S., K.M Harkins, A.C. Stone, and R.A. Cartwright. 2015. A composite genome approach to identify phylogenetically informative data from next-generation sequencing. BMC Bioinformatics. 16:193. 
 
 *******
 Funding
