@@ -5,7 +5,7 @@
 
 ## Website
 
-    To read all about how use our software and what it requires to run we ask you to look at [SISRS Docs] (https://schwartzlaburi.github.io/SISRS/)
+To read all about how use our software and what it requires to run we ask you to look at [SISRS Docs] (https://schwartzlaburi.github.io/SISRS/)
 
 ## Support and Communication
 
