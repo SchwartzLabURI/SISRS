@@ -5,10 +5,10 @@
 
 ## Website
 
-To learn how to use our software and what software dependencies it has we ask you to look at [SISRS Docs](https://schwartzlaburi.github.io/SISRS/).
+To learn how to use our software, and what software dependencies it has, we ask you to look at [SISRS Docs](https://schwartzlaburi.github.io/SISRS/).
 
 ## Support and Communication
 
-If you have any questions about the software please feel free to reach out to us on our github issues page @ [SISRS Github](https://github.com/SchwartzLabURI/SISRS/issues).
+If you have any questions about the software, please feel free to reach out to us on our github issues page @ [SISRS Github](https://github.com/SchwartzLabURI/SISRS/issues).
 
-For other forms of communication we invite you to go to our labs personal website @ [Schwartz Lab](https://schwartzlaburi.github.io/index.html).
+For other forms of communication we invite you to go to our lab's personal website @ [Schwartz Lab](https://schwartzlaburi.github.io/index.html).
