@@ -1,6 +1,6 @@
 # **SISRS v2.0 gh-pages**
 
-### How To Edit The gh-pages
+## How To Edit The gh-pages
 
 1) Clone this specific branch
 2) All edits need to be done in the docs folder on *.rst files
