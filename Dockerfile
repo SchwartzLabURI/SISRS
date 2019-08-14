@@ -25,8 +25,6 @@ RUN apt-get update && apt-get install -y python3 \
 
 RUN pip3 install biopython && pip3 install pandas && pip install biopython
 
-# Ad python to the path
-
 # Set the locale
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen
