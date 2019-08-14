@@ -1,20 +1,7 @@
-# *SISRS* v2.0 SNP Identification from Short Read Sequences
+# *SISRS* v2.0 Docker Image
 
+This branch is only meant to hold the Dockerfile that was used to build the docker image located at docker://mcconnell22/sisrs:2.0. In case of the need for future updates.
 
-*SISRS* — pronounced “scissors” — is a program for identifying phylogenetically informative sites from next-generation whole-genome sequencing of multiple species. It identifies homologous sites without the need to do de novo assembly, annotation, and alignment. It identifies conserved regions by doing joint de novo assembly on multiple species. Sequencing reads are then aligned back to the contigs to identify variable sites.
+This docker image is a Ubuntu based image and has all the necessary software pre-installed to run *SISRS* and a few extra packages you can find on everyday servers.
 
-## License
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose. See the GNU General Public License for more details.
-
-## Website
-
-To learn how to use our software, and what software dependencies it has, we ask you to look at [SISRS Docs](https://schwartzlaburi.github.io/SISRS/).
-
-## Support and Communication
-
-If you have any questions about the software, please feel free to reach out to us on our github issues page @ [SISRS Github](https://github.com/SchwartzLabURI/SISRS/issues).
-
-For other forms of communication we invite you to go to our lab's personal website @ [Schwartz Lab](https://schwartzlaburi.github.io/index.html).
+Instructions to use our docker image can be found on our [website](https://schwartzlaburi.github.io/SISRS/), by navigating to the software setup page under Docker or Singularity.
