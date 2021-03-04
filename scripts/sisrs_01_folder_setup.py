@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Devin McConnell May 23, 2019
+Last edit: Yana Hrytsenko March 4th, 2021
+
+Devin McConnell May 23, 2019
 
 This script preps the folder architecture for a SISRS run.
 Taxon ID file (text file with Taxon IDs on new lines) must be in base SISRS folder OR
@@ -107,18 +109,28 @@ if __name__ == "__main__":
 
     # Store the command line in a seperate argument
     cmd = sys.argv
-    sisrs = os.path.dirname(sys.path[0])
+    #sisrs = os.path.dirname(sys.path[0]) #use for a default path up one dir
 
-    if len(cmd) < 3:
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")
+    if len(cmd) < 4:
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 3 ARGUMENTS (input data directory, genome size, output data directory)")
         exit()
 
     id = ""
     rd = ""
+    out_dir = ""
+    sisrs = ""
+
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sisrs = os.path.dirname(out_dir)
+
+
     if '-id' in cmd:
         id = cmd[cmd.index('-id') + 1]
+
     elif '-d' in cmd or '--data' in cmd:
         rd = isFound('-d','--data',cmd)
+
     else:
         print("MISSING TAXA INFORMATION (-d,--data)")
         exit()
