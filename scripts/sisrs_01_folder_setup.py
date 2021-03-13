@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 4th, 2021
+Last edit: Yana Hrytsenko March 4th, 2021it
 
 Devin McConnell May 23, 2019
 
@@ -12,7 +12,7 @@ Arguments: (-rd/--rawData or -id) Path to data or Path to Taxon ID file
 Optional Argument: -trm/--trimmed (lets system know the data has been pretrimmed)
 Examples: python scripts/folder_setup.py -id TaxonIDs
 python scripts/folder_setup.py -rd /home/Documents/SISRS_Data/
-Output: Script will create lots of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
+Output: Script will create a number of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
 '''
 
 import sys
@@ -39,7 +39,7 @@ def devTaxaList(taxon_ID_file):
 '''
 This function is relient on the fact that the folders inside the path are labeled
 according to the correct taxon. Takes as the main argumemt the path it will be
-searching for the arguments to the files
+searching for the arguments to the files.
 '''
 def readTaxaFromFolders(path):
     # Error check to make sure it is a path that exists
@@ -111,8 +111,8 @@ if __name__ == "__main__":
     cmd = sys.argv
     #sisrs = os.path.dirname(sys.path[0]) #use for a default path up one dir
 
-    if len(cmd) < 4:
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 3 ARGUMENTS (input data directory, genome size, output data directory)")
+    if len(cmd) < 5:#TODO: confirm the num of args with len(cmd)
+        print("THIS SCRIPT REQUIERS 4 ARGUMENTS (-d <path to input data directory> -dir <path to output data directory>")
         exit()
 
     id = ""
@@ -123,6 +123,9 @@ if __name__ == "__main__":
     if '-dir' in cmd or '--directory' in cmd:
         out_dir = isFound('-dir','--directory',cmd)
         sisrs = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
 
     if '-id' in cmd:

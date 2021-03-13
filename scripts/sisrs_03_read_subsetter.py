@@ -91,7 +91,7 @@ def setupDir(sisrs_dir,genomeSize):
     return rtn
 
 '''
-This function is designed to break up the load that is careied by countBasePair.
+This function is designed to break up the load that is carried by countBasePair.
 '''
 def countHelper(tax_dir,compiled_paired,compiled_single_end):
 
@@ -316,10 +316,18 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
 if __name__ == '__main__':
 
     cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+    #sis = os.path.dirname(sys.path[0])
 
-    if len(cmd) < 3:
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS")
+    if len(cmd) < 3: #TODO: confirm the num of args with len(cmd)
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS (-gs <number of basepairs>)")
+        exit()
+
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
         exit()
 
     gs = 0

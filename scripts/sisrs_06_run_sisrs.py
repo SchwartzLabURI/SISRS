@@ -44,9 +44,16 @@ def runSisrs(sisrs_tax_dirs):
 
 if __name__ == '__main__':
 
-    cmd = sys.argv
+    cmd = sys.argv #we don't need to check the number of args because there no flags
 
-    sis = os.path.dirname(sys.path[0])
+    #sis = os.path.dirname(sys.path[0])
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     sisrs_tax_dirs = sisrsSetup(sis)
     runSisrs(sisrs_tax_dirs)

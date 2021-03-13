@@ -158,8 +158,18 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
         os.system('chmod +x '+sisrs_dir+"/"+taxa+"/"+taxa+".sh")
 
 if __name__ == '__main__':
-    cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+
+    cmd = sys.argv #we don't need to check the number of args because there are only optional arguments: -p/--processors, -mr/--minread, and -thrs/--threshold
+
+
+    #sis = os.path.dirname(sys.path[0])
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     proc = 1
     mr = 3

@@ -50,8 +50,16 @@ def runRay(ray_genome_dir,subset_reads,threads):
 
 if __name__ == '__main__':
 
-    cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+    cmd = sys.argv #we don't need to check the number of args because there is only one optional argument -p
+
+    #sis = os.path.dirname(sys.path[0])
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     #BECAUSE RAY RUNS ON MPI, IT MAY NEED IT'S OWN PROCESSOR VARIABLE
     proc = 1

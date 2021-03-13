@@ -96,8 +96,18 @@ def runBash(sisrs_dir,sisrs_tax_dirs,missing):
                 file.write(line)
 
 if __name__ == '__main__':
-    cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+
+    cmd = sys.argv #we don't need to check the number of args because there are only optional arguments: -ms,--missing
+
+    #sis = os.path.dirname(sys.path[0])
+
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     md = 0
 
