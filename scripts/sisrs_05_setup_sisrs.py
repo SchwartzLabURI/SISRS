@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 This script prepares data for a SISRS run by setting the data up and creating
 mapping scripts
 Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
 The composite genome is indexed by Bowtie2 and Samtools
 SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
-Input: -p/--processors Number of processors, -mr/--minRead, and -thresh/--threshold
+Input: -p/--processors Number of processors, -mr/--minRead, and -thresh/--threshold, -dir /data/schwartzlab/yana/test_output_flag_sequential_run/
 '''
 
 import os
@@ -64,7 +68,7 @@ def fileChanges(ray_dir,composite_dir):
     contig_length.to_csv(composite_dir+"/contigs_SeqLength.tsv",sep="\t",header=None,index=False)
 
 '''
-This function is designed to call the bowtie comman and the samtools command
+This function is designed to call the bowtie command and the samtools command
 in order to index the composite genomes correctly. This function requiers two
 parameters the composite genome directory and the number of threads that it can
 run with
@@ -155,14 +159,13 @@ def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath
             new_sisrs = new_sisrs.replace(key,keyDict[key])
         with open(sisrs_dir+"/"+taxa+"/"+taxa+".sh", "w") as text_file:
             print(new_sisrs, file=text_file)
-        os.system('chmod +x '+sisrs_dir+"/"+taxa+"/"+taxa+".sh")
+        os.system('chmod +x '+sisrs_dir+"/"+taxa+"/"+taxa+".sh") #execute
 
 if __name__ == '__main__':
 
-    cmd = sys.argv #we don't need to check the number of args because there are only optional arguments: -p/--processors, -mr/--minread, and -thrs/--threshold
+    cmd = sys.argv
 
-
-    #sis = os.path.dirname(sys.path[0])
+    #sis = os.path.dirname(sys.path[0])  #use for a default path up one dir
     sis = " "
     if '-dir' in cmd or '--directory' in cmd:
         out_dir = isFound('-dir','--directory',cmd)
