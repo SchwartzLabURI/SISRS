@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 When running sequentially, make sure to use python3 and load all the necessary modules for each run
 
 This is a wrapper script for trimming reads for use in SISRS
@@ -266,8 +270,8 @@ if __name__ == "__main__":
     cmd = sys.argv
     #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
 
-    if len(cmd) < 3: #TODO: confirm the num of args with len(cmd)
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENT ( -dir <path to output directory>")
+    if len(cmd) < 3: 
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENT (-dir <path to output directory>")
         exit()
 
     sis = " "

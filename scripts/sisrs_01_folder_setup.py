@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 4th, 2021it
+Last edit: Yana Hrytsenko March 22nd, 2021
 
 Devin McConnell May 23, 2019
 
@@ -47,7 +47,7 @@ def readTaxaFromFolders(path):
         print("ERROR WHILE PROCESSING PATH to TAXON FOLDERS!")
         exit()
 
-    # Make list of taxa based on the foler names
+    # Make list of taxa based on the folder names
     taxa_list = [folder for folder in listdir(path) if isdir(join(path,folder))]
 
     return taxa_list
@@ -56,7 +56,7 @@ def readTaxaFromFolders(path):
 This function was desinged to make soft links to all the files and make links to
 them into the proper folders. This function requiers the path to the data, a list
 of tha taxons/folder names, and a boolean value determining if the reads are
-trimmer already or if it is rawdata.
+trimmer already or if it is raw data.
 '''
 def makeLinks(data_path, sisrs_dir, taxa_list, trim):
     dest = ""
@@ -75,7 +75,7 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
 
 '''
 Function that is designed to build the necessay file structure
-for sisrs to properly run. It will take in as input the taxa list
+for SISRS to properly run. It will take in as input the taxa list
 and the working sisrs directory
 '''
 def fileStructure(sisrs_dir,taxa_list):
@@ -111,8 +111,8 @@ if __name__ == "__main__":
     cmd = sys.argv
     #sisrs = os.path.dirname(sys.path[0]) #use for a default path up one dir
 
-    if len(cmd) < 5:#TODO: confirm the num of args with len(cmd)
-        print("THIS SCRIPT REQUIERS 4 ARGUMENTS (-d <path to input data directory> -dir <path to output data directory>")
+    if len(cmd) < 5:
+        print("THIS SCRIPT REQUIERS 4 ARGUMENTS (-d <path to input data directory> -dir <path to output data directory>)")
         exit()
 
     id = ""

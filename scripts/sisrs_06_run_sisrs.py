@@ -8,10 +8,13 @@ SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA fold
 '''
 
 import os
-from os import path
+from os import listdir,path
 import sys
 from glob import glob
 import subprocess
+from cmdCheck import *
+from os.path import isdir, isfile, join
+
 
 '''
 Get the correct bash scripts based on the working sisrs directory. The only

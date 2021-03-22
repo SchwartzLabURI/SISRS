@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 IMPORTANT: Trimmed reads should be QC checked prior to this step to remove
 datasets with low quality or high deplication rates
 This script performs read subsetting for a SISRS composite genome assembly
@@ -40,7 +44,7 @@ import re
 This function is designed to do the remaining folder setup for the read subsetting.
 It also finisihes up the other minor setups needed for this script. The arguments
 that are needed for this script are the working sisrs directory and the genomeSize
-estimation.
+estimation and output path
 '''
 def setupDir(sisrs_dir,genomeSize):
 
@@ -138,7 +142,7 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
     return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_list,dataset_list,basecount_list,taxon_ID
 
 '''
-Poorly planned function to execute the first for loop
+Function to execute the first for loop using helper function
 '''
 def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 
@@ -195,7 +199,7 @@ def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
     return df, compiled_paired, compiled_single_end
 
 '''
-Poorly planned function to execute the second for loop
+Function to execute the second for loop
 '''
 def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
 
@@ -316,10 +320,10 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
 if __name__ == '__main__':
 
     cmd = sys.argv
-    #sis = os.path.dirname(sys.path[0])
+    #sis = os.path.dirname(sys.path[0]) #default path - one directory up
 
-    if len(cmd) < 3: #TODO: confirm the num of args with len(cmd)
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENTS (-gs <number of basepairs>)")
+    if len(cmd) < 5:
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 4 ARGUMENTS (-gs <number of basepairs> -dir <path to output data directory>)")
         exit()
 
     sis = " "
