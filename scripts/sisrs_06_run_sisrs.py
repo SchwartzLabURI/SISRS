@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 This script prepares data for a SISRS run by setting the data up and creating mapping scripts
 Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
 The composite genome is indexed by Bowtie2 and Samtools
@@ -8,10 +12,13 @@ SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA fold
 '''
 
 import os
-from os import path
+from os import listdir,path
 import sys
 from glob import glob
 import subprocess
+from cmdCheck import *
+from os.path import isdir, isfile, join
+
 
 '''
 Get the correct bash scripts based on the working sisrs directory. The only
@@ -46,7 +53,14 @@ if __name__ == '__main__':
 
     cmd = sys.argv
 
-    sis = os.path.dirname(sys.path[0])
+    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     sisrs_tax_dirs = sisrsSetup(sis)
     runSisrs(sisrs_tax_dirs)

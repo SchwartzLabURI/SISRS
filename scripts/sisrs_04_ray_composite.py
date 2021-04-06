@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 This script calls a Ray genome assembly on all reads in the SubsetReads directory
 Ray requires working MPI via mpirun, even if running on  one node
 This script also calls Bowtie2 and Samtools for genome indexing
 Ensure Ray and Bowtie2 are compiled  with gzip support
-Input: (1) -p/--processors Number of processors
+Input:
+(1) -p/--processors Number of processors
+(2) -dir Path to output directory
 Output: Ray assembly will be built in <basedir>/Ray_Composite_Genome (Contigs.fasta)
 '''
 
@@ -20,7 +26,7 @@ from subprocess import check_call
 
 '''
 This function is designed to obtain the neccessary file paths and data that is
-needed for the Ray command. It only requeires the working directory for were all
+needed for the Ray command. It only requires the working directory for where all
 of the sisrs information is stationed.
 '''
 def getDirs(sisrs_dir):
@@ -51,7 +57,16 @@ def runRay(ray_genome_dir,subset_reads,threads):
 if __name__ == '__main__':
 
     cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+
+    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
+
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     #BECAUSE RAY RUNS ON MPI, IT MAY NEED IT'S OWN PROCESSOR VARIABLE
     proc = 1

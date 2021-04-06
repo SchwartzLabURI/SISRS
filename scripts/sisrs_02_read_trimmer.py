@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
+When running sequentially, make sure to use python3 and load all the necessary modules for each run
+
 This is a wrapper script for trimming reads for use in SISRS
 This script calls bbduk.sh, which must be installed and in your path
 
@@ -34,7 +40,7 @@ from subprocess import check_call
 
 '''
 This function is designed to Find BBDuk + Adapter File. It will return the path
-to the location of these files
+to the location of these files.
 '''
 def findAdapter():
     cmd = ['which', 'bbduk.sh']
@@ -262,7 +268,19 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
 if __name__ == "__main__":
 
     cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
+
+    if len(cmd) < 3: 
+        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENT (-dir <path to output directory>")
+        exit()
+
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     proc = 1
     if '-p' in cmd or '--processors' in cmd:

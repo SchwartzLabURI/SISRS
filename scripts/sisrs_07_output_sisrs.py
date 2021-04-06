@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 This script prepares data for a SISRS run by setting the data up and creating mapping scripts
 Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
 The composite genome is indexed by Bowtie2 and Samtools
@@ -19,6 +23,10 @@ from cmdCheck import *
 from itertools import islice
 
 '''
+Last edit: Yana Hrytsenko March 22nd, 2021
+
+Devin McConnell May 23, 2019
+
 This function is designed to get the appropriate directories needed to finish the
 sisrs run. The parameters that is needed for it to properly run is just the
 current sisrs working directory.
@@ -72,7 +80,8 @@ def runBash(sisrs_dir,sisrs_tax_dirs,missing):
         print(output)
         print(err)
         print(rc)
-        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE) #why is this commented out?
+        #in Bobs script it is on the line  77
 
     with open(sisrs_dir+"/out_SISRS_Log","w") as file:
         file.write("\nRead Mapping and SISRS Site Selection:\n")
@@ -96,8 +105,18 @@ def runBash(sisrs_dir,sisrs_tax_dirs,missing):
                 file.write(line)
 
 if __name__ == '__main__':
+
     cmd = sys.argv
-    sis = os.path.dirname(sys.path[0])
+
+    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
+
+    sis = " "
+    if '-dir' in cmd or '--directory' in cmd:
+        out_dir = isFound('-dir','--directory',cmd)
+        sis = os.path.dirname(out_dir)
+    else:
+        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
+        exit()
 
     md = 0
 
