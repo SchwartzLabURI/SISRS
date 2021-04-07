@@ -23,12 +23,20 @@ from collections import defaultdict
 
 #get combined pileup info
 def getallbases(path,contig_dir,minread,thresh):
+
+    count_sites_no_pileup_data = 0
+
     basePath=os.path.dirname(path)
+
+
     assert len(glob.glob1(path,"*.pileups"))==1,'More than one pileup file in'+path
-    speciesDict=defaultdict(lambda: 'N')
+
+    speciesDict={}
+
     minPenalty=0
     threshPenalty=0
     bothPenalty=0
+
     with open (path+'/'+os.path.basename(path)+'.pileups',"r") as filein:
         for line in iter(filein):
             splitline=line.split()
@@ -39,20 +47,30 @@ def getallbases(path,contig_dir,minread,thresh):
                 finalBase,minPenalty,threshPenalty,bothPenalty=getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothPenalty)
                 speciesDict[loc] = finalBase
 
+    filein.close()
+
+
     printSpecies = open(path+"/"+os.path.basename(path)+'_LocList', 'w')
     with open(contig_dir+"/contigs_LocList") as f:
         for line in f:
-            printSpecies.write(speciesDict[line.strip()]+'\n')
+            if line.strip() in speciesDict:
+                printSpecies.write(speciesDict[line.strip()]+'\n')
+            else:
+                count_sites_no_pileup_data += 1
+                printSpecies.write('N\n')
     f.close()
     printSpecies.close()
 
+    totalPositions = len(speciesDict)+count_sites_no_pileup_data
     c = Counter(speciesDict.values())
-    nCount = c['N']
-    siteCount = len(speciesDict) - nCount
-    sitePercent = format((float(siteCount)/len(speciesDict))*100,'.2f')
-    nPercent = format((float(nCount)/len(speciesDict))*100,'.2f')
-    print("Of "+ str(len(speciesDict)) + " positions, " + os.path.basename(path) + " has good calls for " + str(siteCount) + " sites (" + sitePercent +"%). There were " + str(nCount) + " N calls ("+ nPercent + "%).",flush=True)
-    print("Of " + str(nCount) + " Ns, " + os.path.basename(path) + " lost " + str(threshPenalty) + " via homozygosity threshold, " + str(minPenalty)  +" from low coverage, and " + str(bothPenalty) + " from both. "+ str(nCount - threshPenalty - minPenalty - bothPenalty) + " sites had no pileup data.\n",flush=True)
+    nCount = c['N']+count_sites_no_pileup_data
+    siteCount = totalPositions - nCount
+    sitePercent = format((float(siteCount)/totalPositions)*100,'.2f')
+    nPercent = format((float(nCount)/totalPositions)*100,'.2f')
+
+    print("Of "+ str(totalPositions) + " positions, " + os.path.basename(path) + " has good calls for " + str(siteCount) + " sites (" + sitePercent +"%). There were " + str(nCount) + " N calls ("+ nPercent + "%).",flush=True)
+
+    print("Of " + str(nCount) + " Ns, " + os.path.basename(path) + " lost " + str(threshPenalty) + " via homozygosity threshold, " + str(minPenalty)  +" from low coverage, and " + str(bothPenalty) + " from both. "+ str(count_sites_no_pileup_data) + " sites had no pileup data.\n",flush=True)
 
     return siteCount
 
@@ -74,7 +92,9 @@ def getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothP
                 threshPenalty+=1
 
     return finalBase,minPenalty,threshPenalty,bothPenalty
-###############################################
+
+
+
 def main(path, contig_dir, minread, thresh):
 
     allbases=getallbases(path,contig_dir,minread,thresh)      #dictionary of combined pileups - locus/pos:bases(as list)
