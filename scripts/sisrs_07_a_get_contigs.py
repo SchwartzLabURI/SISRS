@@ -13,45 +13,50 @@ taxon_list = os.listdir(path_to_taxon_dirs)
 
 taxon_list.remove('Composite_Genome') #remove this directory from the list for easy traversal
 
-#process each taxon's contigs
-for dir in taxon_list:
 
-    taxon_LocList_file = path_to_taxon_dirs + '/' + dir + '/' + dir + '_LocList'
-    taxon_contigs_file = path_to_taxon_dirs + '/' + dir + '/' + dir + '_contigs'
-    contigs_LocList_file = path_to_contigs_LocList_file + '/' + 'contigs_LocList'
+#put contigs into dict
+contigs_LocList_file = path_to_contigs_LocList_file + '/' + 'contigs_LocList'
 
-    contigs_dict = {} #store contigs in a dictionary
-    with open(contigs_LocList_file, 'r') as in_file:
-        for line in in_file:
-            split1_line = line.strip().split('-')
-            split2_line = split1_line[1].split('/')
+contigs_dict = {} #store contigs in a dictionary
+with open(contigs_LocList_file, 'r') as in_file:
+    for line in in_file:
+        split1_line = line.strip().split('-')
+        split2_line = split1_line[1].split('/')
 
-            key = split2_line[0]
-            val = split2_line[1]
-            contigs_dict[key] = val
+        key = split2_line[0]
+        val = split2_line[1]
+        contigs_dict[key] = val
 
-    in_file.close()
+in_file.close()
 
-    with open (taxon_LocList_file, 'r') as in_file2, open(taxon_contigs_file, 'a+') as out_file:
+i = 0
 
-        #out_file.write(">" + dir + '\n') #>AotNan
+for key in sorted(contigs_dict.keys()):
+
+    contigs_file = path_to_contigs_LocList_file + '/' + 'SISRS_contig-' + key + '.fasta'
+
+    out_file = open(contigs_file,'a+')
+
+    for dir in taxon_list:
+
+        out_file.write(">" + dir + '\n') #>AotNan
+
+        taxon_LocList_file = path_to_taxon_dirs + '/' + dir + '/' + dir + '_LocList'
+
+        in_file2 = open(taxon_LocList_file, 'r')
+
         mylist = in_file2.read().splitlines()
 
-        i = 0
+        contig_string = ""
 
-        for key in sorted(contigs_dict.keys()):
+        lines = mylist[i : i + int(contigs_dict[key])] #get a slice of the file
 
-            out_file.write(">" + key + '\n')
+        contig_string = contig_string.join(lines)
 
-            contig_string = ""
+        out_file.write(contig_string + '\n')
 
-            lines = mylist[i : i + int(contigs_dict[key])] #get a slice of the file
 
-            contig_string = contig_string.join(lines)
+    i += int(contigs_dict[key])
 
-            out_file.write(contig_string + '\n')
-
-            i += int(contigs_dict[key])
-
-    in_file2.close()
-    out_file.close()
+in_file2.close()
+out_file.close()

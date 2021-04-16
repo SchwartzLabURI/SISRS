@@ -1,6 +1,6 @@
 import os
 import sys
-import itertools
+
 
 
 path_to_contigs_LocList_file = sys.argv[1] #/data3/schwartzlab/yana/SISRS_reRun/SISRS_Walkthrough_test_BOBs_scripts/SISRS_Run/Composite_Genome/
