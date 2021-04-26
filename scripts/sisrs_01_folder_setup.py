@@ -74,7 +74,7 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
                 sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
 
 '''
-Function that is designed to build the necessay file structure
+Function that is designed to build the necessary file structure
 for SISRS to properly run. It will take in as input the taxa list
 and the working sisrs directory
 '''
@@ -91,7 +91,7 @@ def fileStructure(sisrs_dir,taxa_list):
         os.mkdir(sisrs_dir+"/SISRS_Run")
         #os.mkdir(sisrs_dir+"/Reference_Genome") #uncomment to have this dir
         #os.mkdir(sisrs_dir+"/Reference_Genome/Annotations") #uncomment to have this dir
-        
+
         #os.mkdir(sisrs_dir+"/Post_SISRS_Processing")
         #os.mkdir(sisrs_dir+"/R_Analyses")
         #os.mkdir(sisrs_dir+"/Reference_Topology")

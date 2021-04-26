@@ -8,8 +8,8 @@
 
 cd $SLURM_SUBMIT_DIR
 
-module purge
-module load BEDTools/2.27.1-foss-2018b
+#module purge
+#module load BEDTools/2.30.0-GCC-10.2.0
 
 PTH=$1
 

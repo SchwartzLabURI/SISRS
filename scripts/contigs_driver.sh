@@ -8,10 +8,11 @@
 
 cd $SLURM_SUBMIT_DIR
 
-module purge
-module load SAMtools/1.12-GCC-10.2.0
-module load BCFtools/1.12-GCC-10.2.0
-module load BBMap/38.81-foss-2019b-Java-1.8 #ask Kevin to make this compatible with other modules
+#module purge
+#module load SAMtools/1.12-GCC-10.2.0
+#module load BCFtools/1.12-GCC-10.2.0
+#module load BBMap/38.87-foss-2020b
+
 
 PTH=$1
 
