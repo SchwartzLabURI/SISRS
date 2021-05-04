@@ -12,12 +12,16 @@ from os.path import isfile, join
 
 #format the file outputs
 def format_consensus_output(output_path):
-    path_to_contigs_LocList_file = output_path + 'Composite_Genome/'
-    path_to_taxon_dirs = output_path
+    path_to_contigs_LocList_file = output_path + 'SISRS_Run/contigs_outputs/'
+    path_to_taxon_dirs = output_path + "Reads/RawReads/"
+
+
     #get list of taxon dirs except Composite_Genome
     taxon_list = []
     taxon_list = os.listdir(path_to_taxon_dirs)
-    taxon_list.remove('Composite_Genome') #remove this directory from the list for easy traversal
+    taxon_list.remove('fastqcOutput') #remove this directory from the list for easy traversal
+    taxon_list.remove('trimOutput') #remove this directory from the list for easy traversal
+
 
     contigs_LocList_file = path_to_contigs_LocList_file + 'contigs_LocList'
 
@@ -44,8 +48,7 @@ def format_consensus_output(output_path):
             out_file.write(">" + dir + '\n')
 
             #read from the consensus sequence file by taxon
-            taxon_consensus_file = path_to_taxon_dirs + '/' + dir + '/' + dir + '_single_line_format_consensus.fa'
-
+            taxon_consensus_file = output_path + 'SISRS_Run/' + dir + '/' + dir + '_single_line_format_consensus.fa'
             in_file = open(taxon_consensus_file, 'r')
             all_lines = in_file.readlines()
 
@@ -61,12 +64,15 @@ def format_consensus_output(output_path):
 
 #remove sequences that contain only N's
 def remove_Ns_contigs(path_to_contigs, taxa_threshold):
+    path_to_contigs = path_to_contigs + 'SISRS_Run/contigs_outputs'
 
     if (path_to_contigs[-1] != '/'):
         path_to_contigs = path_to_contigs + '/'
 
     list_of_contig_files = [f for f in listdir(path_to_contigs) if isfile(join(path_to_contigs, f))]
-    #list_of_contig_files.remove('contigs_LocList')
+    list_of_contig_files.remove('out_contigs_outputs_SISRS')
+    list_of_contig_files.remove('err_contigs_outputs_SISRS')
+    print(len(list_of_contig_files))
 
     list_of_contig_files.sort() #sort list to make sure to start from the first contig
 
@@ -83,6 +89,9 @@ def remove_Ns_contigs(path_to_contigs, taxa_threshold):
         else:
             os.remove(file_out) #otherwise, delete that file from the path
 
+    list_of_contig_files_LEFT = [f for f in listdir(path_to_contigs) if isfile(join(path_to_contigs, f))]
+    print(len(list_of_contig_files_LEFT))
+
 
 
 if __name__ == '__main__':
@@ -90,8 +99,8 @@ if __name__ == '__main__':
     # Store the command line in a seperate argument
     cmd = sys.argv
 
-    if len(cmd) < 2:
-        print("THIS SCRIPT REQUIERS 2 ARGUMENTS (-dir <path to output data directory>)")
+    if len(cmd) < 4:
+        print("THIS SCRIPT REQUIERS 4 ARGUMENTS (-trh <taxon threshold> -dir <path to output data directory>)")
         exit()
 
     out_dir = ""
@@ -100,14 +109,15 @@ if __name__ == '__main__':
     if '-dir' in cmd or '--directory' in cmd:
         out_dir = isFound('-dir','--directory',cmd)
         sisrs = out_dir
-        if (sisrs[-1] == '/'):
-            output_path = sisrs + "SISRS_Run/"
+        if (sisrs[-1] != '/'):
+            output_path = sisrs + '/'
         else:
-            output_path = sisrs + "/SISRS_Run/"
+            output_path = sisrs
 
-        contigs_from_consensus = output_path + contigs_outputs
-        print(contigs_from_consensus)
-        os.mkdir(contigs_from_consensus)#creates a directory "contigs_outputs"
+        contigs_from_consensus = output_path + "SISRS_Run/" + "contigs_outputs"
+
+        if not os.path.exists(contigs_from_consensus):
+            os.mkdir(contigs_from_consensus)
     else:
         print("SPECIFY THE OUTPUT PATH (-dir, --directory). PROGRAM EXITING.")
         exit()
@@ -119,15 +129,17 @@ if __name__ == '__main__':
         print("SPECIFY THE TAXA THRESHOLD (-trh, --threshold). PROGRAM EXITING.")
         exit()
 
-
+    '''
     #first mask the ref sequence
     os.chmod('mask_ref_seq.sh', 0o755)
-    subprocess.call("./mask_ref_seq.sh " + output_path, shell=True)
-
+    subprocess.call("./mask_ref_seq.sh " + output_path + 'SISRS_Run/', shell=True)
+    '''
+    '''
     #generate consensus sequence
     os.chmod('contigs_driver.sh', 0o755)
-    subprocess.call("./contigs_driver.sh " + output_path, shell=True)
+    subprocess.call("./contigs_driver.sh " + output_path + 'SISRS_Run/', shell=True)
+    '''
 
 
-    format_consensus_output(output_path)
-    remove_Ns_contigs(output_path, taxa_threshold)
+    #format_consensus_output(output_path)
+    #remove_Ns_contigs(output_path, taxa_threshold)

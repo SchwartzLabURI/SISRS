@@ -13,8 +13,9 @@ cd $SLURM_SUBMIT_DIR
 
 PTH=$1
 
-#get all the directories in the path except Composite_Genome and SISRS_Run
-FILELIST=( $( find $PTH -maxdepth 1 -type d -not -name Composite_Genome -not -name SISRS_Run ) )
+#get all the directories in the path except Composite_Genome, SISRS_Run, contigs_outputs
+FILELIST=( $( find $PTH -maxdepth 1 -type d -not -name Composite_Genome -not -name contigs_outputs -not -name SISRS_Run) )
+
 
 #len of the list is 2 AotNan, CalJac
 ARRLEN=${#FILELIST[@]}
@@ -23,13 +24,18 @@ for (( i = 0; i < $ARRLEN; i++ ))
 do
   taxon_name="$(basename ${FILELIST[i]})" #get directory basename
 
+
   bam_file="${FILELIST[i]}/${taxon_name}.bam" #extract the taxon name
+
 
   ref_fa="${FILELIST[i]}/contigs.fa"
 
+
   masked_ref="${FILELIST[i]}/masked_contigs.fa"
 
+
   bed_file="${FILELIST[i]}/to_mask.bed"
+
 
   #step 0 Mask the reference sequence
   bedtools genomecov -ibam ${bam_file} -bga | awk '{if ($4 == 0) print $0}' > ${bed_file}
