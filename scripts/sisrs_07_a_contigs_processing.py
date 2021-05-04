@@ -12,7 +12,7 @@ from os.path import isfile, join
 
 #format the file outputs
 def format_consensus_output(output_path):
-    path_to_contigs_LocList_file = output_path + 'SISRS_Run/contigs_outputs/'
+    path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
     path_to_taxon_dirs = output_path + "Reads/RawReads/"
 
 
@@ -41,7 +41,8 @@ def format_consensus_output(output_path):
     counter = 1
     for key in sorted(contigs_dict.keys()):
         #store each sequence for each taxon by contig name
-        contigs_file = path_to_contigs_LocList_file + '/' + 'SISRS_contig-' + key + '.fasta'
+        #contigs_file = path_to_contigs_LocList_file + '/' + 'SISRS_contig-' + key + '.fasta'
+        contigs_file = output_path + 'SISRS_Run/contigs_outputs/' + 'SISRS_contig-' + key + '.fasta'
         out_file = open(contigs_file,'a+')
 
         for dir in taxon_list:
@@ -70,9 +71,6 @@ def remove_Ns_contigs(path_to_contigs, taxa_threshold):
         path_to_contigs = path_to_contigs + '/'
 
     list_of_contig_files = [f for f in listdir(path_to_contigs) if isfile(join(path_to_contigs, f))]
-    list_of_contig_files.remove('out_contigs_outputs_SISRS')
-    list_of_contig_files.remove('err_contigs_outputs_SISRS')
-    print(len(list_of_contig_files))
 
     list_of_contig_files.sort() #sort list to make sure to start from the first contig
 
@@ -90,7 +88,7 @@ def remove_Ns_contigs(path_to_contigs, taxa_threshold):
             os.remove(file_out) #otherwise, delete that file from the path
 
     list_of_contig_files_LEFT = [f for f in listdir(path_to_contigs) if isfile(join(path_to_contigs, f))]
-    print(len(list_of_contig_files_LEFT))
+
 
 
 
