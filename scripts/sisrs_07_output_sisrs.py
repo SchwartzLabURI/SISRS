@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
+Last edit: Yana Hrytsenko May 6th, 2021
 
 Devin McConnell May 23, 2019
 
@@ -72,6 +72,9 @@ requiers as input the path to the SISRS_Run directory and the path to all of
 the folders that contain sh scripts.
 '''
 def runBash(sisrs_dir,sisrs_tax_dirs,missing):
+
+    sisrs_tax_dirs.remove(sisrs_dir + '/contigs_outputs/') #exclude the folder from the taxa list
+
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment_m{}.sh'.format(missing)
         p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
