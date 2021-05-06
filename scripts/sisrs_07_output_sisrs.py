@@ -72,8 +72,10 @@ requiers as input the path to the SISRS_Run directory and the path to all of
 the folders that contain sh scripts.
 '''
 def runBash(sisrs_dir,sisrs_tax_dirs,missing):
-
-    sisrs_tax_dirs.remove(sisrs_dir + '/contigs_outputs/') #exclude the folder from the taxa list
+    to_remove_for_easy_traversal = sisrs_dir + '/contigs_outputs/'
+    
+    if(to_remove_for_easy_traversal in sisrs_tax_dirs):
+        sisrs_tax_dirs.remove(sisrs_dir + '/contigs_outputs/') #exclude the folder from the taxa list
 
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment_m{}.sh'.format(missing)
