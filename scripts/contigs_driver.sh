@@ -16,7 +16,7 @@ cd $SLURM_SUBMIT_DIR
 
 PTH=$1
 
-#get all the directories in the path except Composite_Genome and SISRS_Run
+#get all the directories in the path except Composite_Genome and SISRS_Run and contigs_outputs
 FILELIST=( $( find $PTH -maxdepth 1 -type d -not -name Composite_Genome -not -name contigs_outputs -not -name SISRS_Run) )
 
 #len of the list is 2 AotNan, CalJac
