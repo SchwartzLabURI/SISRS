@@ -15,19 +15,19 @@ from os import listdir
 from os.path import isfile, join
 
 
-#format the file outputs
+# format the file outputs
 def format_consensus_output(output_path, taxa_threshold):
     path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
     path_to_taxon_dirs = output_path + "Reads/RawReads/"
 
 
-    #get list of taxon dirs except Composite_Genome
+    # get a list of taxon dirs except Composite_Genome
     taxon_list = []
     taxon_list = os.listdir(path_to_taxon_dirs)
-    taxon_list.remove('fastqcOutput') #remove this directory from the list for easy traversal
-    taxon_list.remove('trimOutput') #remove this directory from the list for easy traversal
+    taxon_list.remove('fastqcOutput') # remove this directory from the list for easy traversal
+    taxon_list.remove('trimOutput') # remove this directory from the list for easy traversal
 
-    #open all taxa handles at once
+    # open all taxa handles at once
     consensus_handles = {}
     for dir in taxon_list:
         taxon_consensus_file = output_path + 'SISRS_Run/' + dir + '/' + dir + '_single_line_format_consensus.fa'
@@ -35,27 +35,27 @@ def format_consensus_output(output_path, taxa_threshold):
 
     # iterate over any (the first taxon) consensus, other files assumed to have exactly same order and contents
     for line in consensus_handles[taxon_list[0]]:
-        # if line has > then it's a contig name, record it
+        # if the line starts with ">" then it's a contig name, record it
         if line[0] == ">":
             contigName = line[1:].strip()
             # just a sanity check - get same line from other taxa to verify that contig is same
             for other_taxon in taxon_list[1:]:
                 if contigName != consensus_handles[other_taxon].readline()[1:].strip():
-                    print ("contig order must be screwed")
+                    print ("contig order must be different between consensus files")
                     sys.exit()
-            # if sanity check is not performed then other handles should be iterated 1 step, perhaps by invoking .next
+            # if no check is performed then other handles should be iterated for 1 step, perhaps by invoking .next
             # to match the first handle which we iterate in the for loop
-        #  if line is not ">" then we assume its a seq following the contigName - save for all taxa
+        # if the line does not start with ">" then we assume it's a sequence following the contigName - save for all taxa
         else:
-            # first check if the locus is complete enough:
+            # create a dictionary to temporary hold the sequences for this locus
             contigs_dict = {}
 
-            #save the first taxon (over which we iterate in the for loop) - we alredy have this line in RAM
+            # save the first taxon (over which we iterate in the for loop) - we already have this line in RAM
             # save only if not full of N - with additional strip
             if len(line.replace("N", "").strip()) > 0:
                 contigs_dict[taxon_list[0]] = line.strip()
 
-            #read 1 line from all other taxa and save to the same dict but only if not complete N
+            # read 1 line from all other taxa and save to the same dict but only if not complete N
             for dir in taxon_list[1:]:
                 taxonseq = consensus_handles[dir].readline().strip()
                 # only save if after removing all N there's something left - have to do additional strip
@@ -68,12 +68,12 @@ def format_consensus_output(output_path, taxa_threshold):
                 contigs_file = output_path + 'SISRS_Run/contigs_outputs/' + contigName + '.fasta'
                 out_file = open(contigs_file,'w')
 
-                #populate the file
+                # populate the file
                 for dir in sorted(contigs_dict):
                     out_file.write(">" + dir + '\n')
                     out_file.write(contigs_dict[dir] + '\n')
 
-                #close
+                # close the output handle
                 out_file.close()
 
     # close all input handles
