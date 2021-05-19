@@ -14,7 +14,7 @@ PTH=$1 #input path with all the contig files
 
 PTH_OUT=$2 #output path to store alignments
 
-THR=$3 #num threads to use #1 node, 20 processors per node -p 20; 
+THR=$3 #num threads to use #1 node, 20 processors per node -p 20;
 
 #get all the files in the dir
 FILELIST=( $( find $PTH -maxdepth 1 -type f ) )
@@ -26,6 +26,6 @@ ARRLEN=${#FILELIST[@]}
 
 for (( i = 0; i < $ARRLEN; i++ ))
 do
-  out_file="..."
+  out_file=${FILELIST[i]}
   echo "mafft --auto --thread $THR ${FILELIST[i]} > $PTH_OUT${out_file}"
 done

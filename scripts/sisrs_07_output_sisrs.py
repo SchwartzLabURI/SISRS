@@ -74,14 +74,18 @@ the folders that contain sh scripts.
 '''
 def runBash(sisrs_dir,sisrs_tax_dirs,missing):
     to_remove_for_easy_traversal = sisrs_dir + '/contigs_outputs/'
+    to_remove_for_easy_traversal_2 = sisrs_dir + '/aligned_contigs/'
 
     if(to_remove_for_easy_traversal in sisrs_tax_dirs):
         sisrs_tax_dirs.remove(sisrs_dir + '/contigs_outputs/') #exclude the folder from the taxa list
 
+    if(to_remove_for_easy_traversal_2 in sisrs_tax_dirs):
+        sisrs_tax_dirs.remove(sisrs_dir + '/aligned_contigs/') #exclude the folder from the taxa list
+
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment_m{}.sh'.format(missing)
         '''
-        
+
         #this block of code produces exactly the same output as this line:
         #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
         #however it allows you to print out the error messages communicated to the pipe:
