@@ -8,7 +8,7 @@
 
 cd $SLURM_SUBMIT_DIR
 
-module load MAFFT/7.475-gompi-2020b-with-extensions
+#module load MAFFT/7.475-gompi-2020b-with-extensions
 
 PTH=$1 #input path with all the contig files
 
@@ -22,10 +22,8 @@ FILELIST=( $( find $PTH -maxdepth 1 -type f ) )
 #get nuber of contigs files to process
 ARRLEN=${#FILELIST[@]}
 
-#${FILELIST[i]} is a contig file
-
 for (( i = 0; i < $ARRLEN; i++ ))
 do
-  out_file=${FILELIST[i]}
-  echo "mafft --auto --thread $THR ${FILELIST[i]} > $PTH_OUT${out_file}"
+  out_file="$(basename ${FILELIST[i]})" # contig file
+  mafft --auto --thread $THR ${FILELIST[i]} > $PTH_OUT${out_file}
 done

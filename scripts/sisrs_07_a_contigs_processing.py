@@ -2,7 +2,7 @@
 
 
 '''
-Last edit: Yana Hrytsenko Alexander Knyshov May 6th, 2021
+Last edit: Yana Hrytsenko & Alexander Knyshov May 6th, 2021
 '''
 import os
 import sys

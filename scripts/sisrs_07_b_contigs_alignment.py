@@ -6,6 +6,10 @@ Last edit: Yana Hrytsenko May 19th, 2021
 import os
 import sys
 import subprocess
+from subprocess import call
+from cmdCheck import *
+from os import listdir
+from os.path import isfile, join
 
 if __name__ == '__main__':
 
@@ -47,10 +51,11 @@ if __name__ == '__main__':
 
     #first mask the ref sequence
     os.chmod('align_contigs.sh', 0o755)
-    path_in = output_path + 'SISRS_Run/contigs_outputs/ '
-    path_out = output_path + 'SISRS_Run/aligned_contigs/ '
+    path_in = output_path + "SISRS_Run/contigs_outputs/ "
+
+    path_out = output_path + "SISRS_Run/" + "aligned_contigs"
     #create if not created
     if not os.path.exists(path_out):
         os.mkdir(path_out)
 
-    subprocess.call("./align_contigs.sh " + path_in + path_out + proc, shell=True)
+    subprocess.call("./align_contigs.sh " + path_in + path_out + '/ ' + str(proc), shell=True)
