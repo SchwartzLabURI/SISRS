@@ -57,7 +57,7 @@ if __name__ == '__main__':
     sis = " "
     if '-dir' in cmd or '--directory' in cmd:
         out_dir = isFound('-dir','--directory',cmd)
-        sis = os.path.dirname(out_dir)
+        sis = os.path.dirname(out_dir) #path add slash
     else:
         print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
         exit()
