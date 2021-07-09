@@ -1,17 +1,10 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
-
-Devin McConnell May 23, 2019
 
 This script preps the folder architecture for a SISRS run.
-Taxon ID file (text file with Taxon IDs on new lines) must be in base SISRS folder OR
-Data Directory (Directory containing all data divided up by taxon)
 Arguments: (-rd/--rawData or -id) Path to data or Path to Taxon ID file
 Optional Argument: -trm/--trimmed (lets system know the data has been pretrimmed)
-Examples: python scripts/folder_setup.py -id TaxonIDs
-python scripts/folder_setup.py -rd /home/Documents/SISRS_Data/
 Output: Script will create a number of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
 '''
 
