@@ -23,7 +23,7 @@ For other forms of communication we invite you to go to our lab's personal websi
 
 For sample data `unzip SISRS_Small.zip`
 
-Assuming that you are running SISRS on an HPC with Slurm: `cd scripts`
+Assuming that you are running SISRS on an HPC with Slurm: `cd scripts`. Run all scripts from this folder.
 
 `vim slurm_submissions/1_submit.slurm`
 

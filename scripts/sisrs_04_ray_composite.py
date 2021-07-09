@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
-
-Devin McConnell May 23, 2019
 
 This script calls a Ray genome assembly on all reads in the SubsetReads directory
 Ray requires working MPI via mpirun, even if running on  one node
@@ -63,7 +60,7 @@ if __name__ == '__main__':
     sis = " "
     if '-dir' in cmd or '--directory' in cmd:
         out_dir = isFound('-dir','--directory',cmd)
-        sis = os.path.dirname(out_dir)
+        sis = out_dir
     else:
         print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
         exit()
