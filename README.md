@@ -28,3 +28,5 @@ Assuming that you are running SISRS on an HPC with Slurm: `cd scripts`
 `vim slurm_submissions/1_submit.slurm`
 
 Change the modules, email address, and folder information as needed.
+
+Repeat for remained slurm scripts
