@@ -18,3 +18,13 @@ To learn how to use our software, and what software dependencies it has, we ask 
 If you have any questions about the software, please feel free to reach out to us on our github issues page @ [SISRS Github](https://github.com/SchwartzLabURI/SISRS/issues).
 
 For other forms of communication we invite you to go to our lab's personal website @ [Schwartz Lab](https://schwartzlaburi.github.io/index.html).
+
+## Tutorial
+
+For sample data `unzip SISRS_Small.zip`
+
+Assuming that you are running SISRS on an HPC with Slurm: `cd scripts`
+
+`vim slurm_submissions/1_submit.slurm`
+
+Change the modules, email address, and folder information as needed.
