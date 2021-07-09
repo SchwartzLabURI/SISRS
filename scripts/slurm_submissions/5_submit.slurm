@@ -2,8 +2,8 @@
 #SBATCH --job-name="5_step"
 #SBATCH --time=10:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=10   # processor core(s) per node
-#SBATCH --mail-user="user@email.edu" #user email address
+#SBATCH --ntasks-per-node=20   # processor core(s) per node
+#SBATCH --mail-user="rsschwartz@uri.edu" #user email address
 #SBATCH --mail-type=END,FAIL
 #SBATCH --exclusive
 cd $SLURM_SUBMIT_DIR
@@ -20,4 +20,4 @@ module load Ray/2.3.1-foss-2019b
 module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
-#python3 sisrs_05_setup_sisrs.py -dir <path to the output directory>
+python3 sisrs_05_setup_sisrs.py -p 20 -d ~/SISRS_Small_test

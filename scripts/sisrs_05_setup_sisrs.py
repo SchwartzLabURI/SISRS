@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
-
-Devin McConnell May 23, 2019
 
 This script prepares data for a SISRS run by setting the data up and creating
 mapping scripts
 Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
 The composite genome is indexed by Bowtie2 and Samtools
 SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
-Input: -p/--processors Number of processors, -mr/--minRead, and -thresh/--threshold, -dir /data/schwartzlab/yana/test_output_flag_sequential_run/
 '''
 
 import os
@@ -19,6 +15,9 @@ import sys
 from glob import glob
 from cmdCheck import *
 import pandas as pd
+from Bio import SeqIO
+import argparse
+import re
 
 '''
 This function is designed to obtain all of the directories needed to finish the
@@ -45,7 +44,7 @@ def obtainDir(outPath):
     return trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir
 
 '''
-This function is designed to raname the contig files and make copies of the
+This function is designed to rename the contig files and make copies of the
 length files that are a product of the output from Ray. It requieres as input
 the directory were ray output all of its dated and the composite directory.
 '''
@@ -90,11 +89,10 @@ def indexCompGenome(composite_dir,threads):
     os.system(" ".join(bowtie_command))
 
 '''
-This function is designed to start the file setups requiered for sisrs to run
-properly. It requires as parameters the composite_dir and the location of were
-all of the scripts are located
+This function is designed to start the file setups required for sisrs to run
+properly. It requires as parameters the composite_dir
 '''
-def beginSetUp(composite_dir,script_dir):
+def beginSetUp(composite_dir):
     #Create file with an entry for each individual site in the alignment
     siteCount=0
     locListFile = open(composite_dir+'/contigs_LocList','w') #originally it was an append mode 'a+'
@@ -108,108 +106,18 @@ def beginSetUp(composite_dir,script_dir):
 
     print("==== Site list created: " + str(siteCount) + " total sites ==== \n",flush=True)
 
-    # Read in the bash script
-    sisrs_template = ""
-
-    shFile = open(script_dir + '/sisrs_05_template.sh')
-    for line in shFile:
-        sisrs_template += line
-
-    return sisrs_template
-
-
-'''
-This function is designed to complete the sisrs setup and will be going through
-to replace all of the non-specfic portions of the bash script with more specfic
-portions of the scripts. This function requiers all of the directory information
-alond with the number of threads, mindread, threshold, and the script directory.
-'''
-def copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,script):
-
-    composite_dir = os.path.abspath(composite_dir)
-    sisrs_dir = os.path.abspath(sisrs_dir)
-    #Create links to trimmed read files in SISRS_Run directory
-    for tax_dir in trim_read_tax_dirs:
-        tax_dir = os.path.abspath(tax_dir)
-        taxa = path.basename(tax_dir[:])
-        read_link_command = [
-            'cd',
-            '{}'.format(sisrs_dir+"/"+taxa),
-            ';',
-            'cp',
-            '-as',
-            '{}/*.fastq.gz'.format(tax_dir),
-            '.']
-        os.system(" ".join(read_link_command))
-
-        new_sisrs = sisrs_template
-
-        keyList = ['PROCESSORS','BOWTIE2-INDEX','COMPOSITE_GENOME','SCRIPT_DIR','MINREAD','THRESHOLD','TAXA','SISRS_DIR','COMPOSITE_DIR','READS']
-        keyDict = {'PROCESSORS':str(threads),
-                   'BOWTIE2-INDEX':composite_dir+"/contigs",
-                   'COMPOSITE_GENOME':composite_dir+"/contigs.fa",
-                   'SCRIPT_DIR':script,
-                   'MINREAD':str(minread),
-                   'THRESHOLD':str(threshold),
-                   'TAXA':taxa,
-                   'SISRS_DIR':sisrs_dir,
-                   'COMPOSITE_DIR':composite_dir,
-                   'READS':",".join(glob(tax_dir+"/*.fastq.gz"))}
-        for key in keyList:
-            new_sisrs = new_sisrs.replace(key,keyDict[key])
-        with open(sisrs_dir+"/"+taxa+"/"+taxa+".sh", "w") as text_file:
-            print(new_sisrs, file=text_file)
-        os.system('chmod +x '+sisrs_dir+"/"+taxa+"/"+taxa+".sh") #execute
-
 if __name__ == '__main__':
 
-    cmd = sys.argv
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
+    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    args = my_parser.parse_args()
 
-    #sis = os.path.dirname(sys.path[0])  #use for a default path up one dir
-    sis = " "
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sis = os.path.dirname(out_dir)
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
-        exit()
-
-    proc = 1
-    mr = 3
-    thres = 1
-
-    if '-p' in cmd or '--processors' in cmd:
-        try:
-            proc = int(isFound('-p','--processors',cmd))
-        except:
-            print("INVALID NUMBER OF PROCESSORS (-p,--processors): DEFAULT PROCESSOR COUNT TO 1")
-            proc = 1
-    else:
-        print("SETTING PROCESSORS COUNT (-p,--processors) TO 1")
-        proc = 1
-
-    if '-mr' in cmd or '--minread' in cmd:
-        try:
-            mr = int(isFound('-mr','--minread',cmd))
-        except:
-            print("INVALID NUMBER OF MINREAD (-mr,--minread): DEFAULT THREAD COUNT TO 3")
-            mr = 3
-    else:
-        print("SETTING MINREAD (-mr,--minreads TO 3")
-        mr = 3
-
-    if '-thresh' in cmd or '--threshold' in cmd:
-        try:
-            thres = int(isFound('-thresh','--threshold',cmd))
-        except:
-            print("INVALID NUMBER OF THRESHOLD (-thresh,--threshold): DEFAULT THRESHOLD COUNT TO 1")
-            thres = 1
-    else:
-        print("SETTING THRESHOLD COUNT (-thresh,--threshold) TO 1")
-        thres = 1
+    sis = args.directory
+    proc = args.processors
 
     trim_read_tax_dirs,ray_dir,sisrs,composite_dir = obtainDir(sis)
     fileChanges(ray_dir,composite_dir)
     indexCompGenome(composite_dir,proc)
-    sisrs_template = beginSetUp(composite_dir,sys.path[0])
-    copyShFile(trim_read_tax_dirs,sisrs,sisrs_template,composite_dir,sis,proc,mr,thres,sys.path[0])
+    beginSetUp(composite_dir)
