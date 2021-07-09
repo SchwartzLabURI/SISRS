@@ -1,24 +1,11 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
-
-Devin McConnell May 23, 2019
 
 IMPORTANT: Trimmed reads should be QC checked prior to this step to remove
 datasets with low quality or high deplication rates
 This script performs read subsetting for a SISRS composite genome assembly
-This script calls reformat.sh  (part of BBMap Suite), which must be installed and in your path
-
-************************************WARNING*************************************
-Adding something to your path can be difficult please make sure that things are
-added in the correct order.
-Example: We are looking for the bbduk.sh file in your system and if bbduk is installed
-here: /usr/bin/anaconda3/opt/bbmap-38.51-0/
-but you also need /usr/bin/anaconda3/bin/
-in your path make sure you have the ordering as followedself.
-export PATH='/usr/bin/anaconda3/opt/bbmap-38.51-0/:/usr/bin/anaconda3/bin/:$PATH'
-********************************************************************************
+This script calls reformat.sh  (part of BBMap Suite)
 
 All reads for all taxa should be in .fastq.gz format (To change this, find/replace
 this script, replacing '.fastq.gz' with your chosen extension)
@@ -42,7 +29,7 @@ import re
 
 '''
 This function is designed to do the remaining folder setup for the read subsetting.
-It also finisihes up the other minor setups needed for this script. The arguments
+It also finishes up the other minor setups needed for this script. The arguments
 that are needed for this script are the working sisrs directory and the genomeSize
 estimation and output path
 '''
@@ -137,7 +124,7 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
     right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
-    # This return statement looks this way because of an erro that is assosicated
+    # This return statement looks this way because of an error that is assosicated
     # with turning it into a list. I will attempt to fix it again later
     return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_list,dataset_list,basecount_list,taxon_ID
 
@@ -329,7 +316,7 @@ if __name__ == '__main__':
     sis = " "
     if '-dir' in cmd or '--directory' in cmd:
         out_dir = isFound('-dir','--directory',cmd)
-        sis = os.path.dirname(out_dir)
+        sis = out_dir
     else:
         print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
         exit()
