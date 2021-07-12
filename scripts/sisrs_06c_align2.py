@@ -2,7 +2,7 @@
 
 '''
 
-This script runs one sisrs alignment
+This script runs one sisrs alignment - specific contigs
 '''
 
 import os
@@ -13,18 +13,26 @@ from cmdCheck import *
 import argparse
 import re
 
+
+def bbuild(outPath, readfolder, proc): 
+    f = "".join([outPath, '/SISRS_Run/', readfolder ])
+    b = ['bowtie2-build ', f, '/contigs.fa ', f, '/contigs -p ',proc ]
+    # bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs -p PROCESSORS
+
+    os.system("".join(b))
+
 '''
 This function runs bowtie2 on the reads in a folder treating all reads as unpaired
 '''
-def runBowtie(outPath,threads,readfolder):
+def runBowtie(outPath,threads,sp):
 
-    outbam = "".join([outPath, '/SISRS_Run/', os.path.basename(os.path.dirname(readfolder)), #dirname then basename bc ends w /
+    outbam = "".join([outPath, '/SISRS_Run/', sp, #dirname then basename bc ends w /
         '/',
-        os.path.basename(os.path.dirname(readfolder)),
+        sp,
         '_Temp.bam'])
-    outbamb = "".join([outPath, '/SISRS_Run/', os.path.basename(os.path.dirname(readfolder)), #AotNan
+    outbamb = "".join([outPath, '/SISRS_Run/', sp, #AotNan
         '/',
-        os.path.basename(os.path.dirname(readfolder)),
+        sp,
         '.bam'])
     print(outbam)
 
@@ -32,8 +40,8 @@ def runBowtie(outPath,threads,readfolder):
         'bowtie2 -p ',
         str(threads),
         ' -N 1 --local -x ',
-        outPath,'/SISRS_Run/Composite_Genome/contigs -U ', #contigs base of filename
-        ",".join(glob(os.path.expanduser(readfolder)+'/*.fastq.gz')), #files in the readfolder
+        outPath,'/SISRS_Run/', sp, '/contigs -U ', #contigs base of filename
+        ",".join(glob(os.path.expanduser("".join([outPath, '/Reads/TrimReads/', sp, '/*.fastq.gz'])))), #files in the readfolder
         ' | samtools view -Su -@ ', 
         str(threads),
         ' -F 4 - | samtools sort -@ ',
@@ -75,7 +83,8 @@ if __name__ == '__main__':
     sis = args.directory
     proc = args.processors
     folder = args.folder
-
+    f2 = os.path.basename(os.path.dirname(folder))
     print(sis, folder)
 
-    runBowtie(sis,proc,folder)
+    bbuild(sis, f2, proc)
+    runBowtie(sis,proc,f2.rstrip('/'))
