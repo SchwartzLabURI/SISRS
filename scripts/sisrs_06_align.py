@@ -10,8 +10,6 @@ from os import path
 import sys
 from glob import glob
 from cmdCheck import *
-import pandas as pd
-from Bio import SeqIO
 import argparse
 import re
 
@@ -20,43 +18,53 @@ This function runs bowtie2 on the reads in a folder treating all reads as unpair
 '''
 def runBowtie(outPath,threads,readfolder):
 
-    outbam = "".join([outPath, '/SISRS_run/', os.path.basename(readfolder), #AotNan
+    outbam = "".join([outPath, '/SISRS_Run/', os.path.basename(os.path.dirname(readfolder)), #dirname then basename bc ends w /
         '/',
-        os.path.basename(readfolder),
+        os.path.basename(os.path.dirname(readfolder)),
         '_Temp.bam'])
-    outbamb = "".join([outPath, '/SISRS_run/', os.path.basename(readfolder), #AotNan
+    outbamb = "".join([outPath, '/SISRS_Run/', os.path.basename(os.path.dirname(readfolder)), #AotNan
         '/',
-        os.path.basename(readfolder),
+        os.path.basename(os.path.dirname(readfolder)),
         '.bam'])
+    print(outbam)
 
     bowtie_command = [
         'bowtie2 -p ',
         str(threads),
         ' -N 1 --local -x ',
         outPath,'/SISRS_Run/Composite_Genome/contigs -U ', #contigs base of filename
-        ",".join(glob(readfolder+"*.fastq.gz")), #files in the readfolder
+        ",".join(glob(os.path.expanduser(readfolder)+'/*.fastq.gz')), #files in the readfolder
         ' | samtools view -Su -@ ', 
         str(threads),
         ' -F 4 - | samtools sort -@ ',
         str(threads),
         ' - -o ',
         outbam]
+    print(bowtie_command)
     os.system("".join(bowtie_command))
 
     samtools1 = [
         'samtools view -@ ',
         str(threads),
         ' -H ', outbam,
-        ' > ', os.path.splitext(outbam)[0], '_Header.sam' ]
+        ' > ', outbam, '_Header.sam' ]
     samtools2 = [ 
         'samtools view -@ ', 
         str(threads),
-        ' ', outbam, ' | grep -v "XS:" | cat ', os.path.splitext(outbam)[0], '_Header.sam - | samtools view -@ ',
+        ' ', outbam, ' | grep -v "XS:" | cat ', outbam, '_Header.sam - | samtools view -@ ',
         str(threads), ' -b - > ', outbamb]
     
+    print(samtools1)
+    print(samtools2)
+   
     os.system("".join(samtools1))
     os.system("".join(samtools2)) #why is this command necessary?
 
+    os.remove(outbam)  #rm SISRS_DIR/TAXA/TAXA_Temp.bam
+    os.remove(outbam+'_Header.sam') #rm SISRS_DIR/TAXA/TAXA_Header.sam
+
+    samtools3 = ['samtools index', outbamb] #samtools index SISRS_DIR/TAXA/TAXA.bam
+    os.system(" ".join(samtools3))
 
 if __name__ == '__main__':
 
@@ -64,11 +72,13 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
-    my_parser.add_argument('-f', '--folder', ,action='store',nargs="?")
+    my_parser.add_argument('-f', '--folder', action='store',nargs="?")
     args = my_parser.parse_args()
 
     sis = args.directory
     proc = args.processors
     folder = args.folder
+
+    print(sis, folder)
 
     runBowtie(sis,proc,folder)
