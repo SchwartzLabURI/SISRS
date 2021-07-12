@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
+Last edit: Yana Hrytsenko May 9th, 2021
 
 Devin McConnell May 23, 2019
 
@@ -55,6 +55,7 @@ def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
     for line in shFile:
         sisrs_output_template += line
 
+
     keyList = ['TWOTAXA','SISRS_DIR','SCRIPT_DIR','MISSING','COMPOSITE_DIR']
     keyDict = {'TWOTAXA':str(len(sisrs_tax_dirs) - 2),
                'SISRS_DIR':sisrs_dir,
@@ -72,16 +73,35 @@ requiers as input the path to the SISRS_Run directory and the path to all of
 the folders that contain sh scripts.
 '''
 def runBash(sisrs_dir,sisrs_tax_dirs,missing):
+    to_remove_for_easy_traversal = sisrs_dir + '/contigs_outputs/'
+    to_remove_for_easy_traversal_2 = sisrs_dir + '/aligned_contigs/'
+
+    if(to_remove_for_easy_traversal in sisrs_tax_dirs):
+        sisrs_tax_dirs.remove(sisrs_dir + '/contigs_outputs/') #exclude the folder from the taxa list
+
+    if(to_remove_for_easy_traversal_2 in sisrs_tax_dirs):
+        sisrs_tax_dirs.remove(sisrs_dir + '/aligned_contigs/') #exclude the folder from the taxa list
+
     with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
         cmd = sisrs_dir+'/Output_Alignment_m{}.sh'.format(missing)
+        '''
+
+        #this block of code produces exactly the same output as this line:
+        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+        #however it allows you to print out the error messages communicated to the pipe:
+        #as in here print(err)
+        #it is personal preference (useful debugging) whether to use this block or a single line of code below:
+        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+
         p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
         output, err = p.communicate()
         rc = p.returncode
         print(output)
         print(err)
         print(rc)
-        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE) #why is this commented out?
-        #in Bobs script it is on the line  77
+
+        '''
+        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
 
     with open(sisrs_dir+"/out_SISRS_Log","w") as file:
         file.write("\nRead Mapping and SISRS Site Selection:\n")
@@ -135,14 +155,15 @@ if __name__ == '__main__':
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
 
-    if '-' in str(md):
+
+    if '-' in str(md): #example 3-6
         ms = md.split('-')
         ms[0] = int(ms[0])
         ms[1] = int(ms[1])
 
         for i in range(ms[0],ms[1]+1):
             # Create the bash script to run sisrs as we need it to
-            createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,i,sys.path[0])
+            createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,i,sys.path[0])#sys.path[0] is to access sisrs_07_template.sh
 
             #RunSisrs
             runBash(sisrs,sisrs_tax_dirs,i)
@@ -154,7 +175,7 @@ if __name__ == '__main__':
 
     else:
         # Create the bash script to run sisrs as we need it to
-        createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])
+        createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])#sys.path[0] is to access sisrs_07_template.sh
 
         # Run sisrs
         runBash(sisrs,sisrs_tax_dirs,md)

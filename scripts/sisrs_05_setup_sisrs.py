@@ -97,7 +97,7 @@ all of the scripts are located
 def beginSetUp(composite_dir,script_dir):
     #Create file with an entry for each individual site in the alignment
     siteCount=0
-    locListFile = open(composite_dir+'/contigs_LocList','a+')
+    locListFile = open(composite_dir+'/contigs_LocList','w') #originally it was an append mode 'a+'
     with open(composite_dir +"/contigs_SeqLength.tsv","r") as filein:
         for line in iter(filein):
             splitline=line.split()
