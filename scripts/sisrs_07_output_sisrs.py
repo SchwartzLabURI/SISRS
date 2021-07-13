@@ -1,18 +1,11 @@
 #!/usr/bin/env python3
 
 '''
-Last edit: Yana Hrytsenko May 9th, 2021
 
-Devin McConnell May 23, 2019
-
-This script prepares data for a SISRS run by setting the data up and creating mapping scripts
-Contigs are renamed and moved to the SISRS_Run/Composite_Genome directory
-The composite genome is indexed by Bowtie2 and Samtools
-SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA folder
-Input: -ms/--missing
+Input: -m/--missing
 '''
 
-
+import argparse
 import os
 from os import path
 import sys
@@ -23,9 +16,6 @@ from cmdCheck import *
 from itertools import islice
 
 '''
-Last edit: Yana Hrytsenko March 22nd, 2021
-
-Devin McConnell May 23, 2019
 
 This function is designed to get the appropriate directories needed to finish the
 sisrs run. The parameters that is needed for it to properly run is just the
@@ -103,79 +93,52 @@ def runBash(sisrs_dir,sisrs_tax_dirs,missing):
         '''
         subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
 
-    with open(sisrs_dir+"/out_SISRS_Log","w") as file:
-        file.write("\nRead Mapping and SISRS Site Selection:\n")
-        for tax_dir in sisrs_tax_dirs:
-            taxa = path.basename(tax_dir[:-1])
-            bowtie1 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','2,6p']
-            bowtie2 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','9,13p']
-            file.write("\n"+ taxa + " Composite Genome Mapping:\n\n")
-            file.write((subprocess.check_output(' '.join(bowtie1),shell=True).decode("UTF8")))
-            file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
-            file.write((subprocess.check_output(' '.join(bowtie2),shell=True).decode("UTF8")))
+#commenting this out to see if writing this extra stuff is causing issues unnecessarily
+#    with open(sisrs_dir+"/out_SISRS_Log","w") as file:
+#        file.write("\nRead Mapping and SISRS Site Selection:\n")
+#        for tax_dir in sisrs_tax_dirs:
+#            taxa = path.basename(tax_dir[:-1])
+#            bowtie1 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','2,6p']
+#            bowtie2 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','9,13p']
+#            file.write("\n"+ taxa + " Composite Genome Mapping:\n\n")
+#            file.write((subprocess.check_output(' '.join(bowtie1),shell=True).decode("UTF8")))
+#            file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
+#            file.write((subprocess.check_output(' '.join(bowtie2),shell=True).decode("UTF8")))
 
-            with open(tax_dir + "out_" + taxa + "_SISRS") as f:
-                file.write("\n"+taxa+" SISRS Site Selection:\n\n")
-                for line in f:
-                    if(str.startswith(line,'Of ')):
-                        file.write(line)
-        with open(sisrs_dir + "/out_SISRS_Alignment") as f2:
-            file.write("\nSISRS Alignment Filtering:\n\n")
-            for line in f2:
-                file.write(line)
+#            with open(tax_dir + "out_" + taxa + "_SISRS") as f:
+#                file.write("\n"+taxa+" SISRS Site Selection:\n\n")
+#                for line in f:
+#                    if(str.startswith(line,'Of ')):
+#                        file.write(line)
+#        with open(sisrs_dir + "/out_SISRS_Alignment") as f2:
+#            file.write("\nSISRS Alignment Filtering:\n\n")
+#            for line in f2:
+#                file.write(line)
 
 if __name__ == '__main__':
 
-    cmd = sys.argv
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
+    my_parser.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
+    args = my_parser.parse_args()
 
-    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
-
-    sis = " "
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sis = os.path.dirname(out_dir)
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
-        exit()
-
-    md = 0
-
-    # Gets the allowed amount of missing data from the files
-    if '-ms' in cmd or '--missing' in cmd:
-        bool = isInt(isFound('-ms','--missing',cmd))
-        md = int(isFound('-ms','--missing',cmd)) if bool else 0
-        if bool == False:
-            bool2 = isRange(isFound('-ms','--missing',cmd))
-            md = isFound('-ms','--missing',cmd) if bool2 else 0
-            if bool2 == False:
-                print("THE ALLOWED AMOUNT OF MISSING DATA (-ms/--missing) MUST BE A VALID NUMBER --> SWITCHED TO 0")
-                md = 0
-    else:
-        print("USING DEFAULT MISSING (-ms,--missing) DATA: 0")
+    sis = args.directory
+    ms = args.missing
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
 
 
-    if '-' in str(md): #example 3-6
-        ms = md.split('-')
-        ms[0] = int(ms[0])
-        ms[1] = int(ms[1])
-
-        for i in range(ms[0],ms[1]+1):
-            # Create the bash script to run sisrs as we need it to
-            createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,i,sys.path[0])#sys.path[0] is to access sisrs_07_template.sh
-
-            #RunSisrs
-            runBash(sisrs,sisrs_tax_dirs,i)
-
-            subprocess.call("mkdir {0}/missing_{1}".format(sisrs,i),shell=True)
-            subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs,i),shell=True)
-            subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs,i),shell=True)
-            subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs,i),shell=True)
-
-    else:
+    for i in ms:
+        i = int(i)
         # Create the bash script to run sisrs as we need it to
-        createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,md,sys.path[0])#sys.path[0] is to access sisrs_07_template.sh
+        createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,i,sys.path[0])#sys.path[0] is to access sisrs_07_template.sh
 
-        # Run sisrs
-        runBash(sisrs,sisrs_tax_dirs,md)
+        #RunSisrs
+        runBash(sisrs,sisrs_tax_dirs,i)
+
+        subprocess.call("mkdir {0}/missing_{1}".format(sisrs,i),shell=True)
+        subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs,i),shell=True)
+        subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs,i),shell=True)
+        subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs,i),shell=True)
+

@@ -2,10 +2,9 @@
 #SBATCH --job-name="7_step"
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=10   # processor core(s) per node
-#SBATCH --mail-user="user@email.edu" #user email address
+#SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel
+#SBATCH --mail-user="rsschwartz@uri.edu" #user email address
 #SBATCH --mail-type=END,FAIL
-#SBATCH --exclusive
 cd $SLURM_SUBMIT_DIR
 
 module purge
@@ -20,4 +19,5 @@ module load Ray/2.3.1-foss-2019b
 module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
-#python3 sisrs_07_output_sisrs.py -dir <path to the output directory>
+python3 sisrs_07_output_sisrs.py -m <list of number of species allowed to be missing> -d <main output folder>
+#example: python3 sisrs_07_output_sisrs.py -m 1 2 3 -d ~/SISRS_Small_test 
