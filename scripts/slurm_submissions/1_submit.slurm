@@ -1,14 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name="1_step"
-#SBATCH --time=100:00:00  # walltime limit (HH:MM:SS)
+#SBATCH --time=1:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node
-#SBATCH --mail-user="user@email.edu" #user email address
+#SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE TO user email address
 #SBATCH --mail-type=END,FAIL
-#SBATCH --exclusive
+
 cd $SLURM_SUBMIT_DIR
 
 module purge
+
+#CHANGE THESE IF NOT ON A URI SYSTEM
 
 module load Python/3.7.4-GCCcore-8.3.0
 module load SciPy-bundle/2019.10-foss-2019b-Python-3.7.4
@@ -21,4 +23,7 @@ module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
 
-#python3 sisrs_01_folder_setup.py -d <path to the data directory> -dir <path to the output directory>
+D=../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
+DIR=~/SISRS_Small_test #CHANGE THIS to the path for the output of your analysis
+ 
+python3 sisrs_01_folder_setup.py -d $D -dir $DIR
