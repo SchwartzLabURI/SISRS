@@ -31,8 +31,8 @@ PROCESSORS=20 #CHANGE to number of processors
 OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
 SPP=($(ls -F ${OUTFOLDER}/Reads/TrimReads/))
-SPP=( "${SPP[@]/fastqcOutput}" ) 
-SPP=( "${SPP[@]/subsetOutput}" )  
+SPP=( "${SPP[@]/'fastqcOutput/'}" )
+SPP=( "${SPP[@]/'subsetOutput/'}" ) 
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
