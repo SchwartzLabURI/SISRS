@@ -17,6 +17,8 @@ from os.path import isfile, join
 
 # format the file outputs
 def format_consensus_output(output_path, taxa_threshold):
+    ''' This function formats the consensus files outputs.  '''
+
     path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
     path_to_taxon_dirs = output_path + "Reads/RawReads/"
 

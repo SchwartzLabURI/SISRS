@@ -39,6 +39,8 @@ class Alignment:
         self.single = single
 
     def numsnps(self):
+        ''' This function gets a number of biallelic sites. '''
+
         print(str(len(self.locations))+' total variable sites (alignment.nex)')
         for i in range(len(self.locations)):
             bases = [self.species_data[sp][i] for sp in self.species_data if self.species_data[sp][i] in ['A','C','G','T','-']]     #bases for that site
@@ -55,6 +57,7 @@ class Alignment:
 
 
 def get_phy_sites(sisrs_dir,composite_dir,num_missing):
+    ''' This function builds alignment. ''' #Ask Rachel
 
     #Fetch contig data
     contigList=glob.glob(composite_dir +'/contigs_LocList')
@@ -83,6 +86,8 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
     return alignment
 
 def write_alignment(fi,alignment,numbi):
+    ''' This function writes the alignmetn to file. ''' #Ask Rachel
+
     spp = sorted(alignment.species_data.keys())
     ntax = str(len(alignment.species_data))
 

@@ -23,6 +23,7 @@ from collections import defaultdict
 
 #get combined pileup info
 def getallbases(path,contig_dir,minread,thresh):
+    ''' This function gets combined pileup information. '''
 
     count_sites_no_pileup_data = 0
 
@@ -75,6 +76,8 @@ def getallbases(path,contig_dir,minread,thresh):
     return siteCount
 
 def getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothPenalty):
+    ''' This function gets final bases pruned. '''
+
     singleBase=(Counter(cleanBases).most_common()[0][0])
     if singleBase == '*':
         singleBase = '-'

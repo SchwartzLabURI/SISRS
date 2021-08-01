@@ -22,6 +22,8 @@ This function is designed to Find BBDuk + Adapter File. It will return the path
 to the location of these files.
 '''
 def findAdapter():
+    ''' Finds and returns BBDuk + Adapter File. '''
+
     cmd = ['which', 'bbduk.sh']
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     o, e = proc.communicate()
@@ -35,6 +37,8 @@ the genome triming. Its only argument is the directory where all of the sisrs
 output is being stored and will be returning the
 '''
 def setup(sisrs_dir):
+    ''' This function sets up the remaining of the SISRS file structure. '''
+
     # Returned items as a list
     # raw_read_dir          --> 0
     # trim_read_dir         --> 1
@@ -82,6 +86,8 @@ to run both the raw and the trimmed data, takes the number of processors, the
 output directory, and the read directory.
 '''
 def newdFastqc(processors,fastqc_output,data_dir,newFiles):
+    ''' Runs FastQC on all trimmed files (new data only), using all available processors. '''
+
     #Run FastQC on all trimmed files, using all available processors
     fastqc_command = [
         'fastqc',
@@ -105,6 +111,8 @@ and the trimmed data, takes the number of processors, the output directory, and
 the read directory.
 '''
 def fastqcCommand(processors,fastqc_output,read_dir):
+    ''' Runs FastQC on all raw and trimmed files, using all available processors. '''
+
     #Run FastQC on all trimmed files, using all available processors
     fastqc_command = [
         'fastqc',
@@ -125,6 +133,7 @@ loop that is seem below in the trim function. It only needs the current working
 raw read directory and the matching trim read directory as arguments.
 '''
 def trimHelper(tax_dir,trim_read_dir,newData):
+    ''' Helper function to obtain all of the possible single read and pair read files for file Trimming step. '''
 
     #List all files and set output dir
     files = sorted(glob(tax_dir+"*.fastq.gz"))
@@ -189,6 +198,7 @@ the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
 bbduk_adapter file.
 '''
 def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
+    ''' This function trims all of the rawdata that has been provided to the program. '''
 
     #For each taxa directory...
     for tax_dir in raw_read_tax_dirs:
@@ -249,7 +259,7 @@ if __name__ == "__main__":
     cmd = sys.argv
     #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
 
-    if len(cmd) < 3: 
+    if len(cmd) < 3:
         print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENT (-dir <path to output directory>")
         exit()
 

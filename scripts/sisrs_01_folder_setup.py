@@ -16,10 +16,11 @@ from cmdCheck import *
 from os.path import isdir, isfile, join
 
 '''
-This function will be developing the taxon list based on an input file of taxon
-ids.
+This function will be developing the taxon list based on an input file of taxon ids.
 '''
 def devTaxaList(taxon_ID_file):
+    ''' Returned list containes taxon list. '''
+
     # Error check to make sure the file can be opened
     if isfile(taxon_ID_file) == False:
         print("ERROR WHILE PROCESSING FILE!")
@@ -35,6 +36,8 @@ according to the correct taxon. Takes as the main argumemt the path it will be
 searching for the arguments to the files.
 '''
 def readTaxaFromFolders(path):
+    ''' Returned list containes taxon list. '''
+
     # Error check to make sure it is a path that exists
     if isdir(path) == False:
         print("ERROR WHILE PROCESSING PATH to TAXON FOLDERS!")
@@ -52,6 +55,8 @@ of tha taxons/folder names, and a boolean value determining if the reads are
 trimmer already or if it is raw data.
 '''
 def makeLinks(data_path, sisrs_dir, taxa_list, trim):
+    ''' This function makes soft links to the data files. '''
+
     dest = ""
     if trim:
         dest = "TrimReads"
@@ -72,6 +77,7 @@ for SISRS to properly run. It will take in as input the taxa list
 and the working sisrs directory
 '''
 def fileStructure(sisrs_dir,taxa_list):
+    ''' This function builds necessary file structure to run SISRS. '''
 
     if isdir(sisrs_dir) == False:
         os.mkdir(sisrs_dir)

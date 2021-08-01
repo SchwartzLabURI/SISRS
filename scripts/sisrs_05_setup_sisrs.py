@@ -25,6 +25,7 @@ setup of sisrs. This function only needs the working sisrs directory as a
 parameter.
 '''
 def obtainDir(outPath):
+    ''' This function is designed to obtain all of the directories needed to finish the setup of SISRS. '''
 
     #Set TrimRead + SISRS directories based off of script folder location
     trim_read_dir =  outPath+"/Reads/TrimReads"
@@ -49,6 +50,7 @@ length files that are a product of the output from Ray. It requieres as input
 the directory were ray output all of its dated and the composite directory.
 '''
 def fileChanges(ray_dir,composite_dir):
+    ''' This function renames the contig files and make copies of the length files from Ray output. '''
 
     #Create renamed contig file in SISRS_Run/Composite_Genome
     rename_command = [
@@ -73,6 +75,8 @@ parameters the composite genome directory and the number of threads that it can
 run with
 '''
 def indexCompGenome(composite_dir,threads):
+    ''' This function calls Bowtie and Samtools for indexing the composite genome. '''
+
     #Index composite genome using Bowtie2 and Samtools
     bowtie_command = [
         'bowtie2-build',
@@ -93,6 +97,8 @@ This function is designed to start the file setups required for sisrs to run
 properly. It requires as parameters the composite_dir
 '''
 def beginSetUp(composite_dir):
+    ''' This function starts the file setups required for sisrs to run properly. '''
+
     #Create file with an entry for each individual site in the alignment
     siteCount=0
     locListFile = open(composite_dir+'/contigs_LocList','w') #originally it was an append mode 'a+'

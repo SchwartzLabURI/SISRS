@@ -34,6 +34,7 @@ that are needed for this script are the working sisrs directory and the genomeSi
 estimation and output path
 '''
 def setupDir(sisrs_dir,genomeSize):
+    ''' This function does the remaining folder setup for the read subsetting. '''
 
     # returned list of items
     # trim_read_dir         --> 0
@@ -85,6 +86,7 @@ def setupDir(sisrs_dir,genomeSize):
 This function is designed to break up the load that is carried by countBasePair.
 '''
 def countHelper(tax_dir,compiled_paired,compiled_single_end):
+    ''' This is helper function for countBasePair function to break up the load. '''
 
     #List all files and set output dir
     files = sorted(glob(tax_dir+"*.fastq.gz"))
@@ -132,6 +134,7 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
 Function to execute the first for loop using helper function
 '''
 def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
+    ''' This function counts bases in single-end files and paired-end files if present. '''
 
     #For each taxa directory...
     for tax_dir in trim_read_tax_dirs:
@@ -189,6 +192,7 @@ def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 Function to execute the second for loop
 '''
 def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
+    ''' This function checks taxa total coverage. '''
 
     df = df.reset_index(drop=True)
     df["Basecount"] = pd.to_numeric(df["Basecount"])
@@ -255,6 +259,8 @@ subsetted. They will be stripped of the file path, file extension, and if there
 is paired files the _1 and _2 will also be stripped
 '''
 def stripFiles(aList):
+    ''' This function strip the list of files that are going to be subsetted. '''
+
     nList = []
     for item in aList:
         fName = os.path.basename(item)
@@ -272,6 +278,8 @@ Function to do all of the subsetting the is needed by sisrs. This is a general
 function and can handle single and paired ends genomes.
 '''
 def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
+    ''' This function performs file subsetting (single and paired-end). '''
+
     cList = stripFiles(compiledList)
 
     if len(cList) > 0:

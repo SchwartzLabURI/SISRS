@@ -17,6 +17,7 @@ import re
 specific contigs
 '''
 def pileup(outPath,sp):
+    ''' This function runs samtools mpileup command. '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
         '/',
@@ -35,6 +36,8 @@ def pileup(outPath,sp):
     os.system("".join(pileup))
 
 def specific_genome(outPath, sp):
+    ''' This function calls specific_genome.py ''' #Ask Rachel about this function description
+
     #put the script here instead of calling a new interpreter
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -47,6 +50,8 @@ def specific_genome(outPath, sp):
     os.system("".join(spec))
 
 def faidx(outPath, sp):
+    ''' This function indexes the files. '''
+    
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)
     faid = ['samtools faidx ', f, '/contigs.fa' ] #samtools faidx SISRS_DIR/TAXA/contigs.fa

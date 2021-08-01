@@ -27,6 +27,8 @@ needed for the Ray command. It only requires the working directory for where all
 of the sisrs information is stationed.
 '''
 def getDirs(sisrs_dir):
+    ''' This function obtain the neccessary file paths and data that is needed for the Ray command. '''
+
     #Set SubsetRead and Genome directories based off of script folder location
     subset_read_dir = sisrs_dir+"/Reads/SubsetReads"
     ray_genome_dir = sisrs_dir+"/Ray_Composite_Genome"
@@ -36,10 +38,12 @@ def getDirs(sisrs_dir):
     return ray_genome_dir, subset_reads
 
 '''
-This function is designed to run ray on all files that are found in the subset
+This function is designed to run Ray on all files that are found in the subset
 folders. Requieres the output folder developed, number of threads, and the files.
 '''
 def runRay(ray_genome_dir,subset_reads,threads):
+    ''' This function runs Ray command on all files that are found in the subset folders. '''
+
     ray_command = [
         'mpirun',
         '-n','{}'.format(str(threads)),

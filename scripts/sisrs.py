@@ -17,6 +17,8 @@ from cmdCheck import *
 Function to run all of the first script
 '''
 def sisrs01(data_path,sisrs_dir,trimmed):
+    ''' This function runs step 1 of SISRS. '''
+
     taxa_list = []
 
     taxa_list = readTaxaFromFolders(data_path)
@@ -33,6 +35,8 @@ def sisrs01(data_path,sisrs_dir,trimmed):
 Function to run all of the second script
 '''
 def sisrs2(trimmed,processors,sisrs_dir):
+    ''' This function runs step 2 of SISRS. '''
+
     if not trimmed:
         bbduk_adapter = findAdapter()
         out = setup(sisrs_dir)
@@ -51,6 +55,8 @@ def sisrs2(trimmed,processors,sisrs_dir):
 Function to run all of the thrid script
 '''
 def sisrs3(genomeSize, sisrs_dir):
+    ''' This function runs step 3 of SISRS. '''
+
     setupInfo = setupDir(sisrs_dir,genomeSize)
 
     df, compiled_paired, compiled_single_end = countBasePair(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
@@ -69,6 +75,7 @@ def sisrs3(genomeSize, sisrs_dir):
 Function to run all of the fourth script
 '''
 def sisrs4(sisrs_dir,threads):
+    ''' This function runs step 4 of SISRS. '''
 
     # obtain the directories and files needed for Ray
     ray_genome_dir, subset_reads = getDirs(sisrs_dir)
@@ -80,6 +87,7 @@ def sisrs4(sisrs_dir,threads):
 Function to run all of the fifth script
 '''
 def sisrs05(outPath,threads,minread,threshold):
+    ''' This function runs step 5 of SISRS. '''
 
     # Grab the folders and files that are needed to setup sisrs
     trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
@@ -100,6 +108,7 @@ def sisrs05(outPath,threads,minread,threshold):
 Function to run all of the sixth script
 '''
 def sisrs06(sisrs_dir):
+    ''' This function runs step 6 of SISRS. '''
 
     # Get all folders and files needed to run sisrs
     sisrs_tax_dirs = sisrsSetup(sisrs_dir)
@@ -108,6 +117,7 @@ def sisrs06(sisrs_dir):
     runSisrs(sisrs_tax_dirs)
 
 def sisrs07(outPath,missing):
+    ''' This function runs step 7 of SISRS. '''
 
     # Grab the neccessary folders and files
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)

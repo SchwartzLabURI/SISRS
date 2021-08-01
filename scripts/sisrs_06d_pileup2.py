@@ -14,6 +14,8 @@ import argparse
 import re
 
 def sindex(outPath,sp):
+    ''' This function runs samtools index command. '''
+
     outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',
         sp,
@@ -25,6 +27,7 @@ def sindex(outPath,sp):
 specific contigs
 '''
 def pileup(outPath,sp):
+    ''' This function performs samtools mpileup on composite genome. '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
         '/',
@@ -42,11 +45,13 @@ def pileup(outPath,sp):
     os.system("".join(pileup))
 
 def prune(outPath, sp, minread, threshold):
+    ''' This function calls get_pruned_dict.py '''
+
     #put the script here instead of calling a new interpreter
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     f = "".join([outPath, '/SISRS_Run/', sp])
-    specific = ['python3 ', script_dir, '/get_pruned_dict.py ', f, ' ', outPath,'/SISRS_Run/Composite_Genome ', 
+    specific = ['python3 ', script_dir, '/get_pruned_dict.py ', f, ' ', outPath,'/SISRS_Run/Composite_Genome ',
     minread, ' ', threshold ]# python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
 
     os.system("".join(specific))

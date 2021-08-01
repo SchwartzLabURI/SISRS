@@ -14,7 +14,9 @@ import argparse
 import re
 
 
-def bbuild(outPath, readfolder, proc): 
+def bbuild(outPath, readfolder, proc):
+    ''' This function runs bowtie2-build on contigs.fa '''
+
     f = "".join([outPath, '/SISRS_Run/', readfolder ])
     b = ['bowtie2-build ', f, '/contigs.fa ', f, '/contigs -p ',proc ]
     # bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs -p PROCESSORS
@@ -25,6 +27,7 @@ def bbuild(outPath, readfolder, proc):
 This function runs bowtie2 on the reads in a folder treating all reads as unpaired
 '''
 def runBowtie(outPath,threads,sp):
+    ''' This function runs  bowtie2, samtools view and samtools sort commands.'''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp, #dirname then basename bc ends w /
         '/',
@@ -42,7 +45,7 @@ def runBowtie(outPath,threads,sp):
         ' -N 1 --local -x ',
         outPath,'/SISRS_Run/', sp, '/contigs -U ', #contigs base of filename
         ",".join(glob(os.path.expanduser("".join([outPath, '/Reads/TrimReads/', sp, '/*.fastq.gz'])))), #files in the readfolder
-        ' | samtools view -Su -@ ', 
+        ' | samtools view -Su -@ ',
         str(threads),
         ' -F 4 - | samtools sort -@ ',
         str(threads),
@@ -56,15 +59,15 @@ def runBowtie(outPath,threads,sp):
         str(threads),
         ' -H ', outbam,
         ' > ', outbam, '_Header.sam' ]
-    samtools2 = [ 
-        'samtools view -@ ', 
+    samtools2 = [
+        'samtools view -@ ',
         str(threads),
         ' ', outbam, ' | grep -v "XS:" | cat ', outbam, '_Header.sam - | samtools view -@ ',
         str(threads), ' -b - > ', outbamb]
-    
+
     print(samtools1)
     print(samtools2)
-   
+
     os.system("".join(samtools1))
     os.system("".join(samtools2)) #why is this command necessary?
 
