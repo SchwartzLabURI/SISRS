@@ -16,6 +16,7 @@ from glob import glob
 from cmdCheck import *
 import subprocess
 from subprocess import check_call
+import argparse
 
 '''
 This function is designed to Find BBDuk + Adapter File. It will return the path
@@ -31,12 +32,19 @@ def findAdapter():
 
     return bbduk_adapter
 
+def get_taxa(sisrs_dir):
+    #taxa come from taxonlist file
+    with open(sisrs_dir+'/TaxonList.txt') as f:
+        taxa = f.readlines()
+    taxa = [x.rstrip() for x in taxa]
+    return taxa
+
 '''
 This function is deisgned to do the remaining folder setup that is needed to do
 the genome triming. Its only argument is the directory where all of the sisrs
 output is being stored and will be returning the
 '''
-def setup(sisrs_dir):
+def setup(datadir, sisrs_dir, taxa):
     ''' This function sets up the remaining of the SISRS file structure. '''
 
     # Returned items as a list
@@ -49,32 +57,28 @@ def setup(sisrs_dir):
     rtn = []
 
     #Set RawRead and TrimRead directories based off of script folder location
-    raw_read_dir = sisrs_dir+"/Reads/RawReads"
+    raw_read_dir = datadir
     trim_read_dir = sisrs_dir+"/Reads/TrimReads"
     rtn += [raw_read_dir]
     rtn += [trim_read_dir]
 
     #Find taxa folders within RawRead folder
-    raw_read_tax_dirs = sorted(glob(raw_read_dir+"/*/"))
+    raw_read_tax_dirs = [raw_read_dir+'/'+x for x in taxa]
 
     #Create folder for BBDuk StdOut
-    if not path.isdir(raw_read_dir+"/trimOutput"):
-        os.mkdir(raw_read_dir+"/trimOutput")
-    rtn += [raw_read_dir+"/trimOutput/"]
+    if not path.isdir(sisrs_dir+"/Reads/RawReads/trimOutput"):
+        os.mkdir(sisrs_dir+"/Reads/RawReads/trimOutput")
+    rtn += [sisrs_dir+"/Reads/RawReads/trimOutput"]
 
     #Create folder for Raw FastQC output
-    if not path.isdir(raw_read_dir+"/fastqcOutput"):
-        os.mkdir(raw_read_dir+"/fastqcOutput")
-    rtn += [raw_read_dir+"/fastqcOutput/"]
+    if not path.isdir(sisrs_dir+"/Reads/RawReads/fastqcOutput"):
+        os.mkdir(sisrs_dir+"/Reads/RawReads/fastqcOutput")
+    rtn += [sisrs_dir+"/Reads/RawReads/fastqcOutput"]
 
     #Create folder for Trimmed FastQC output
     if not path.isdir(trim_read_dir+"/fastqcOutput"):
         os.mkdir(trim_read_dir+"/fastqcOutput")
     rtn += [trim_read_dir+"/fastqcOutput/"]
-
-    #Ensure Trim Log/FastQC output directories not included in taxa list
-    raw_read_tax_dirs = [x for x in raw_read_tax_dirs if not x.endswith('trimOutput/')]
-    raw_read_tax_dirs = [x for x in raw_read_tax_dirs if not x.endswith('fastqcOutput/')]
 
     rtn += [raw_read_tax_dirs]
 
@@ -110,10 +114,10 @@ This function is designed to run the fastqc command. Modified to run both the ra
 and the trimmed data, takes the number of processors, the output directory, and
 the read directory.
 '''
-def fastqcCommand(processors,fastqc_output,read_dir):
-    ''' Runs FastQC on all raw and trimmed files, using all available processors. '''
+def fastqcCommand(processors,fastqc_output,read_dir, taxa):
+    ''' Runs FastQC on fastq.gz in specified taxon folders, using all available processors. '''
 
-    #Run FastQC on all trimmed files, using all available processors
+    #Run FastQC on all files, using all available processors
     fastqc_command = [
         'fastqc',
         '-t',
@@ -121,8 +125,12 @@ def fastqcCommand(processors,fastqc_output,read_dir):
         '-o',
         '{}'.format(fastqc_output)]
 
-    for x in glob(read_dir+"/*/*.fastq.gz"):
-        fastqc_command.append(x)
+    for t in taxa:
+        print(read_dir+"/"+t+"/*.fastq.gz")
+        print(glob(read_dir+"/"+t+"/*.fastq.gz"))
+        for x in glob(read_dir+"/"+t+"/*.fastq.gz"): #can add recursive here
+            print(x)
+            fastqc_command.append(x)
 
     check_call(fastqc_command)
 
@@ -136,8 +144,8 @@ def trimHelper(tax_dir,trim_read_dir,newData):
     ''' Helper function to obtain all of the possible single read and pair read files for file Trimming step. '''
 
     #List all files and set output dir
-    files = sorted(glob(tax_dir+"*.fastq.gz"))
-    taxon_ID = path.basename(tax_dir[:-1])
+    files = sorted(glob(tax_dir+"/*.fastq.gz"))
+    taxon_ID = path.basename(tax_dir)
     out_trim_dir = trim_read_dir + "/" + taxon_ID
 
     left_pairs = list()
@@ -256,37 +264,24 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
 
 if __name__ == "__main__":
 
-    cmd = sys.argv
-    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
-
-    if len(cmd) < 3:
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 2 ARGUMENT (-dir <path to output directory>")
-        exit()
-
-    sis = " "
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sis = out_dir
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
-        exit()
-
-    proc = 1
-    if '-p' in cmd or '--processors' in cmd:
-        try:
-            proc = int(isFound('-p','--processors',cmd))
-        except:
-            proc = 1
-    else:
-        print("SWITCHING TO DEFAULT 1 PROCESSOR (-p,--processors)")
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-d','--datadir',action='store',nargs="?")
+    my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
+    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    args = my_parser.parse_args()
 
     bba = findAdapter()
-    out = setup(sis)
+    tl = get_taxa(args.outputdir) #get taxa from TaxonList.txt
+    out = setup(args.datadir, args.outputdir,tl)
 
     # raw_fastqc_command
-    fastqcCommand(proc,out[3],out[0])
+    fastqcCommand(args.processors,out[3],args.datadir,tl) #raw_fastqc_output, raw_read_dir=datadir
 
-    trim(out[5],out[1],bba,out[2],[])
+    print(out[5])
+    print(out[1])
+    print(out[2])
+    trim(out[5],out[1],bba,out[2],[]) #raw_read_tax_dirs, trim_read_dir, , trim_output
 
     # trim_fastqc_command
-    fastqcCommand(proc,out[4],out[1])
+    fastqcCommand(args.processors,out[4],out[1], tl) #trim_fastqc_output, trim_read_dir

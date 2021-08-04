@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     sis = args.directory
     sp = args.species
-    sp = sp.rstrip("/")
+#    sp = sp.rstrip("/")
     print(sis, sp)
 
     pileup(sis,sp)

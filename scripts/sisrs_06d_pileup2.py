@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     sis = args.directory
     minread = args.minread
-    folder = args.species.rstrip('/')
+    folder = args.species#.rstrip('/')
     threshold = args.threshold
 
     print(sis, folder)

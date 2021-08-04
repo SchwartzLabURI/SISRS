@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - only use 1 for this!
 #SBATCH --mail-user="rsschwartz@uri.edu" #user email address
 #SBATCH --mail-type=ALL
-#SBATCH --array=[0-12]%12 #CHANGE as 6c - note each job only takes 1 core so you can run them all simultaneously 
+#SBATCH --array=[0-11]%12 #CHANGE as 6c - note each job only takes 1 core so you can run them all simultaneously 
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 cd $SLURM_SUBMIT_DIR
@@ -29,9 +29,7 @@ OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 MINREAD=3 #CHANGE to set the threshold for the number of reads to call a site
 THRESHOLD=1 #CHANGE to set the threshold [<=1] for the proportion of sites required to be the same to call a site
 
-SPP=($(ls -F ${OUTFOLDER}/Reads/TrimReads/))
-SPP=( "${SPP[@]/'fastqcOutput/'}" )
-SPP=( "${SPP[@]/'subsetOutput/'}" )  
+SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
