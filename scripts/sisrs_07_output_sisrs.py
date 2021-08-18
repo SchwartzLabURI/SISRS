@@ -22,6 +22,7 @@ sisrs run. The parameters that is needed for it to properly run is just the
 current sisrs working directory.
 '''
 def getData(outPath):
+    ''' This function gets the appropriate directories needed to finish the SISRS run. '''
 
     #Set TrimRead + SISRS directories based off of script folder location
     sisrs_dir = outPath+"/SISRS_Run"
@@ -38,6 +39,7 @@ for sisrs, the location of the "SISRS_Run" folder, the missing data parameter,
 and the list of composite genome paths.
 '''
 def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
+    ''' This function creates all the bash scripts that are still needed to finish off the SISRS run. '''
 
     sisrs_output_template = ""
 
@@ -63,6 +65,8 @@ requiers as input the path to the SISRS_Run directory and the path to all of
 the folders that contain sh scripts.
 '''
 def runBash(sisrs_dir,sisrs_tax_dirs,missing):
+    ''' This function runs all of the bash scripts created by the createBash(). '''
+
     to_remove_for_easy_traversal = sisrs_dir + '/contigs_outputs/'
     to_remove_for_easy_traversal_2 = sisrs_dir + '/aligned_contigs/'
 
@@ -141,4 +145,3 @@ if __name__ == '__main__':
         subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs,i),shell=True)
         subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs,i),shell=True)
         subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs,i),shell=True)
-

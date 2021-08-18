@@ -3,8 +3,8 @@
 '''
 
 This script preps the folder architecture for a SISRS run.
-Arguments: (-rd/--rawData or -id) Path to data or Path to Taxon ID file
-Optional Argument: -trm/--trimmed (lets system know the data has been pretrimmed)
+Arguments: -d: Path to data folder
+TO DO: Optional Argument: -trm/--trimmed (lets system know the data has been pretrimmed)
 Output: Script will create a number of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
 '''
 
@@ -14,12 +14,11 @@ import os
 from os import listdir,path
 from cmdCheck import *
 from os.path import isdir, isfile, join
+import argparse
 
-'''
-This function will be developing the taxon list based on an input file of taxon
-ids.
-'''
 def devTaxaList(taxon_ID_file):
+    ''' Returned list containes taxon list. '''
+
     # Error check to make sure the file can be opened
     if isfile(taxon_ID_file) == False:
         print("ERROR WHILE PROCESSING FILE!")
@@ -34,14 +33,27 @@ This function is relient on the fact that the folders inside the path are labele
 according to the correct taxon. Takes as the main argumemt the path it will be
 searching for the arguments to the files.
 '''
-def readTaxaFromFolders(path):
+def readTaxaFromFolders(inpath,outpath):
+    ''' Returned list containes taxon list. '''
+
     # Error check to make sure it is a path that exists
-    if isdir(path) == False:
+    if isdir(inpath) == False:
         print("ERROR WHILE PROCESSING PATH to TAXON FOLDERS!")
         exit()
 
     # Make list of taxa based on the folder names
-    taxa_list = [folder for folder in listdir(path) if isdir(join(path,folder))]
+    taxa_list = [folder for folder in listdir(inpath) if isdir(join(inpath,folder))]
+    taxa_list = sorted(taxa_list)
+
+    #write taxon list to file
+    with open(outpath+'/'+'TaxonList.txt', 'w') as f:
+        f.write("\n".join(taxa_list))
+
+    #make folder for each taxon
+    for x in taxa_list:
+        os.mkdir(outpath+"/Reads/RawReads/"+x)
+        os.mkdir(outpath+"/Reads/TrimReads/"+x)
+        os.mkdir(outpath+"/SISRS_Run/"+x)
 
     return taxa_list
 
@@ -52,6 +64,8 @@ of tha taxons/folder names, and a boolean value determining if the reads are
 trimmer already or if it is raw data.
 '''
 def makeLinks(data_path, sisrs_dir, taxa_list, trim):
+    ''' This function makes soft links to the data files. '''
+
     dest = ""
     if trim:
         dest = "TrimReads"
@@ -71,12 +85,13 @@ Function that is designed to build the necessary file structure
 for SISRS to properly run. It will take in as input the taxa list
 and the working sisrs directory
 '''
-def fileStructure(sisrs_dir,taxa_list):
+def fileStructure(sisrs_dir):
+    ''' This function builds necessary file structure to run SISRS. '''
 
     if isdir(sisrs_dir) == False:
         os.mkdir(sisrs_dir)
 
-    try:
+#    try:
         os.mkdir(sisrs_dir+"/Reads")
         os.mkdir(sisrs_dir+"/Reads/RawReads")
         os.mkdir(sisrs_dir+"/Reads/TrimReads")
@@ -88,62 +103,41 @@ def fileStructure(sisrs_dir,taxa_list):
         #os.mkdir(sisrs_dir+"/Post_SISRS_Processing")
         #os.mkdir(sisrs_dir+"/R_Analyses")
         #os.mkdir(sisrs_dir+"/Reference_Topology")
-    except:
-        print("SISRS RUN ALREADY EXISTS HERE! IF YOU ARE ADDING NEW DATA USE FLAG -aD or -aT.\n")
-        print("OTHERWISE CHANGE DIRECTORIES AND TRY AGAIN. PROGRAM EXITING!")
-        exit()
+#    except:
+#        print("SISRS RUN ALREADY EXISTS HERE! IF YOU ARE ADDING NEW DATA USE FLAG -aD or -aT.\n")
+#        print("OTHERWISE CHANGE DIRECTORIES AND TRY AGAIN. PROGRAM EXITING!")
+#        exit()
 
-
-    for x in taxa_list:
-        os.mkdir(sisrs_dir+"/Reads/RawReads/"+x)
-        os.mkdir(sisrs_dir+"/Reads/TrimReads/"+x)
-        os.mkdir(sisrs_dir+"/SISRS_Run/"+x)
 
 if __name__ == "__main__":
 
-    # Store the command line in a seperate argument
-    cmd = sys.argv
-    #sisrs = os.path.dirname(sys.path[0]) #use for a default path up one dir
+    #run as python3 sisrs_01_folder_setup.py -d $D -dir $DIR
+    
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
+    my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
+    args = my_parser.parse_args()
 
-    if len(cmd) < 5:
-        print("THIS SCRIPT REQUIERS 4 ARGUMENTS (-d <path to input data directory> -dir <path to output data directory>)")
-        exit()
-
-    id = ""
-    rd = ""
-    out_dir = ""
-    sisrs = ""
-
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sisrs = out_dir
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
-        exit()
-
-
-    if '-id' in cmd:
-        id = cmd[cmd.index('-id') + 1]
-
-    elif '-d' in cmd or '--data' in cmd:
-        rd = isFound('-d','--data',cmd)
-
-    else:
-        print("MISSING TAXA INFORMATION (-d,--data)")
-        exit()
-
-    # Grab the taxon names
-    tl = []
-    if id != "":
-        tl = devTaxaList(id)
-    else:
-        tl = readTaxaFromFolders(rd)
+    d = args.directory
+    outputdir = args.outputdir
 
     # Create the file structure
-    fileStructure(sisrs, tl)
+    fileStructure(outputdir)
 
-    if rd != "":
-        if '-trm' in cmd or '--trimmed' in cmd:
-            makeLinks(rd, sisrs, tl, True)
-        else:
-            makeLinks(rd, sisrs, tl, False)
+    # Grab the taxon names
+    #tl = []
+    #if id != "":
+    #    tl = devTaxaList(id)
+    #else:
+    tl = readTaxaFromFolders(d, outputdir)
+
+    # Create the file structure
+    fileStructure(outputdir)
+
+    #fix given new argparse
+#    if rd != "":
+#        if '-trm' in cmd or '--trimmed' in cmd:
+#            makeLinks(rd, sisrs, tl, True)
+#        else:
+#    makeLinks(d, outputdir, tl, False)

@@ -26,6 +26,7 @@ from cmdCheck import *
 from subprocess import check_call
 import pandas as pd
 import re
+import argparse
 
 '''
 This function is designed to do the remaining folder setup for the read subsetting.
@@ -34,6 +35,7 @@ that are needed for this script are the working sisrs directory and the genomeSi
 estimation and output path
 '''
 def setupDir(sisrs_dir,genomeSize):
+    ''' This function does the remaining folder setup for the read subsetting. '''
 
     # returned list of items
     # trim_read_dir         --> 0
@@ -50,8 +52,15 @@ def setupDir(sisrs_dir,genomeSize):
     trim_read_dir = sisrs_dir + "/Reads/TrimReads"
     rtn += [trim_read_dir]
 
+    #taxa come from taxonlist file
+    with open(sisrs_dir+'/TaxonList.txt') as f:
+        taxa = f.readlines()
+    taxa = [x.rstrip() for x in taxa]
+    taxa = sorted(taxa)
+    
     #Find taxa folders within TrimRead folder
-    trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
+    trim_read_tax_dirs = [trim_read_dir+"/"+x for x in taxa]
+    print(trim_read_tax_dirs)
 
     #Create folder for Subset reads
     if(not path.isdir(sisrs_dir +"/Reads/SubsetReads")):
@@ -85,17 +94,17 @@ def setupDir(sisrs_dir,genomeSize):
 This function is designed to break up the load that is carried by countBasePair.
 '''
 def countHelper(tax_dir,compiled_paired,compiled_single_end):
+    ''' This is helper function for countBasePair function to break up the load. '''
 
     #List all files and set output dir
-    files = sorted(glob(tax_dir+"*.fastq.gz"))
-    taxon_ID = path.basename(tax_dir[:-1])
+    files = sorted(glob(tax_dir+"/*.fastq.gz"))
+    taxon_ID = path.basename(tax_dir)
 
     left_pairs = list()
     right_pairs = list()
     single_end = list()
 
     taxon_list = list()
-    taxon_ID = path.basename(tax_dir[:-1])
 
     dataset_list = list()
     basecount_list = list()
@@ -132,6 +141,7 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
 Function to execute the first for loop using helper function
 '''
 def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
+    ''' This function counts bases in single-end files and paired-end files if present. '''
 
     #For each taxa directory...
     for tax_dir in trim_read_tax_dirs:
@@ -189,6 +199,7 @@ def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 Function to execute the second for loop
 '''
 def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
+    ''' This function checks taxa total coverage. '''
 
     df = df.reset_index(drop=True)
     df["Basecount"] = pd.to_numeric(df["Basecount"])
@@ -255,6 +266,8 @@ subsetted. They will be stripped of the file path, file extension, and if there
 is paired files the _1 and _2 will also be stripped
 '''
 def stripFiles(aList):
+    ''' This function strip the list of files that are going to be subsetted. '''
+
     nList = []
     for item in aList:
         fName = os.path.basename(item)
@@ -272,6 +285,8 @@ Function to do all of the subsetting the is needed by sisrs. This is a general
 function and can handle single and paired ends genomes.
 '''
 def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
+    ''' This function performs file subsetting (single and paired-end). '''
+
     cList = stripFiles(compiledList)
 
     if len(cList) > 0:
@@ -306,31 +321,14 @@ def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired
 
 if __name__ == '__main__':
 
-    cmd = sys.argv
-    #sis = os.path.dirname(sys.path[0]) #default path - one directory up
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-dir','--directory',action='store',nargs="?")
+    my_parser.add_argument('-gs','--genome_size',type=int, action='store',nargs="?")
+    args = my_parser.parse_args()
 
-    if len(cmd) < 5:
-        print("THIS SCRIPT REQUIERS A MINIMUM OF 4 ARGUMENTS (-gs <number of basepairs> -dir <path to output data directory>)")
-        exit()
-
-    sis = " "
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sis = out_dir
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
-        exit()
-
-    gs = 0
-    if '-gs' in cmd or '--genomeSize' in cmd:
-        try:
-            gs = int(isFound('-gs','--genomeSize',cmd))
-        except:
-            print("INVALID GENOME SIZE")
-            exit()
-    else:
-        print("GENOME SIZE REQUIERED FOR THIS SCRIPT")
-        exit()
+    sis = args.directory
+    gs = args.genome_size
 
     setupInfo = setupDir(sis,gs)
 

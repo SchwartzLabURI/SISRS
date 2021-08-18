@@ -6,7 +6,7 @@
 #SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE THIS to your user email address
 #SBATCH --mail-type=ALL
 #SBATCH --exclusive
-#SBATCH --array=[0-12]%4 # CHANGE this second bracketed number to the total jobs you need(taxa); CHANGE after % to number of  simultaneous jobs
+#SBATCH --array=[0-11]%4 # CHANGE this second bracketed number to the total jobs you need(taxa-1); CHANGE after % to number of  simultaneous jobs
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 cd $SLURM_SUBMIT_DIR
@@ -30,10 +30,8 @@ module load BEDTools/2.29.2-GCC-8.3.0
 PROCESSORS=20 #CHANGE to number of processors
 OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
-SPP=($(ls -F ${OUTFOLDER}/Reads/TrimReads/))
-SPP=( "${SPP[@]/'fastqcOutput/'}" )
-SPP=( "${SPP[@]/'subsetOutput/'}" ) 
+SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-python3 sisrs_06_align.py -d $OUTFOLDER -p $PROCESSORS -f ${OUTFOLDER}/Reads/TrimReads/${SPP[$SLURM_ARRAY_TASK_ID]}
+python3 sisrs_06_align.py -d $OUTFOLDER -p $PROCESSORS -f ${SPP[$SLURM_ARRAY_TASK_ID]}

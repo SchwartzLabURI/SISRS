@@ -7,6 +7,8 @@ import glob
 
 #get combined pileup info
 def getallbases(path):
+    ''' This function gets combined pileup information. '''
+
     assert len(glob.glob1(path,"*.pileups"))==1,'More than one pileup file in'+path
     allbases=dict()
     with open (path+'/'+os.path.basename(path)+'.pileups',"r") as filein:
@@ -22,6 +24,8 @@ def getallbases(path):
     return allbases
 
 def getCleanList(ref,bases):
+    ''' This function builds and returns clean list of bases without indels. ''' #ask Rachel
+
     bases=bases.replace('.',ref) #insert ref base
     bases=bases.replace(',',ref)
     bases=bases.upper() #everything in uppercase
@@ -53,6 +57,8 @@ def getCleanList(ref,bases):
     return new_base_list
 
 def getFinalBase_Specific(cleanBases):
+    ''' This function returns the base if the site is homozygous or finds bases with highest read support. '''
+
     baseCount = Counter(cleanBases)
     #If the site is homozygous, return the base
     if len(baseCount) == 1:

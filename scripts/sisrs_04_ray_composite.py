@@ -19,7 +19,7 @@ from glob import glob
 from cmdCheck import *
 import subprocess
 from subprocess import check_call
-
+import argparse
 
 '''
 This function is designed to obtain the neccessary file paths and data that is
@@ -27,6 +27,8 @@ needed for the Ray command. It only requires the working directory for where all
 of the sisrs information is stationed.
 '''
 def getDirs(sisrs_dir):
+    ''' This function obtain the neccessary file paths and data that is needed for the Ray command. '''
+
     #Set SubsetRead and Genome directories based off of script folder location
     subset_read_dir = sisrs_dir+"/Reads/SubsetReads"
     ray_genome_dir = sisrs_dir+"/Ray_Composite_Genome"
@@ -36,10 +38,12 @@ def getDirs(sisrs_dir):
     return ray_genome_dir, subset_reads
 
 '''
-This function is designed to run ray on all files that are found in the subset
+This function is designed to run Ray on all files that are found in the subset
 folders. Requieres the output folder developed, number of threads, and the files.
 '''
 def runRay(ray_genome_dir,subset_reads,threads):
+    ''' This function runs Ray command on all files that are found in the subset folders. '''
+
     ray_command = [
         'mpirun',
         '-n','{}'.format(str(threads)),
@@ -53,27 +57,14 @@ def runRay(ray_genome_dir,subset_reads,threads):
 
 if __name__ == '__main__':
 
-    cmd = sys.argv
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-dir','--directory',action='store',nargs="?")
+    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    args = my_parser.parse_args()
 
-    #sis = os.path.dirname(sys.path[0]) #use for a default path up one dir
-
-    sis = " "
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sis = out_dir
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory).PROGRAM EXITING.")
-        exit()
-
-    #BECAUSE RAY RUNS ON MPI, IT MAY NEED IT'S OWN PROCESSOR VARIABLE
-    proc = 1
-    if '-p' in cmd or '--processors' in cmd:
-        try:
-            proc = int(isFound('-p','--processors',cmd))
-        except:
-            proc = 1
-    else:
-        print("SWITCHING TO DEFAULT THREAD OF 1")
+    sis = args.directory
+    proc = args.processors
 
     # obtain the directories and files needed for Ray
     ray_genome_dir, subset_reads = getDirs(sis)

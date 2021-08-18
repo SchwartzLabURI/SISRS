@@ -16,25 +16,27 @@ import re
 '''
 This function runs bowtie2 on the reads in a folder treating all reads as unpaired
 '''
-def runBowtie(outPath,threads,readfolder):
+def runBowtie(outPath,threads,sp):
+    ''' This function runs bowtie2 on the reads in a folder treating all reads as unpaired. '''
 
-    outbam = "".join([outPath, '/SISRS_Run/', os.path.basename(os.path.dirname(readfolder)), #dirname then basename bc ends w /
+    outbam = "".join([outPath, '/SISRS_Run/', sp, 
         '/',
-        os.path.basename(os.path.dirname(readfolder)),
+        sp,
         '_Temp.bam'])
-    outbamb = "".join([outPath, '/SISRS_Run/', os.path.basename(os.path.dirname(readfolder)), #AotNan
+    outbamb = "".join([outPath, '/SISRS_Run/', sp, 
         '/',
-        os.path.basename(os.path.dirname(readfolder)),
+        sp,
         '.bam'])
     print(outbam)
 
+    readfolder = outPath+'/'+'Reads/TrimReads/'+sp
     bowtie_command = [
         'bowtie2 -p ',
         str(threads),
         ' -N 1 --local -x ',
         outPath,'/SISRS_Run/Composite_Genome/contigs -U ', #contigs base of filename
         ",".join(glob(os.path.expanduser(readfolder)+'/*.fastq.gz')), #files in the readfolder
-        ' | samtools view -Su -@ ', 
+        ' | samtools view -Su -@ ',
         str(threads),
         ' -F 4 - | samtools sort -@ ',
         str(threads),
@@ -48,15 +50,15 @@ def runBowtie(outPath,threads,readfolder):
         str(threads),
         ' -H ', outbam,
         ' > ', outbam, '_Header.sam' ]
-    samtools2 = [ 
-        'samtools view -@ ', 
+    samtools2 = [
+        'samtools view -@ ',
         str(threads),
         ' ', outbam, ' | grep -v "XS:" | cat ', outbam, '_Header.sam - | samtools view -@ ',
         str(threads), ' -b - > ', outbamb]
-    
+
     print(samtools1)
     print(samtools2)
-   
+
     os.system("".join(samtools1))
     os.system("".join(samtools2)) #why is this command necessary?
 
