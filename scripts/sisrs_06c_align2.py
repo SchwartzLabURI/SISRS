@@ -29,11 +29,11 @@ This function runs bowtie2 on the reads in a folder treating all reads as unpair
 def runBowtie(outPath,threads,sp):
     ''' This function runs  bowtie2, samtools view and samtools sort commands.'''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp, #dirname then basename bc ends w /
+    outbam = "".join([outPath, '/SISRS_Run/', sp, 
         '/',
         sp,
         '_Temp.bam'])
-    outbamb = "".join([outPath, '/SISRS_Run/', sp, #AotNan
+    outbamb = "".join([outPath, '/SISRS_Run/', sp, 
         '/',
         sp,
         '.bam'])
@@ -85,9 +85,9 @@ if __name__ == '__main__':
 
     sis = args.directory
     proc = args.processors
-    folder = args.folder
-    f2 = os.path.basename(os.path.dirname(folder))
+    f2 = args.folder
+    folder = sis+"/Reads/TrimReads/"+f2
     print(sis, folder)
 
     bbuild(sis, f2, proc)
-    runBowtie(sis,proc,f2.rstrip('/'))
+    runBowtie(sis,proc,f2)

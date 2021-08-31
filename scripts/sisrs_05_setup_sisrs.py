@@ -29,7 +29,13 @@ def obtainDir(outPath):
 
     #Set TrimRead + SISRS directories based off of script folder location
     trim_read_dir =  outPath+"/Reads/TrimReads"
-    trim_read_tax_dirs = sorted(glob(trim_read_dir+"/*/"))
+
+    #taxa come from taxonlist file
+    with open(outPath+'/TaxonList.txt') as f:
+        taxa = f.readlines()
+    taxa = sorted([x.rstrip() for x in taxa]) 
+
+    trim_read_tax_dirs = [trim_read_dir+'/'+x for x in taxa]
     ray_dir = outPath+"/Ray_Composite_Genome"
     sisrs_dir = outPath+"/SISRS_Run"
 

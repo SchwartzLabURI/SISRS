@@ -16,11 +16,11 @@ from os import path
 import linecache
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import generic_dna, IUPAC, Gapped
+#from Bio.Alphabet import generic_dna, IUPAC, Gapped
 from Bio.Align import MultipleSeqAlignment, AlignInfo
 from Bio import AlignIO, SeqIO
 
-def main(alignment_filename, missing_str):
+def filter_nexus(alignment_filename, missing_str):
 
     ######################
     bases = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't','-']
@@ -53,16 +53,17 @@ def main(alignment_filename, missing_str):
         seq = SeqRecord(Seq(''.join(v)), id=k)
         datalist.append(seq)
 
-    SeqIO.write(datalist, path.dirname(alignment_filename) + '/'+ path.basename(alignment_filename).split('.')[0] + '_m'+missing_str+'.phylip-relaxed', "phylip-relaxed")
-    locfile = open(path.dirname(alignment_filename)+'/'+ path.basename(alignment_filename).replace('.nex','') + '_locs_m'+missing_str+'.txt', 'w')
+    SeqIO.write(datalist, path.dirname(alignment_filename) + '/'+ path.basename(alignment_filename).split('.')[0] + '_m'+str(missing_str)+'.phylip-relaxed', "phylip-relaxed")
+    locfile = open(path.dirname(alignment_filename)+'/'+ path.basename(alignment_filename).replace('.nex','') + '_locs_m'+str(missing_str)+'.txt', 'w')    
     locfile.write("\n".join(newlocs))
     locfile.close()
     origLength = len(data[species[0]])
     newLength = len(newlocs)
-    print('With '+missing_str+' taxa allowed to be missing, '+str(origLength)+' sites from '+path.basename(alignment_filename)+' ('+str(len(species)-2)+' allowed missing) are reduced to '+str(len(newlocs))+' sites ('+str(origLength-newLength)+' sites or '+str('%.2f' % (((origLength-newLength)/origLength)*100))+'% lost)')
+    print('With '+str(missing_str)+' taxa allowed to be missing, '+str(origLength)+' sites from '+path.basename(alignment_filename)+' ('+str(len(species)-2)+' allowed missing) are reduced to '+str(len(newlocs))+' sites ('+str(origLength-newLength)+' sites or '+str('%.2f' % (((origLength-newLength)/origLength)*100))+'% lost)')
 
 
 if __name__ == '__main__':
     alignment_filename = sys.argv[1]
     missing_str = sys.argv[2]
-    main(alignment_filename, missing_str)
+    filter_nexus(alignment_filename, missing_str)
+
