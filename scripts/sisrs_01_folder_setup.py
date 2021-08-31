@@ -108,7 +108,6 @@ def fileStructure(sisrs_dir):
 #        print("OTHERWISE CHANGE DIRECTORIES AND TRY AGAIN. PROGRAM EXITING!")
 #        exit()
 
-
 if __name__ == "__main__":
 
     #run as python3 sisrs_01_folder_setup.py -d $D -dir $DIR

@@ -23,9 +23,11 @@ module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
 P=20 #CHANGE THIS to the number of processors 
-D=/data/schwartzlab/yana/SISRS-development_indexfile/SISRS_Small #CHANGE THIS to the directory with input data
-DIR=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE THIS to the analysis (output) directory
+
+D=../SISRS_Small #CHANGE THIS to the directory with input data
+DIR=~/SISRS_Small_test #CHANGE THIS to the analysis (output) directory
 
 #Note - the only taxa used will be in TaxonList.txt so edit that for fewer taxa
 
-python3 /data/schwartzlab/yana/SISRS-development_indexfile/scripts/sisrs_02_read_trimmer.py -p $P -d $D -dir $DIR
+python3 sisrs_02_read_trimmer.py -p $P -d $D -dir $DIR
+
