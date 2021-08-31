@@ -176,74 +176,36 @@ if __name__ == '__main__':
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
 
-    """
-    python3 SCRIPT_DIR/get_alignment.py TWOTAXA SISRS_DIR COMPOSITE_DIR
-    """
     alignment=get_phy_sites(sisrs, composite_dir, len(sisrs_tax_dirs) - 2)
+
     numbi=alignment.numsnps() #prints numbers of snps, biallelic snps, and singletons
+
     alignment = write_alignment(sisrs + '/alignment.nex', alignment, numbi)
 
 
     for i in ms:
         i = int(i)
-        """
-        These replace python3 SCRIPT_DIR/filter_nexus_for_missing.py SISRS_DIR/alignment.nex MISSING
-        """
+
         filter_nexus(sisrs + "/alignment.nex", i)
 
-        """
-        These replace python3 SCRIPT_DIR/filter_nexus_for_missing_nogap.py SISRS_DIR/alignment.nex MISSING
-        """
         filter_nexus_no_gap(sisrs + "/alignment.nex", i)
 
-        """
-        These replace grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_locs_mMISSING.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_locs_mMISSING_Clean.txt
-        """
         run_alignment_locs_m(sisrs, i)
 
-
-        """
-        These replace grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_locs_mMISSING_nogap.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_locs_mMISSING_nogap_Clean.txt
-        """
         run_alignment_locs_m_nogap(sisrs, i)
 
-        """
-        These replace python3 SCRIPT_DIR/filter_nexus_for_missing.py SISRS_DIR/alignment_bi.nex MISSING
-        """
         filter_nexus(sisrs + "/alignment_bi.nex", i)
 
-        """
-        These replace python3 SCRIPT_DIR/filter_nexus_for_missing_nogap.py SISRS_DIR/alignment_bi.nex MISSING
-        """
         filter_nexus_no_gap(sisrs + "/alignment_bi.nex", i)
 
-        """
-        These replace grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_bi_locs_mMISSING.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_bi_locs_mMISSING_Clean.txt
-        """
         run_alignment_bi_locs(sisrs, i)
 
-        """
-        These replace grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_bi_locs_mMISSING_nogap.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_bi_locs_mMISSING_nogap_Clean.txt
-        """
         run_alignment_bi_locs_nogap(sisrs, i)
 
-        """
-        These replace python3 SCRIPT_DIR/filter_nexus_for_missing.py SISRS_DIR/alignment_pi.nex MISSING
-        """
         filter_nexus(sisrs + "/alignment_pi.nex", i)
 
-        """
-        These replace python3 SCRIPT_DIR/filter_nexus_for_missing_nogap.py SISRS_DIR/alignment_pi.nex MISSING
-        """
         filter_nexus_no_gap(sisrs + "/alignment_pi.nex", i)
 
-        """
-        These replace grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_pi_locs_mMISSING.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_pi_locs_mMISSING_Clean.txt
-        """
         run_alignment_pi_locs_m(sisrs, i)
 
-        """
-        These replace grep -oe "SISRS_[^/]*" SISRS_DIR/alignment_pi_locs_mMISSING_nogap.txt | uniq -c | sort -k1 -nr | awk '{print $2}' > SISRS_DIR/alignment_pi_locs_mMISSING_nogap_Clean.txt
-        """
         run_alignment_pi_locs_m_nogap(sisrs, i)
-
