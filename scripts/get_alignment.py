@@ -57,10 +57,11 @@ class Alignment:
 
 
 def get_phy_sites(sisrs_dir,composite_dir,num_missing):
-    ''' This function builds alignment. ''' #Ask Rachel
+    ''' This function builds alignment. '''
 
     #Fetch contig data
     contigList=glob.glob(composite_dir +'/contigs_LocList')
+
     assert len(contigList) > 0, 'Total site list not found in assembly folder'
 
     #Fetch sorted species data
@@ -143,3 +144,4 @@ if __name__ == '__main__':
     sisrs_dir = sys.argv[2]
     composite_dir = sys.argv[3]
     main(num_missing, sisrs_dir, composite_dir)
+

@@ -108,7 +108,6 @@ def fileStructure(sisrs_dir):
 #        print("OTHERWISE CHANGE DIRECTORIES AND TRY AGAIN. PROGRAM EXITING!")
 #        exit()
 
-
 if __name__ == "__main__":
 
     #run as python3 sisrs_01_folder_setup.py -d $D -dir $DIR
@@ -121,6 +120,10 @@ if __name__ == "__main__":
 
     d = args.directory
     outputdir = args.outputdir
+
+    if (outputdir):
+        print("This directory already exists and not empty. Please specify empty directory.")
+        exit()
 
     # Create the file structure
     fileStructure(outputdir)

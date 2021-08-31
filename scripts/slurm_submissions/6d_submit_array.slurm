@@ -3,7 +3,7 @@
 #SBATCH --time=120:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - only use 1 for this!
-#SBATCH --mail-user="rsschwartz@uri.edu" #user email address
+#SBATCH --mail-user="yana_hrytsenko@uri.edu" #user email address
 #SBATCH --mail-type=ALL
 #SBATCH --array=[0-11]%12 #CHANGE as 6c - note each job only takes 1 core so you can run them all simultaneously 
 #SBATCH -o %x_%A_%a.out
@@ -25,7 +25,7 @@ module load Ray/2.3.1-foss-2019b
 module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
-OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
+OUTFOLDER=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE to analysis directory
 MINREAD=3 #CHANGE to set the threshold for the number of reads to call a site
 THRESHOLD=1 #CHANGE to set the threshold [<=1] for the proportion of sites required to be the same to call a site
 
@@ -33,4 +33,4 @@ SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-python3 sisrs_06d_pileup2.py -d $OUTFOLDER -m $MINREAD -t $THRESHOLD -s ${SPP[$SLURM_ARRAY_TASK_ID]}
+python3 /data/schwartzlab/yana/SISRS-development_indexfile/scripts/sisrs_06d_pileup2.py -d $OUTFOLDER -m $MINREAD -t $THRESHOLD -s ${SPP[$SLURM_ARRAY_TASK_ID]}

@@ -1,123 +1,167 @@
 #!/usr/bin/env python3
 
-'''
+"""
 
 Input: -m/--missing
-'''
+"""
 
 import argparse
 import os
 from os import path
 import sys
-from glob import glob
+import glob
 import subprocess
 from subprocess import Popen
 from cmdCheck import *
 from itertools import islice
+from get_alignment import *
+from filter_nexus_for_missing import *
+from filter_nexus_for_missing_nogap import *
 
-'''
+"""
 
 This function is designed to get the appropriate directories needed to finish the
 sisrs run. The parameters that is needed for it to properly run is just the
 current sisrs working directory.
-'''
+"""
 def getData(outPath):
-    ''' This function gets the appropriate directories needed to finish the SISRS run. '''
+    """ This function gets the appropriate directories needed to finish the SISRS run. """
 
-    #Set TrimRead + SISRS directories based off of script folder location
     sisrs_dir = outPath+"/SISRS_Run"
     composite_dir = sisrs_dir + '/Composite_Genome'
-    sisrs_tax_dirs = sorted(glob(sisrs_dir+"/*/"))
-    sisrs_tax_dirs = [x for x in sisrs_tax_dirs if not x.endswith('Composite_Genome/')]
-
+    with open(outPath +'/TaxonList.txt') as f:
+        sisrs_tax_dirs = f.readlines()
+    sisrs_tax_dirs = [sisrs_dir+'/'+x.rstrip() for x in sisrs_tax_dirs]
     return composite_dir,sisrs_tax_dirs,sisrs_dir
 
-'''
-This fucntion is designed to create all the bash scripts that are still needed
-to finish off the sisrs run. It requiers as input the current working directory
-for sisrs, the location of the "SISRS_Run" folder, the missing data parameter,
-and the list of composite genome paths.
-'''
-def createBash(composite_dir,sisrs_tax_dirs,sisrs_dir,outPath,missing,dir):
-    ''' This function creates all the bash scripts that are still needed to finish off the SISRS run. '''
 
-    sisrs_output_template = ""
+def run_alignment_locs_m(sisrs, ms):
 
-    shFile = open(dir + '/sisrs_07_template.sh')
-    for line in shFile:
-        sisrs_output_template += line
+    alignment_locs_m_command = [
+
+    'grep -oe "SISRS_[^/]*" ',
+
+    sisrs + "/alignment_locs_m" + str(ms) + ".txt",
+
+    ' | uniq -c ',
+
+    ' | sort -k1 -nr ',
+
+    ' | awk "{print $2}" > ',
+
+    sisrs + "/alignment_locs_m" + str(ms) + "_Clean.txt"
+
+    ]
+
+    print(alignment_locs_m_command)
+    os.system("".join(alignment_locs_m_command))
+
+def run_alignment_locs_m_nogap(sisrs, ms):
+
+    alignment_locs_m_nogap_command = [
+
+    'grep -oe "SISRS_[^/]*" ',
+
+    sisrs + "/alignment_locs_m" + str(ms) + "_nogap.txt",
+
+    ' | uniq -c',
+
+    ' | sort -k1 -nr',
+
+    ' | awk "{print $2}" > ',
+
+    sisrs + "/alignment_locs_m" + str(ms) + "_nogap_Clean.txt"
+
+    ]
+
+    print(alignment_locs_m_nogap_command)
+    os.system("".join(alignment_locs_m_nogap_command))
+
+def run_alignment_bi_locs(sisrs, ms):
+
+    alignment_bi_locs_m_command = [
+
+    'grep -oe "SISRS_[^/]*" ',
+
+    sisrs + "/alignment_bi_locs_m" + str(ms) + ".txt",
+
+    ' | uniq -c',
+
+    ' | sort -k1 -nr',
+
+    ' | awk "{print $2}" > ',
+
+    sisrs + "/alignment_bi_locs_m" + str(ms) + "_Clean.txt"
+
+    ]
+
+    print(alignment_bi_locs_m_command)
+    os.system("".join(alignment_bi_locs_m_command))
+
+def run_alignment_bi_locs_nogap(sisrs, ms):
+
+    alignment_bi_locs_m_nogap_command = [
+
+    'grep -oe "SISRS_[^/]*" ',
+
+    sisrs + "/alignment_bi_locs_m" + str(ms) + "_nogap.txt",
+
+    ' | uniq -c',
+
+    ' | sort -k1 -nr',
+
+    ' | awk "{print $2}" > ',
+
+    sisrs + "/alignment_bi_locs_m" + str(ms) + "_nogap_Clean.txt"
+
+    ]
+
+    print(alignment_bi_locs_m_nogap_command)
+    os.system("".join(alignment_bi_locs_m_nogap_command))
+
+def run_alignment_pi_locs_m(sisrs, ms):
+
+    alignment_pi_locs_m_command = [
+
+    'grep -oe "SISRS_[^/]*" ',
+
+    sisrs + "/alignment_pi_locs_m" + str(ms) + ".txt",
+
+    ' | uniq -c',
+
+    ' | sort -k1 -nr',
+
+    ' | awk "{print $2}" > ',
+
+    sisrs + "/alignment_pi_locs_m" + str(ms) + "_Clean.txt"
+
+    ]
+    print(alignment_pi_locs_m_command)
+    os.system("".join(alignment_pi_locs_m_command))
 
 
-    keyList = ['TWOTAXA','SISRS_DIR','SCRIPT_DIR','MISSING','COMPOSITE_DIR']
-    keyDict = {'TWOTAXA':str(len(sisrs_tax_dirs) - 2),
-               'SISRS_DIR':sisrs_dir,
-               'SCRIPT_DIR':dir,
-               'MISSING':str(missing),
-               'COMPOSITE_DIR':composite_dir}
-    for key in keyList:
-        sisrs_output_template = sisrs_output_template.replace(key,keyDict[key])
-    with open(sisrs_dir+"/Output_Alignment_m{}.sh".format(missing), "w") as text_file:
-        print(sisrs_output_template, file=text_file)
+def run_alignment_pi_locs_m_nogap(sisrs, ms):
 
-'''
-This function is designed to run all of the newly created bash scripts. It
-requiers as input the path to the SISRS_Run directory and the path to all of
-the folders that contain sh scripts.
-'''
-def runBash(sisrs_dir,sisrs_tax_dirs,missing):
-    ''' This function runs all of the bash scripts created by the createBash(). '''
+    alignment_pi_locs_m_nogap_command = [
 
-    to_remove_for_easy_traversal = sisrs_dir + '/contigs_outputs/'
-    to_remove_for_easy_traversal_2 = sisrs_dir + '/aligned_contigs/'
+    'grep -oe "SISRS_[^/]*" ',
 
-    if(to_remove_for_easy_traversal in sisrs_tax_dirs):
-        sisrs_tax_dirs.remove(sisrs_dir + '/contigs_outputs/') #exclude the folder from the taxa list
+    sisrs + "/alignment_pi_locs_m" + str(ms) + "_nogap.txt",
 
-    if(to_remove_for_easy_traversal_2 in sisrs_tax_dirs):
-        sisrs_tax_dirs.remove(sisrs_dir + '/aligned_contigs/') #exclude the folder from the taxa list
+    ' | uniq -c',
 
-    with open(sisrs_dir+"/out_SISRS_Alignment","w") as file:
-        cmd = sisrs_dir+'/Output_Alignment_m{}.sh'.format(missing)
-        '''
+    ' | sort -k1 -nr',
 
-        #this block of code produces exactly the same output as this line:
-        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
-        #however it allows you to print out the error messages communicated to the pipe:
-        #as in here print(err)
-        #it is personal preference (useful debugging) whether to use this block or a single line of code below:
-        #subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+    ' | awk "{print $2}" > ',
 
-        p = Popen(['sh', cmd], stdout=file, stderr=subprocess.PIPE)
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output)
-        print(err)
-        print(rc)
+    sisrs + "/alignment_pi_locs_m" + str(ms) + "_nogap_Clean.txt"
 
-        '''
-        subprocess.call(['sh',cmd],stdout=file, stderr=subprocess.PIPE)
+    ]
+    print(alignment_pi_locs_m_nogap_command)
+    os.system("".join(alignment_pi_locs_m_nogap_command))
 
-#commenting this out to see if writing this extra stuff is causing issues unnecessarily
-#    with open(sisrs_dir+"/out_SISRS_Log","w") as file:
-#        file.write("\nRead Mapping and SISRS Site Selection:\n")
-#        for tax_dir in sisrs_tax_dirs:
-#            taxa = path.basename(tax_dir[:-1])
-#            bowtie1 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','2,6p']
-#            bowtie2 = ['grep','-A4',"'of these'",'{}'.format(tax_dir + "err_" + taxa + "_SISRS"),'|','sed','-n','9,13p']
-#            file.write("\n"+ taxa + " Composite Genome Mapping:\n\n")
-#            file.write((subprocess.check_output(' '.join(bowtie1),shell=True).decode("UTF8")))
-#            file.write("\n"+taxa+" Specific Genome Mapping:\n\n")
-#            file.write((subprocess.check_output(' '.join(bowtie2),shell=True).decode("UTF8")))
 
-#            with open(tax_dir + "out_" + taxa + "_SISRS") as f:
-#                file.write("\n"+taxa+" SISRS Site Selection:\n\n")
-#                for line in f:
-#                    if(str.startswith(line,'Of ')):
-#                        file.write(line)
-#        with open(sisrs_dir + "/out_SISRS_Alignment") as f2:
-#            file.write("\nSISRS Alignment Filtering:\n\n")
-#            for line in f2:
-#                file.write(line)
+
 
 if __name__ == '__main__':
 
@@ -128,20 +172,40 @@ if __name__ == '__main__':
     args = my_parser.parse_args()
 
     sis = args.directory
-    ms = args.missing
+    ms = args.missing #contains a list of missing
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
+
+    alignment=get_phy_sites(sisrs, composite_dir, len(sisrs_tax_dirs) - 2)
+
+    numbi=alignment.numsnps() #prints numbers of snps, biallelic snps, and singletons
+
+    alignment = write_alignment(sisrs + '/alignment.nex', alignment, numbi)
 
 
     for i in ms:
         i = int(i)
-        # Create the bash script to run sisrs as we need it to
-        createBash(composite_dir,sisrs_tax_dirs,sisrs,sis,i,sys.path[0])#sys.path[0] is to access sisrs_07_template.sh
 
-        #RunSisrs
-        runBash(sisrs,sisrs_tax_dirs,i)
+        filter_nexus(sisrs + "/alignment.nex", i)
 
-        subprocess.call("mkdir {0}/missing_{1}".format(sisrs,i),shell=True)
-        subprocess.call("mv {0}/alignment* {0}/missing_{1}".format(sisrs,i),shell=True)
-        subprocess.call("mv {0}/out_SISRS* {0}/missing_{1}".format(sisrs,i),shell=True)
-        subprocess.call("mv {0}/Output_Alignment_m{1}.sh {0}/missing_{1}".format(sisrs,i),shell=True)
+        filter_nexus_no_gap(sisrs + "/alignment.nex", i)
+
+        run_alignment_locs_m(sisrs, i)
+
+        run_alignment_locs_m_nogap(sisrs, i)
+
+        filter_nexus(sisrs + "/alignment_bi.nex", i)
+
+        filter_nexus_no_gap(sisrs + "/alignment_bi.nex", i)
+
+        run_alignment_bi_locs(sisrs, i)
+
+        run_alignment_bi_locs_nogap(sisrs, i)
+
+        filter_nexus(sisrs + "/alignment_pi.nex", i)
+
+        filter_nexus_no_gap(sisrs + "/alignment_pi.nex", i)
+
+        run_alignment_pi_locs_m(sisrs, i)
+
+        run_alignment_pi_locs_m_nogap(sisrs, i)
