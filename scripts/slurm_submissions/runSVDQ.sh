@@ -13,7 +13,7 @@ logFile="${alignmentFile}.svdq.log"
 treeFile="${alignmentFile}.svdq.tre"
 
 nBoot=1000
-nCpus=36
+nCpus=36 #CHANGE to match ntasks line if needed
 
 date
 
