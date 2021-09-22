@@ -25,10 +25,10 @@ module load Ray/2.3.1-foss-2019b
 module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
-OUTFOLDER=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE to analysis directory
+OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
 SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-python3 /data/schwartzlab/yana/SISRS-development_indexfile/scripts/sisrs_06b_pileup.py -d $OUTFOLDER -s ${SPP[$SLURM_ARRAY_TASK_ID]}
+python3 sisrs_06b_pileup.py -d $OUTFOLDER -s ${SPP[$SLURM_ARRAY_TASK_ID]}

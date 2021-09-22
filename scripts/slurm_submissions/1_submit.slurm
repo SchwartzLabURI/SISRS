@@ -3,7 +3,7 @@
 #SBATCH --time=1:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE TO user email address
+#SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE TO user email address
 #SBATCH --mail-type=END,FAIL
 
 cd $SLURM_SUBMIT_DIR
@@ -23,7 +23,7 @@ module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
 
-D=/data/schwartzlab/yana/SISRS-development_indexfile/SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
-DIR=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE THIS to the path for the output of your analysis
+D=../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
+DIR=~/SISRS_Small_test #CHANGE THIS to the path for the output of your analysis
  
-python3 /data/schwartzlab/yana/SISRS-development_indexfile/scripts/sisrs_01_folder_setup.py -d $D -dir $DIR
+python3 sisrs_01_folder_setup.py -d $D -dir $DIR

@@ -27,7 +27,7 @@ module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
 PROCESSORS=20 #CHANGE to the number of processors
-OUTFOLDER=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE to the analysis directory
+OUTFOLDER=~/SISRS_Small_test #CHANGE to the analysis directory
 
 SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}

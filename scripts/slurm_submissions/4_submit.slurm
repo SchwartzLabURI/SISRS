@@ -23,5 +23,5 @@ module load BEDTools/2.29.2-GCC-8.3.0
 
 
 P=20 #CHANGE THIS to the number of processors 
-DIR=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE THIS to the analysis directory
-python3 /data/schwartzlab/yana/SISRS-development_indexfile/scripts/sisrs_04_ray_composite.py -p $P -dir $DIR
+DIR=~/SISRS_Small_test #CHANGE THIS to the analysis directory
+python3 sisrs_04_ray_composite.py -p $P -dir $DIR

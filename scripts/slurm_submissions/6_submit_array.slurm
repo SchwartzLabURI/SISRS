@@ -28,7 +28,7 @@ module load BEDTools/2.29.2-GCC-8.3.0
 
 # create an array variable containing the folders names
 PROCESSORS=20 #CHANGE to number of processors
-OUTFOLDER=/data/schwartzlab/yana/output_for_SISRS-development_indexfile/SISRS_Small_test #CHANGE to analysis directory
+OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
 SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
