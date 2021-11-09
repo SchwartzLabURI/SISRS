@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="2c_step_chloroplast"
+#SBATCH --job-name="2c_step_chloroplast2"
 #SBATCH --time=24:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # processor core(s) per node
