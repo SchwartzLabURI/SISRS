@@ -21,6 +21,7 @@ if __name__ == '__main__':
     output = fo+"/Reads/TrimReads_nocl/"+taxon
     #forward_end, reverse_end, output = sys.argv[1], sys.argv[2], sys.argv[3]
 
+    os.mkdir(fo+"/Reads/TrimReads_nocl/")
     os.mkdir(output)
 
     #get paired reads
