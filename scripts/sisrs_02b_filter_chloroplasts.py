@@ -36,7 +36,7 @@ if __name__ == '__main__':
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
 
-        cl_genome = glob.glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
+        cl_genome = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
 
         filter_chloroplasts = f"bbmap.sh in={forward_end} in2={reverse_end} ref={output}/{cl_genome[1]} ambiguous=all threads={proc} outm={output}/mappedChloroplast1.fastq outm2={output}/mappedChloroplast2.fastq outu={output}/{left}_Nuclear_Trim_1.fastq.gz outu2={output}/{left}_Nuclear_Trim_2.fastq.gz"
         os.system(filter_chloroplasts)
@@ -46,6 +46,6 @@ if __name__ == '__main__':
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py -u {reads} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
 
-	cl_genome = glob.glob(output+'/*.fasta')
+	cl_genome = glob(output+'/*.fasta')
 
 	filter_chloroplasts = f"bbmap.sh in={reads} ref={output}/{cl_genome[1]} ambiguous=all threads={proc} outm={output}/mappedChloroplast.fastq outu={output}/{singlef}_Nuclear_Trim.fastq.gz
