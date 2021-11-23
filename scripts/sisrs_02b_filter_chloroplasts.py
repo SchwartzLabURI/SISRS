@@ -31,25 +31,27 @@ if __name__ == '__main__':
     out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir,newData)
 
     for left in left_pairs:
+	sample = os.path.basename(left)
         forward_end = left +'_1.fastq.gz'
         reverse_end = left +'_2.fastq.gz'
         #at some point fix this so we don't call python from python
-        find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --overwrite -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
+        find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
 
         cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
 	cl_genome = max(cl_genomes, key=os.path.getctime)
 
-        filter_chloroplasts = f"bbmap.sh in={forward_end} in2={reverse_end} ref={cl_genome} ambiguous=all threads={proc} outm={output}/mappedChloroplast1.fastq outm2={output}/mappedChloroplast2.fastq outu={output}/{left}_Nuclear_Trim_1.fastq.gz outu2={output}/{left}_Nuclear_Trim_2.fastq.gz"
+        filter_chloroplasts = f"bbmap.sh in={forward_end} in2={reverse_end} ref={cl_genome} ambiguous=all threads={proc} outm={output}/{sample}_mappedChloroplast1.fastq outm2={output}/{sample}_mappedChloroplast2.fastq outu={output}/{sample}_Nuclear_Trim_1.fastq.gz outu2={output}/{sample}_Nuclear_Trim_2.fastq.gz"
         os.system(filter_chloroplasts)
 
     for singlef in single_end:
+	sample = os.path.basename(singlef)
         reads = singlef + '_Trim.fastq.gz'
-        find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --overwrite -u {reads} -o {output}/ -F embplant_pt"
+        find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -u {reads} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
 
 	cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
 	cl_genome = max(cl_genomes, key=os.path.getctime)
 
-	filter_chloroplasts = f"bbmap.sh in={reads} ref={cl_genome} ambiguous=all threads={proc} outm={output}/mappedChloroplast.fastq outu={output}/{singlef}_Nuclear_Trim.fastq.gz
+	filter_chloroplasts = f"bbmap.sh in={reads} ref={cl_genome} ambiguous=all threads={proc} outm={output}/{sample}_mappedChloroplast.fastq outu={output}/{sample}_Nuclear_Trim.fastq.gz
 	os.system(filter_chloroplasts)
