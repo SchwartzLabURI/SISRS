@@ -9,10 +9,11 @@
 cd $SLURM_SUBMIT_DIR
 
 #CHANGE if not on URI system
+module purge
 
-module load Python/3.7.4-GCCcore-8.3.0
-module load BLAST+/2.11.0-gompi-2020b
-module load Bowtie2/2.4.4-GCC-10.2.0
+module load BLAST+/2.10.1-gompi-2020a
+module load Bowtie2/2.4.4-GCC-10.2.0^C
+module load Python/3.8.6-GCCcore-10.2.0
 
 git clone https://github.com/Kinggerm/GetOrganelle.git
 
