@@ -34,7 +34,7 @@ if __name__ == '__main__':
         forward_end = left +'_1.fastq.gz'
         reverse_end = left +'_2.fastq.gz'
         #at some point fix this so we don't call python from python
-        find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
+        find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --overwrite -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
 
         cl_genome = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
