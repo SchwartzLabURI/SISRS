@@ -2,7 +2,7 @@
 
 import sys
 import os
-import glob
+from glob import glob
 from sisrs_02_read_trimmer import trimHelper
 
 #This script acts as a wrapper for get_organelle_from_reads.py. It takes three arguments: the path to the forward read, the path to
