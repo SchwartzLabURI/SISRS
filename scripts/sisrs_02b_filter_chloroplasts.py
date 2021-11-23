@@ -31,8 +31,8 @@ if __name__ == '__main__':
     out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir,newData)
 
     for left in left_pairs:
-        forward_end = left +'_Trim_1.fastq.gz'
-        reverse_end = left +'_Trim_2.fastq.gz'
+        forward_end = left +'_1.fastq.gz'
+        reverse_end = left +'_2.fastq.gz'
         #at some point fix this so we don't call python from python
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
