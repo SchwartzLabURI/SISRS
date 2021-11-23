@@ -13,7 +13,7 @@ from sisrs_02_read_trimmer import trimHelper
 
 if __name__ == '__main__':
 
-    fo = sys.argv[1]
+    fo = os.path.expanduser(sys.argv[1])
     taxon = sys.argv[2]
     proc = sys.argv[3]
 
