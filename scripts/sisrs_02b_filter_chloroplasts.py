@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     #get paired reads
     tax_dir = folder #has fastqs
-    trim_read_dir = folder
+    trim_read_dir = fo+"/Reads/TrimReads/"
     newData = [] 
     out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir,newData)
 
