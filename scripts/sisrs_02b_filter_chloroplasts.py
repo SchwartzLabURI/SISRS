@@ -2,6 +2,7 @@
 
 import sys
 import os
+from os import path
 from glob import glob
 from sisrs_02_read_trimmer import trimHelper
 
