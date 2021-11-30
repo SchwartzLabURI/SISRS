@@ -49,9 +49,9 @@ if __name__ == '__main__':
         reads = singlef + '_Trim.fastq.gz'
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -u {reads} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
-
-	cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
-	cl_genome = max(cl_genomes, key=os.path.getctime)
-
-	filter_chloroplasts = f"bbmap.sh in={reads} ref={cl_genome} ambiguous=all threads={proc} outm={output}/{sample}_mappedChloroplast.fastq outu={output}/{sample}_Nuclear_Trim.fastq.gz
-	os.system(filter_chloroplasts)
+        
+        cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
+        cl_genome = max(cl_genomes, key=os.path.getctime)
+        
+        filter_chloroplasts = f"bbmap.sh in={reads} ref={cl_genome} ambiguous=all threads={proc} outm={output}/{sample}_mappedChloroplast.fastq outu={output}/{sample}_Nuclear_Trim.fastq.gz
+        os.system(filter_chloroplasts)
