@@ -37,8 +37,8 @@ if __name__ == '__main__':
         #at some point fix this so we don't call python from python
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
-
-        cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  #name="embplant_pt.K115.complete.graph1.1.path_sequence.fasta"
+        
+        cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  eg embplant_pt.K115.complete.graph1.1.path_sequence.fasta
         cl_genome = max(cl_genomes, key=os.path.getctime)
 
         filter_chloroplasts = f"bbmap.sh in={forward_end} in2={reverse_end} ref={cl_genome} ambiguous=all threads={proc} outm={output}/{sample}_mappedChloroplast1.fastq outm2={output}/{sample}_mappedChloroplast2.fastq outu={output}/{sample}_Nuclear_Trim_1.fastq.gz outu2={output}/{sample}_Nuclear_Trim_2.fastq.gz"
