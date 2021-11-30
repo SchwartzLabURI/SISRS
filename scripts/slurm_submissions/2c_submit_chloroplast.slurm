@@ -24,7 +24,8 @@ module load sympy/1.7.1-foss-2020b sympy/1.8-foss-2021a
 module load scikit-learn/0.23.2-fosscuda-2020b
 module load SPAdes/3.14.0-GCC-8.3.0-Python-3.7.4
 module load Bowtie2/2.3.5.1-GCC-8.3.0
-module load BLAST+/2.8.1-foss-2018b
+
+module load BLAST+/2.10.1-gompi-2020a
 
 #    fo = sys.argv[1]
 #    taxon = sys.argv[2]
