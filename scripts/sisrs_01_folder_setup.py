@@ -122,8 +122,8 @@ if __name__ == "__main__":
     outputdir = args.outputdir
 
     #check if dir exists and dir is a dir and dir has files - stop
-    if os.path.exists(outputdir) and os.path.isdir(outputdir) and os.listdir(outputdir):
-        print("This directory already exists and not empty. Please specify empty directory.")
+    if os.path.exists(outputdir):
+        print("This directory already exists. Please specify a name for a new directory.")
         exit()
 
     # Create the file structure
