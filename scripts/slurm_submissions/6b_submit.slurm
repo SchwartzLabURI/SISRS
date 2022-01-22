@@ -1,15 +1,18 @@
 #!/bin/bash
-#SBATCH --job-name="7_step"
-#SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
+#SBATCH --job-name="6b_step"
+#SBATCH --time=12:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE to your user email address
-#SBATCH --mail-type=END,FAIL
+#SBATCH --ntasks-per-node=1   # processor core(s) per node - only use 1 for this!
+#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE to user email address
+#SBATCH --mail-type=ALL
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
 cd $SLURM_SUBMIT_DIR
+
 
 module purge
 
-#CHANGE if not on a URI system
+#CHANGE IF not on a URI system
 module load Python/3.7.4-GCCcore-8.3.0
 module load SciPy-bundle/2019.10-foss-2019b-Python-3.7.4
 module load Bowtie2/2.3.5.1-GCC-8.3.0
@@ -20,9 +23,13 @@ module load Ray/2.3.1-foss-2019b
 module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
-
-#CHANGE following example
-#python3 sisrs_07_output_sisrs.py -m <list of number of species allowed to be missing> -d <main output folder>
 OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
-python3 sisrs_07_output_sisrs.py -m 1 2 3 -d $OUTFOLDER
+SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
+
+ARRLEN=${#SPP[@]}
+
+for (( i = 0; i < $ARRLEN; i++ ))
+do
+    python3 sisrs_06b_pileup.py -d $OUTFOLDER -s ${SPP[i]}
+done
