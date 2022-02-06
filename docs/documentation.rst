@@ -62,7 +62,7 @@ Command Line Arguments
     i. Adding a Taxon (-aT,--addTaxon): Adding a new taxon to the previous *SISRS* run
     ii. Adding Additional Sequences (-aD,--addData): Adding a new file to existing taxa
 
-    **Note**: This relies on the -d/--data folder to specify were the new data is located
+    **Note**: This relies on the -d/--directory folder to specify were the new data is located
 
 
 *****************
@@ -79,7 +79,7 @@ sisrs_01_folder_setup
 #####################
 
 * This script will start the setup of the folder structure needed to run *SISRS*
-* **Required Arguments**: -d/--date or -id
+* **Required Arguments**: -d/--directory or -id
 * **Optional Arguments**: -trm/--trimmed
 
 sisrs_02_read_trimmer
@@ -149,7 +149,7 @@ This script will:
         * Indexing and processing the composite genome
         * Creating *SISRS* runs scripts for each species
 
-* **Optional Arguments**: -p/--processors, -mr/--minread, and -thrs/--threshold
+* **Optional Arguments**: -p/--processors, -mr/--minread, and -trh/--threshold
 
 sisrs_06_run_sisrs
 ##################
