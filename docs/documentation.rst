@@ -5,10 +5,10 @@
 Command Line Arguments
 **********************
 
-1. Genome Size Estimate (-gs, --genomeSize)
+1. Genome Size Estimate (-gs)
     * Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
 
-2. Specifying starting data (-d, --data)
+2. Specifying starting data (-d)
     * Path to directory where reads are already split into folders by taxon (these can be linked files)
     * **Note 1**: No spaces or special characters are allowed when naming taxon directories
     * **Note 2**: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
@@ -32,27 +32,23 @@ Command Line Arguments
            PapAnu
            PapCyn
 
-4. Output Directory (-dir,--directory)
+4. Output Directory (-dir)
     * Path to desired SISRS output directory. DEFAULT: The directory preceding where the scripts are located
 
-5. Trimmed Data (-trm,--trimmed)
-        * Specify if the data has already been trimmed
-        * DEFAULT: untrimmed
-
-6. Processors (-p,--processors)
+5. Processors (-p)
     * Specify the number of available processors
     * DEFAULT: 1
     * **Note**: If running this on a multi-core machine, specify the number of processors per node here
 
-7. Homozygosity Threshold (-thresh,--threshold)
+6. Homozygosity Threshold (-t)
     * Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1
     * DEFAULT: 1 (SISRS sites have support for only a single base within taxa)
 
-8. Minimum Coverage Threshold (-mr,--minread)
+7. Minimum Coverage Threshold (-mr,--minread)
     * Specify the minimum read coverage to call a SISRS site
     * DEFAULT: 3 (Three reads required to call a site)
 
-9. Missing Taxa Allowed (-ms,--missing)
+8. Missing Taxa Allowed (-m)
     * When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column
     * You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column
     *  It will also separate all the data out into folders labeled missing_(#)
