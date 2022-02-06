@@ -33,7 +33,7 @@ def obtainDir(outPath):
     #taxa come from taxonlist file
     with open(outPath+'/TaxonList.txt') as f:
         taxa = f.readlines()
-    taxa = sorted([x.rstrip() for x in taxa]) 
+    taxa = sorted([x.rstrip() for x in taxa])
 
     trim_read_tax_dirs = [trim_read_dir+'/'+x for x in taxa]
     ray_dir = outPath+"/Ray_Composite_Genome"

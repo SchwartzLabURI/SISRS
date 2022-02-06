@@ -25,4 +25,4 @@ module load BEDTools/2.29.2-GCC-8.3.0
 GENOME=1000000000 #CHANGE THIS to the approximate size of your genome
 DIR=~/SISRS_Small_test #CHANGE this to your analysis folder
 
-python3 sisrs_03_read_subsetter.py -gs $GENOME -dir $DIR
+python3 sisrs_03_read_subsetter.py -gs $GENOME -d $DIR

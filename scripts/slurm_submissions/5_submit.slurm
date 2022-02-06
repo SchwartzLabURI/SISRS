@@ -23,6 +23,6 @@ module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
 
-P=20 #CHANGE THIS to the number of processors 
+P=20 #CHANGE THIS to the number of processors
 DIR=~/SISRS_Small_test #CHANGE THIS to the analysis directory
 python3 sisrs_05_setup_sisrs.py -p $P -d $DIR

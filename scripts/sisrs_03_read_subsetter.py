@@ -57,7 +57,7 @@ def setupDir(sisrs_dir,genomeSize):
         taxa = f.readlines()
     taxa = [x.rstrip() for x in taxa]
     taxa = sorted(taxa)
-    
+
     #Find taxa folders within TrimRead folder
     trim_read_tax_dirs = [trim_read_dir+"/"+x for x in taxa]
     print(trim_read_tax_dirs)
@@ -323,7 +323,7 @@ if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-dir','--directory',action='store',nargs="?")
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-gs','--genome_size',type=int, action='store',nargs="?")
     args = my_parser.parse_args()
 

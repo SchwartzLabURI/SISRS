@@ -266,7 +266,7 @@ if __name__ == "__main__":
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--datadir',action='store',nargs="?")
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
     args = my_parser.parse_args()
