@@ -13,7 +13,7 @@ Command Line Arguments
     * **Note 1**: No spaces or special characters are allowed when naming taxon directories
     * **Note 2**: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
 
-3. Taxon ID File (-id)
+3. Taxon ID File (-id) #I don't see this arg to be used anywhere in the scripts
     * Specify the taxon names with the TaxonIDs file. One taxon per line as follows:
 
         .. code-block:: bash
@@ -40,7 +40,7 @@ Command Line Arguments
     * DEFAULT: 1
     * **Note**: If running this on a multi-core machine, specify the number of processors per node here
 
-6. Homozygosity Threshold (-trh, --threshold)
+6. Homozygosity Threshold (-trh, --threshold) #I think in 7a this arg is misused
     * Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1
     * DEFAULT: 1 (SISRS sites have support for only a single base within taxa)
 
@@ -48,16 +48,14 @@ Command Line Arguments
     * Specify the minimum read coverage to call a SISRS site
     * DEFAULT: 3 (Three reads required to call a site)
 
-8. Missing Taxa Allowed (-m)
+8. Missing Taxa Allowed (-m, --missing)
     * When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column
     * You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column
     * It will also separate all the data out into folders labeled missing_(#)
     * DEFAULT: 0 (Coverage for all taxa for all sites)
 
-9. Taxon to process: (-f, --folder)
+9. Taxon to process: (-f, --folder) #is it same as (-s, --species) ?
     * This argument is set when running steps 6-6d in a loop or array job submission
-
-10. (-s, --species)
 
 10. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present
 
