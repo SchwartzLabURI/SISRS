@@ -40,7 +40,7 @@ Command Line Arguments
     * DEFAULT: 1
     * **Note**: If running this on a multi-core machine, specify the number of processors per node here
 
-6. Homozygosity Threshold (-t, --threshold)
+6. Homozygosity Threshold (-trh, --threshold)
     * Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1
     * DEFAULT: 1 (SISRS sites have support for only a single base within taxa)
 
