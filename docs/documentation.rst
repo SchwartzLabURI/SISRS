@@ -54,10 +54,7 @@ Command Line Arguments
     * It will also separate all the data out into folders labeled missing_(#)
     * DEFAULT: 0 (Coverage for all taxa for all sites)
 
-9. Taxon to process: (-f, --folder) #is it same as (-s, --species) ?
-    * This argument is set when running steps 6-6d in a loop or array job submission
-
-10. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present
+9. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present
 
     i. Adding a Taxon (-aT,--addTaxon): Adding a new taxon to the previous *SISRS* run
     ii. Adding Additional Sequences (-aD,--addData): Adding a new file to existing taxa
