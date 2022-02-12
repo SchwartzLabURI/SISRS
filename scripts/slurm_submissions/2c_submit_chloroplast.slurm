@@ -3,7 +3,7 @@
 #SBATCH --time=24:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # processor core(s) per node
-#SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE TO user email address
+#SBATCH --mail-user="user@example.edu" #CHANGE TO user email address
 #SBATCH --mail-type=END,FAIL
 #SBATCH --array=[0-11]%4 #CHANGE like 6b - bracketed numbers indicate number of total jobs you need(taxa-1) - 0 based, inclusive; following number = simultaneous
 #SBATCH -o %x_%A_%a.out
@@ -38,4 +38,4 @@ SPP=($(cat ${DIR}/TaxonList.txt))
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
 
-python3 sisrs_02b_filter_chloroplasts.py $DIR ${SPP[$SLURM_ARRAY_TASK_ID]} $PROC 
+python3 sisrs_02b_filter_chloroplasts.py $DIR ${SPP[$SLURM_ARRAY_TASK_ID]} $PROC

@@ -3,7 +3,7 @@
 #SBATCH --time=48:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1  # number of nodes
 #SBATCH --ntasks-per-node=20   # CHANGE to the number of processor core(s) per node
-#SBATCH --mail-user="jewelvoyer@uri.edu" #CHANGE to your email address
+#SBATCH --mail-user="user@example.edu" #CHANGE to your email address
 #SBATCH --mail-type=END,FAIL
 #SBATCH --output="out_scfRun"
 #SBATCH --error="err_scfRun"
@@ -20,4 +20,3 @@ OUTPUT=ALGN1_SCF #CHANGE to a name that will indicate the output information rel
 T=20 #CHANGE to the number of processors (20 or 36)
 
 iqtree2 -t $TREE -s $ALIGNMENT --scf 100 --prefix ALGN1_SCF -nt $T
-

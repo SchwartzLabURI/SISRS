@@ -3,7 +3,7 @@
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE to your user email address
+#SBATCH --mail-user="user@example.edu" #CHANGE to your user email address
 #SBATCH --mail-type=END,FAIL
 cd $SLURM_SUBMIT_DIR
 

@@ -3,7 +3,7 @@
 #SBATCH --time=120:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=20   # CHANGE THIS to the number of processors
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE THIS to your user email address
+#SBATCH --mail-user="user@example.edu" #CHANGE THIS to your user email address
 #SBATCH --mail-type=ALL
 #SBATCH --exclusive
 #SBATCH -o %x_%A_%a.out

@@ -3,7 +3,7 @@
 #SBATCH --time=120:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE user email address
+#SBATCH --mail-user="user@example.edu" #CHANGE user email address
 #SBATCH --mail-type=ALL
 #SBATCH --exclusive
 #SBATCH --array=[0-11]%4 #CHANGE like 6b - bracketed numbers indicate number of total jobs you need(taxa-1) - 0 based, inclusive; following number = simultaneous
