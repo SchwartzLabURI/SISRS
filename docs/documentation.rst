@@ -13,7 +13,7 @@ Command Line Arguments
     * **Note 1**: No spaces or special characters are allowed when naming taxon directories
     * **Note 2**: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
 
-3. Taxon ID File (-id) #I don't see this arg to be used anywhere in the scripts
+3. Taxon ID File (-id) 
     * Specify the taxon names with the TaxonIDs file. One taxon per line as follows:
 
         .. code-block:: bash
