@@ -156,7 +156,7 @@ This script will:
 
 
 sisrs_06_align
-##################
+##############
 
 * **Required Arguments**: -d/--directory
 
@@ -165,14 +165,14 @@ sisrs_06_align
 
 
 sisrs_06b_pileup
-##################
+################
 
 * **Required Arguments**: -d/--directory
 
 
 
 sisrs_06c_align2
-##################
+################
 
 * **Required Arguments**: -d/--directory
 
@@ -180,28 +180,10 @@ sisrs_06c_align2
 
 
 sisrs_06d_pileup2
-##################
+#################
 
 * **Required Arguments**: -d/--directory, -mr/--minread, -trh/--threshold
 
-
-
-
-
-
-
-sisrs_06_run_sisrs
-##################
-
-This script will:
-
-    * sisrs_05_setup_sisrs generates a bash script in each taxon folder
-    * This script will run them serially on one machine (one after another)
-    * If multiple nodes are available, you likely want to skip this step as these scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs)
-        * Be sure to specify processors accordingly when running sisrs_05_setup_sisrs
-    * Individual log files are created in each taxon folder
-
-* No Arguments needed
 
 sisrs_07_output_sisrs
 #####################
@@ -212,4 +194,19 @@ This script will:
     * This script also filters the biallelic site alignment down to only data with 0 missing taxa (or whatever number or range you choose), both with and without biallelic gaps
     * This script also creates a final log with all mapping data and SISRS output in SISRS_Run/out_SISRS_Log
 
+* **Required Arguments**: -d/--directory
+
 * **Optional Arguments**: -ms,--missing
+
+sisrs_07_a_contigs_processing
+#############################
+
+* **Required Arguments**: -d/--directory, -trh/--threshold
+
+
+sisrs_07_b_contigs_alignment
+############################
+
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
