@@ -13,7 +13,7 @@ Command Line Arguments
     * **Note 1**: No spaces or special characters are allowed when naming taxon directories
     * **Note 2**: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
 
-3. Taxon ID File (-id) 
+3. Taxon ID File (-id)
     * Specify the taxon names with the TaxonIDs file. One taxon per line as follows:
 
         .. code-block:: bash
@@ -76,8 +76,7 @@ sisrs_01_folder_setup
 #####################
 
 * This script will start the setup of the folder structure needed to run *SISRS*
-* **Required Arguments**: -d/--directory or -id
-* **Optional Arguments**: -trm/--trimmed
+* **Required Arguments**: -d/--directory, -dir/--outputdir
 
 sisrs_02_read_trimmer
 #####################
@@ -87,6 +86,8 @@ Running this script will:
     * Trim all reads in RawReads
     * Output trimmed reads to the TrimReads directory
     * Run FastQC on both trimmed and untrimmed datasets
+
+* **Required Arguments**: -d/--directory, -dir/--outputdir
 
 * **Optional Arguments**: -p,--processors
 
@@ -108,6 +109,7 @@ Using our Wrapper:
 
     * Data will eventually be pooled, so best to remove low-quality data early to prevent it from being incorporated into the genome assembly
 
+
 sisrs_03_read_subsetter
 #######################
 
@@ -125,7 +127,7 @@ Expectations of data:
     * Paired-end reads should end in "_Trim_1.fastq.gz/_Trim_2.fastq.gz"
     * Reads must be in the appropriate TrimReads subfolder by Taxon
 
-* **Required Arguments**: -gs,--genomeSize
+* **Required Arguments**: -d/--directory, -gs/--genomeSize
 
 sisrs_04_ray_composite
 ######################
@@ -134,7 +136,9 @@ This script provides:
 
     * A genome assembly script that wraps around Ray, which is fast but requires MPI even on one node. We plan to offer more assembly options in later releases. *mpirun must be in your path*
 
-* **Optional Arguments**: -p,--processors
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
 
 sisrs_05_setup_sisrs
 ####################
@@ -146,7 +150,9 @@ This script will:
         * Indexing and processing the composite genome
         * Creating *SISRS* runs scripts for each species
 
-* **Optional Arguments**: -p/--processors, -mr/--minread, and -trh/--threshold
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
 
 sisrs_06_run_sisrs
 ##################
