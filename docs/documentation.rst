@@ -154,6 +154,29 @@ This script will:
 
 * **Optional Arguments**: -p/--processors
 
+
+sisrs_06_align
+##################
+
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
+
+
+
+sisrs_06b_pileup
+##################
+
+* **Required Arguments**: -d/--directory
+
+
+
+
+
+
+
+
+
 sisrs_06_run_sisrs
 ##################
 
