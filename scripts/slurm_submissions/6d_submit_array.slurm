@@ -48,7 +48,7 @@ SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-python3 sisrs_06d_pileup2.py -d $OUTFOLDER -mr $MINREAD -t $THRESHOLD -s ${SPP[$SLURM_ARRAY_TASK_ID]}
+python3 sisrs_06d_pileup2.py -d $OUTFOLDER -mr $MINREAD -trh $THRESHOLD -s ${SPP[$SLURM_ARRAY_TASK_ID]}
 
 #move all .out and .err files to their correct dirs so they dont clutter the slurm submission directory
 

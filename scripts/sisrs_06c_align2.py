@@ -29,11 +29,11 @@ This function runs bowtie2 on the reads in a folder treating all reads as unpair
 def runBowtie(outPath,threads,sp):
     ''' This function runs  bowtie2, samtools view and samtools sort commands.'''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp, 
+    outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',
         sp,
         '_Temp.bam'])
-    outbamb = "".join([outPath, '/SISRS_Run/', sp, 
+    outbamb = "".join([outPath, '/SISRS_Run/', sp,
         '/',
         sp,
         '.bam'])
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
-    my_parser.add_argument('-f', '--folder', action='store',nargs="?")
+    
     args = my_parser.parse_args()
 
     sis = args.directory
