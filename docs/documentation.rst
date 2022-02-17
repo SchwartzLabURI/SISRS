@@ -5,10 +5,10 @@
 Command Line Arguments
 **********************
 
-1. Genome Size Estimate (-gs, --genomeSize)
+1. Genome Size Estimate (-gs, --genome_size)
     * Specify the approximate genome size estimate for group in basepairs (e.g. 3500000000 for primates)
 
-2. Specifying starting data (-d, --data)
+2. Specifying starting data (-d, --directory)
     * Path to directory where reads are already split into folders by taxon (these can be linked files)
     * **Note 1**: No spaces or special characters are allowed when naming taxon directories
     * **Note 2**: If using -d option with pre-trimmed reads, you should also use the -trm flag, which tells SISRS to skip the trimming step (See SISRS_Small.zip for data structure)
@@ -32,38 +32,34 @@ Command Line Arguments
            PapAnu
            PapCyn
 
-4. Output Directory (-dir,--directory)
+4. Output Directory (-dir, --outputdir)
     * Path to desired SISRS output directory. DEFAULT: The directory preceding where the scripts are located
 
-5. Trimmed Data (-trm,--trimmed)
-        * Specify if the data has already been trimmed
-        * DEFAULT: untrimmed
-
-6. Processors (-p,--processors)
+5. Processors (-p, --processors)
     * Specify the number of available processors
     * DEFAULT: 1
     * **Note**: If running this on a multi-core machine, specify the number of processors per node here
 
-7. Homozygosity Threshold (-thresh,--threshold)
+6. Homozygosity Threshold (-trh, --threshold)
     * Specify the minimum site homozygosity for SISRS sites, must be between 0 and 1
     * DEFAULT: 1 (SISRS sites have support for only a single base within taxa)
 
-8. Minimum Coverage Threshold (-mr,--minread)
+7. Minimum Coverage Threshold (-mr, --minread)
     * Specify the minimum read coverage to call a SISRS site
     * DEFAULT: 3 (Three reads required to call a site)
 
-9. Missing Taxa Allowed (-ms,--missing)
+8. Missing Taxa Allowed (-m, --missing)
     * When creating the final SISRS alignment, specify the maximum number of missing taxa allowed per column
     * You can give it a single number or give it a range of numbers, such as 0-6, and it will do a final alignment for 0, 1, 2, 3, 4, 5, and 6 missing taxa allowed per column
-    *  It will also separate all the data out into folders labeled missing_(#)
+    * It will also separate all the data out into folders labeled missing_(#)
     * DEFAULT: 0 (Coverage for all taxa for all sites)
 
-10. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present
+9. Existing Run This feature will auto detect if a previous SISRS run has been done based on the file structure and if specific files are present
 
     i. Adding a Taxon (-aT,--addTaxon): Adding a new taxon to the previous *SISRS* run
     ii. Adding Additional Sequences (-aD,--addData): Adding a new file to existing taxa
 
-    **Note**: This relies on the -d/--data folder to specify were the new data is located
+    **Note**: This relies on the -d/--directory folder to specify were the new data is located
 
 
 *****************
@@ -80,8 +76,7 @@ sisrs_01_folder_setup
 #####################
 
 * This script will start the setup of the folder structure needed to run *SISRS*
-* **Required Arguments**: -d/--date or -id
-* **Optional Arguments**: -trm/--trimmed
+* **Required Arguments**: -d/--directory, -dir/--outputdir
 
 sisrs_02_read_trimmer
 #####################
@@ -91,6 +86,8 @@ Running this script will:
     * Trim all reads in RawReads
     * Output trimmed reads to the TrimReads directory
     * Run FastQC on both trimmed and untrimmed datasets
+
+* **Required Arguments**: -d/--directory, -dir/--outputdir
 
 * **Optional Arguments**: -p,--processors
 
@@ -112,6 +109,7 @@ Using our Wrapper:
 
     * Data will eventually be pooled, so best to remove low-quality data early to prevent it from being incorporated into the genome assembly
 
+
 sisrs_03_read_subsetter
 #######################
 
@@ -129,7 +127,7 @@ Expectations of data:
     * Paired-end reads should end in "_Trim_1.fastq.gz/_Trim_2.fastq.gz"
     * Reads must be in the appropriate TrimReads subfolder by Taxon
 
-* **Required Arguments**: -gs,--genomeSize
+* **Required Arguments**: -d/--directory, -gs/--genomeSize
 
 sisrs_04_ray_composite
 ######################
@@ -138,7 +136,9 @@ This script provides:
 
     * A genome assembly script that wraps around Ray, which is fast but requires MPI even on one node. We plan to offer more assembly options in later releases. *mpirun must be in your path*
 
-* **Optional Arguments**: -p,--processors
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
 
 sisrs_05_setup_sisrs
 ####################
@@ -150,20 +150,40 @@ This script will:
         * Indexing and processing the composite genome
         * Creating *SISRS* runs scripts for each species
 
-* **Optional Arguments**: -p/--processors, -mr/--minread, and -thrs/--threshold
+* **Required Arguments**: -d/--directory
 
-sisrs_06_run_sisrs
-##################
+* **Optional Arguments**: -p/--processors
 
-This script will:
 
-    * sisrs_05_setup_sisrs generates a bash script in each taxon folder
-    * This script will run them serially on one machine (one after another)
-    * If multiple nodes are available, you likely want to skip this step as these scripts are independent and can be run in parallel (e.g. on an HPC machine or cluster as separate jobs)
-        * Be sure to specify processors accordingly when running sisrs_05_setup_sisrs
-    * Individual log files are created in each taxon folder
+sisrs_06_align
+##############
 
-* No Arguments needed
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
+
+
+
+sisrs_06b_pileup
+################
+
+* **Required Arguments**: -d/--directory
+
+
+
+sisrs_06c_align2
+################
+
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
+
+
+sisrs_06d_pileup2
+#################
+
+* **Required Arguments**: -d/--directory, -mr/--minread, -trh/--threshold
+
 
 sisrs_07_output_sisrs
 #####################
@@ -174,4 +194,19 @@ This script will:
     * This script also filters the biallelic site alignment down to only data with 0 missing taxa (or whatever number or range you choose), both with and without biallelic gaps
     * This script also creates a final log with all mapping data and SISRS output in SISRS_Run/out_SISRS_Log
 
+* **Required Arguments**: -d/--directory
+
 * **Optional Arguments**: -ms,--missing
+
+sisrs_07_a_contigs_processing
+#############################
+
+* **Required Arguments**: -d/--directory, -trh/--threshold
+
+
+sisrs_07_b_contigs_alignment
+############################
+
+* **Required Arguments**: -d/--directory
+
+* **Optional Arguments**: -p/--processors
