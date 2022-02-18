@@ -26,48 +26,49 @@ for (( i = 0; i < $ARRLEN; i++ ))
 do
   taxon_name="$(basename ${FILELIST[i]})" #get directory basename
 
-  masked_ref="${FILELIST[i]}/masked_contigs.fa"
+  # masked_ref="${FILELIST[i]}/masked_contigs.fa"
 
-  indexed_masked_ref="${FILELIST[i]}/masked_contigs.fai"
+  # indexed_masked_ref="${FILELIST[i]}/masked_contigs.fai"
 
   bam_file="${FILELIST[i]}/${taxon_name}.bam" #extract the taxon name
 
-  vcf_file="${FILELIST[i]}/${taxon_name}.vcf"
+  # vcf_file="${FILELIST[i]}/${taxon_name}.vcf"
 
   vcf_zipped="${FILELIST[i]}/${taxon_name}.vcf.gz"
 
-  zipped_masked_fa="${FILELIST[i]}/masked_ref_seq_contigs.fa.gz"
+  # zipped_masked_fa="${FILELIST[i]}/masked_ref_seq_contigs.fa.gz"
 
-  consensus_seq="${FILELIST[i]}/${taxon_name}_consensus.fa"
+  # consensus_seq="${FILELIST[i]}/${taxon_name}_consensus.fa"
 
-  consensus_seq_formatted="${FILELIST[i]}/${taxon_name}_single_line_format_consensus.fa"
+  # consensus_seq_formatted="${FILELIST[i]}/${taxon_name}_single_line_format_consensus.fa"
 
   #step 1
-  bcftools mpileup -Ou -f ${masked_ref} ${bam_file} | bcftools call -Ou -mv -o ${vcf_file}
+  # bcftools mpileup -Ou -f ${masked_ref} ${bam_file} | bcftools call -Ou -mv -o ${vcf_file}
+  bcftools mpileup -Ou --no-reference  ${bam_file} | bcftools call -Oz -mM -o ${vcf_zipped}
 
 
-  #step 2
-  bgzip -c ${vcf_file} > ${vcf_zipped}
+  # #step 2
+  # bgzip -c ${vcf_file} > ${vcf_zipped}
 
 
-  #step 3
-  bgzip -c ${masked_ref} > ${zipped_masked_fa}
+  # #step 3
+  # bgzip -c ${masked_ref} > ${zipped_masked_fa}
 
 
-  #step 4
-  tabix -fp vcf ${vcf_zipped}
+  # #step 4
+  # tabix -fp vcf ${vcf_zipped}
 
 
-  #step 5
-  samtools faidx ${masked_ref} -o ${indexed_masked_ref}
+  # #step 5
+  # samtools faidx ${masked_ref} -o ${indexed_masked_ref}
 
 
-  #step 6
-  zcat ${zipped_masked_fa} | bcftools consensus ${vcf_zipped} > ${consensus_seq}
+  # #step 6
+  # zcat ${zipped_masked_fa} | bcftools consensus ${vcf_zipped} > ${consensus_seq}
 
 
-  #step 7
-  reformat.sh in=${consensus_seq} out=${consensus_seq_formatted} fastawrap=0
+  # #step 7
+  # reformat.sh in=${consensus_seq} out=${consensus_seq_formatted} fastawrap=0
 
   #uncomment the line before to remove unnecessary files
   #rm ${zipped_masked_fa} ${masked_ref} ${indexed_masked_ref} ${vcf_zipped} ${vcf_file} ${consensus_seq}
