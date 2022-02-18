@@ -2,10 +2,11 @@
 
 
 '''
-Last edit: Yana Hrytsenko & Alexander Knyshov May 6th, 2021
+Last edit: Alexander Knyshov Feb 18, 2022
 '''
 import os
 import sys
+import gzip
 import subprocess
 from subprocess import call
 from cmdCheck import *
@@ -53,15 +54,16 @@ def format_consensus_output(output_path, taxa_threshold):
             contigs_dict = {}
 
             # save the first taxon (over which we iterate in the for loop) - we already have this line in RAM
-            # save only if not full of N - with additional strip
-            if len(line.replace("N", "").strip()) > 0:
-                contigs_dict[taxon_list[0]] = line.strip()
+            # remove N and save only if not empty
+            taxon0seq = line.replace("N", "").strip()
+            if len(taxon0seq) > 0:
+                contigs_dict[taxon_list[0]] = taxon0seq
 
-            # read 1 line from all other taxa and save to the same dict but only if not complete N
+            # read 1 line from all other taxa and save to the same dict
             for dir in taxon_list[1:]:
-                taxonseq = consensus_handles[dir].readline().strip()
-                # only save if after removing all N there's something left - have to do additional strip
-                if len(taxonseq.replace("N", "").strip()) > 0:
+                taxonseq = consensus_handles[dir].readline().replace("N", "").strip()
+                # only save if after removing all N there's something left
+                if len(taxonseq) > 0:
                     contigs_dict[dir] = taxonseq
 
             # check how many taxa passed
@@ -81,6 +83,58 @@ def format_consensus_output(output_path, taxa_threshold):
     # close all input handles
     for dir in taxon_list:
         consensus_handles[dir].close()
+
+# get vcf-based consensus
+def vcf_consensus(output_path, coverage_threshold):
+    ''' 
+    This function produces the consensus sequences from VCF ALT data
+    Ignores low coverage and positions marked with .
+    '''
+
+    path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
+    path_to_taxon_dirs = output_path + "Reads/RawReads/"
+
+
+    # get a list of taxon dirs except Composite_Genome
+    taxon_list = []
+    taxon_list = os.listdir(path_to_taxon_dirs)
+    taxon_list.remove('fastqcOutput') # remove this directory from the list for easy traversal
+    taxon_list.remove('trimOutput') # remove this directory from the list for easy traversal
+
+    # open all taxa handles at once
+    consensus_handles = {}
+    for directory in taxon_list:
+        taxon_vcf_file = output_path + 'SISRS_Run/' + directory + \
+            '/' + directory + '.vcf.gz'
+        taxon_consensus_file = output_path + 'SISRS_Run/' + directory + \
+            '/' + directory + '_single_line_format_consensus.fa'
+        infile =  gzip.open(taxon_vcf_file, 'rt')
+        outfile = open(taxon_consensus_file, "w")
+        outputseq = ""
+        locname = ""
+        for line in infile:
+            if line[0] == "#":
+                continue
+            else:
+                splitline = line.strip().split("\t")
+                if locname != splitline[0] and locname != "":
+                    print (">"+locname, file=outfile)
+                    print (outputseq, file=outfile)
+                    outputseq = ""
+                locname = splitline[0]
+                basecall = splitline[4]
+                info = splitline[7].split(";")
+                info_dict = {}
+                for x in info:
+                    y = x.split("=")
+                    info_dict[y[0]] = y[1]
+                if int(info_dict["DP"]) >= coverage_threshold and basecall != ".":
+                    outputseq += basecall
+        print (">"+locname, file=outfile)
+        print (outputseq, file=outfile)
+        infile.close()
+        outfile.close()
+
 
 if __name__ == '__main__':
 
@@ -118,12 +172,14 @@ if __name__ == '__main__':
         exit()
 
 
-    #first mask the ref sequence
-    os.chmod('mask_ref_seq.sh', 0o755)
-    subprocess.call("./mask_ref_seq.sh " + output_path + 'SISRS_Run/', shell=True)
+    # #first mask the ref sequence
+    # os.chmod('mask_ref_seq.sh', 0o755)
+    # subprocess.call("./mask_ref_seq.sh " + output_path + 'SISRS_Run/', shell=True)
 
     #generate consensus sequence
     os.chmod('contigs_driver.sh', 0o755)
     subprocess.call("./contigs_driver.sh " + output_path + 'SISRS_Run/', shell=True)
+
+    vcf_consensus(output_path, coverage_threshold=3)
 
     format_consensus_output(output_path, taxa_threshold)
