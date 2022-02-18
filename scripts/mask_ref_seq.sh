@@ -38,6 +38,6 @@ do
 
 
   #step 0 Mask the reference sequence
-  bedtools genomecov -ibam ${bam_file} -bga | awk '{if ($4 == 0) print $0}' > ${bed_file}
+  bedtools genomecov -ibam ${bam_file} -bga | awk '{if ($4 < 3) print $0}' > ${bed_file}
   bedtools maskfasta  -fi ${ref_fa} -bed ${bed_file} -fo ${masked_ref}
 done
