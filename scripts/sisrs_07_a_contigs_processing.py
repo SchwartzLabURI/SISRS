@@ -14,6 +14,7 @@ from Bio.Seq import Seq
 from Bio import SeqIO
 from os import listdir
 from os.path import isfile, join
+import statistics
 
 
 # format the file outputs
@@ -101,6 +102,9 @@ def vcf_consensus(output_path, coverage_threshold):
     taxon_list.remove('fastqcOutput') # remove this directory from the list for easy traversal
     taxon_list.remove('trimOutput') # remove this directory from the list for easy traversal
 
+    #heterozygosity dict
+    # hzdict = {}
+
     # open all taxa handles at once
     consensus_handles = {}
     for directory in taxon_list:
@@ -112,6 +116,10 @@ def vcf_consensus(output_path, coverage_threshold):
         outfile = open(taxon_consensus_file, "w")
         outputseq = ""
         locname = ""
+        loclen = 0
+        hznum = 0
+        hzhandle = open(output_path + 'SISRS_Run/' + directory + \
+            '/' + directory +'_hztable.csv', 'w')
         for line in infile:
             if line[0] == "#":
                 continue
@@ -121,19 +129,47 @@ def vcf_consensus(output_path, coverage_threshold):
                     print (">"+locname, file=outfile)
                     print (outputseq, file=outfile)
                     outputseq = ""
+                    if loclen > 0: 
+                        print (locname+","+str(hznum/loclen), file=hzhandle)
+                    else:
+                        print (locname+",NA", file=hzhandle)
+                    # if locname not in hzdict:
+                    #     hzdict[locname] = {}    
+                    # hzdict[locname][directory] = hznum/loclen
+                    hznum = 0
+                    loclen = 0
                 locname = splitline[0]
-                basecall = splitline[4]
-                info = splitline[7].split(";")
-                info_dict = {}
-                for x in info:
-                    y = x.split("=")
-                    info_dict[y[0]] = y[1]
-                if int(info_dict["DP"]) >= coverage_threshold and basecall != ".":
-                    outputseq += basecall
+                basecall = [splitline[3]] + splitline[4].split(",")
+                info = splitline[8].split(":")
+                ad_pos = info.index("AD")
+                coverage_list = [int(x) for x in splitline[9].split(":")[ad_pos].split(",")]
+                max_value = max(coverage_list)
+                if max_value >= covthresh and basecall[1] != ".":
+                    max_index = coverage_list.index(max_value)
+                    outputseq += basecall[max_index]
+                    if len(basecall) > 1:
+                        hznum += 1
+                    loclen += 1
         print (">"+locname, file=outfile)
         print (outputseq, file=outfile)
+        # if locname not in hzdict:
+        #     hzdict[locname] = {}    
+        # hzdict[locname][directory] = hznum/loclen
         infile.close()
         outfile.close()
+        hzhandle.close()
+    # hzhandle = open(output_path+'hztable.csv', 'w')
+    # print('locus,'+','.join(taxon_list), file=hzhandle)
+    # for loc in hzdict:
+    #     locdata = ''
+    #     lochz = []
+    #     for tx in taxon_list:
+    #         if tx in hzdict[loc]:
+    #             locdata+=','+str(hzdict[loc][tx])
+    #         else:
+    #             locdata+=',NA'
+    #     print(loc+','+str(statistics.mean(hzdict[loc].values()))+locdata, file=hzhandle)
+    # hzhandle.close()
 
 
 if __name__ == '__main__':
