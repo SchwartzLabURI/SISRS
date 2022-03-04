@@ -18,12 +18,17 @@ import subprocess
 from subprocess import check_call
 import argparse
 
-'''
-This function is designed to Find BBDuk + Adapter File. It will return the path
-to the location of these files.
-'''
+
 def findAdapter():
-    ''' Finds and returns BBDuk + Adapter File. '''
+
+    '''
+    This function is designed to Find BBDuk + Adapter File.
+
+    Arguments: none.
+
+    Returns:  the path to the location of these files.
+    '''
+
 
     cmd = ['which', 'bbduk.sh']
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -39,13 +44,17 @@ def get_taxa(sisrs_dir):
     taxa = [x.rstrip() for x in taxa]
     return taxa
 
-'''
-This function is deisgned to do the remaining folder setup that is needed to do
-the genome triming. Its only argument is the directory where all of the sisrs
-output is being stored and will be returning the
-'''
+
 def setup(datadir, sisrs_dir, taxa):
-    ''' This function sets up the remaining of the SISRS file structure. '''
+
+    '''
+    This function is deisgned to do the remaining folder setup that is needed to do
+    the genome triming.
+
+    Arguments: SISRS input and output directory, taxon list.
+
+    Returns: list of raw read and trimmed data directories.
+    '''
 
     # Returned items as a list
     # raw_read_dir          --> 0
@@ -84,13 +93,17 @@ def setup(datadir, sisrs_dir, taxa):
 
     return rtn
 
-'''
-This function is designed to run the fastqc command with new data only. Modified
-to run both the raw and the trimmed data, takes the number of processors, the
-output directory, and the read directory.
-'''
-def newdFastqc(processors,fastqc_output,data_dir,newFiles):
-    ''' Runs FastQC on all trimmed files (new data only), using all available processors. '''
+
+def newdFastqc(processors,fastqc_output,data_dir,newFiles): 
+
+    '''
+    This function is designed to run the FastQC command with new data only. Modified
+    to run both the raw and the trimmed data, using all available processors
+
+    Arguments: the number of processors, the output directory, and the read directory.
+
+    Returns: none.
+    '''
 
     #Run FastQC on all trimmed files, using all available processors
     fastqc_command = [
