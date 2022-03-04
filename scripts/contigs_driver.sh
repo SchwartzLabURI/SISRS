@@ -44,7 +44,7 @@ do
 
   #step 1
   # bcftools mpileup -Ou -f ${masked_ref} ${bam_file} | bcftools call -Ou -mv -o ${vcf_file}
-  bcftools mpileup -Ou --no-reference  ${bam_file} | bcftools call -Oz -mM -o ${vcf_zipped}
+  bcftools mpileup -Ou --no-reference -a FORMAT/AD ${bam_file} | bcftools call -Oz -mM -o ${vcf_zipped}
 
 
   # #step 2
