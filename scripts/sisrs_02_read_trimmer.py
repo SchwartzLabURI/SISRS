@@ -94,7 +94,7 @@ def setup(datadir, sisrs_dir, taxa):
     return rtn
 
 
-def newdFastqc(processors,fastqc_output,data_dir,newFiles): 
+def newdFastqc(processors,fastqc_output,data_dir,newFiles):
 
     '''
     This function is designed to run the FastQC command with new data only. Modified
@@ -122,15 +122,19 @@ def newdFastqc(processors,fastqc_output,data_dir,newFiles):
 
     check_call(fastqc_command)
 
-'''
-This function is designed to run the fastqc command. Modified to run both the raw
-and the trimmed data, takes the number of processors, the output directory, and
-the read directory.
-'''
-def fastqcCommand(processors,fastqc_output,read_dir, taxa):
-    ''' Runs FastQC on fastq.gz in specified taxon folders, using all available processors. '''
 
-    #Run FastQC on all files, using all available processors
+def fastqcCommand(processors,fastqc_output,read_dir, taxa):
+
+    '''
+    This function runs FastQC on fastq.gz in specified taxon folders, using all available processors.
+    Modified to run both the raw and the trimmed data, takes the number of processors,
+    the output directory, and the read directory.
+
+    Arguments: the number of processors, path to fastqc output directory, path to raw reads directory, taxon list.
+
+    Returns: none.
+    '''
+
     fastqc_command = [
         'fastqc',
         '-t',
@@ -147,14 +151,18 @@ def fastqcCommand(processors,fastqc_output,read_dir, taxa):
 
     check_call(fastqc_command)
 
-'''
-This function is desinged to do setup work to obtain all of the possible
-single read and pair read files. Its main purpose is to clean up the large for
-loop that is seem below in the trim function. It only needs the current working
-raw read directory and the matching trim read directory as arguments.
-'''
+
 def trimHelper(tax_dir,trim_read_dir,newData):
-    ''' Helper function to obtain all of the possible single read and pair read files for file Trimming step. '''
+
+    '''
+    This function is desinged to do setup work to obtain all of the
+    single read and pair read files. Its main purpose is to clean up the large for
+    loop that is below in the trim function.
+
+    Arguments: current working raw read directory, trimmed read directory.
+
+    Returns: path to trimmed directory, left pair reads,right pair reads, single end reads.
+    '''
 
     #List all files and set output dir
     files = sorted(glob(tax_dir+"/*.fastq.gz"))
@@ -213,13 +221,19 @@ def trimHelper(tax_dir,trim_read_dir,newData):
     return out_trim_dir,left_pairs,right_pairs,single_end
 
 
-'''
-This function is designed to trim all of the rawdata that has been provided to
-the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
-bbduk_adapter file.
-'''
+
 def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
-    ''' This function trims all of the rawdata that has been provided to the program. '''
+
+    '''
+    This function is designed to trim all of the rawdata that has been provided to
+    the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
+    bbduk_adapter file.
+
+    Arguments: path to raw read directory, path to trimmed read directory, bbduk adapter, path to trim output directory.
+
+    Returns: none.
+    '''
+
 
     #For each taxa directory...
     for tax_dir in raw_read_tax_dirs:
