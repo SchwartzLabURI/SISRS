@@ -314,14 +314,14 @@ def stripFiles(aList):
 def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
 
     '''
-    Function to do all of the subsetting the is needed by sisrs. This is a general
+    This function processes subsetting that is needed by sisrs. This is a general
     function and can handle single and paired ends genomes.
 
     Arguments: compiledList, dataframe with 'Taxon','Dataset','Basecount',
                path to trimmed reads directory, path to subset output directory,
-               path to subset log directory, bool True or False for paired reads
+               path to subset log directory, bool True or False for paired reads.
 
-    Returns:
+    Returns: None.
 
     '''
 
