@@ -18,9 +18,8 @@ module load Biopython/1.78-foss-2020b
 
 
 
-#python sisrs_07_a_contigs_processing.py -trh <number of threads to use> -dir <path to the output directory>
+T=1 #CHANGE THIS to the threshold number
 
-T=10 #CHANGE THIS to the number of threads
 OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
 python3 sisrs_07_a_contigs_processing.py -trh $T -dir $OUTFOLDER
