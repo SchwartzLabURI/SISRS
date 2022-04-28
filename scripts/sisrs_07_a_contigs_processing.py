@@ -2,10 +2,11 @@
 
 
 '''
-Last edit: Yana Hrytsenko & Alexander Knyshov May 6th, 2021
+Last edit: Alexander Knyshov Mar 22, 2022
 '''
 import os
 import sys
+import gzip
 import subprocess
 from subprocess import call
 from cmdCheck import *
@@ -13,6 +14,7 @@ from Bio.Seq import Seq
 from Bio import SeqIO
 from os import listdir
 from os.path import isfile, join
+import statistics
 
 
 # format the file outputs
@@ -53,15 +55,16 @@ def format_consensus_output(output_path, taxa_threshold):
             contigs_dict = {}
 
             # save the first taxon (over which we iterate in the for loop) - we already have this line in RAM
-            # save only if not full of N - with additional strip
-            if len(line.replace("N", "").strip()) > 0:
-                contigs_dict[taxon_list[0]] = line.strip()
+            # remove N and save only if not empty
+            taxon0seq = line.replace("N", "").strip()
+            if len(taxon0seq) > 0:
+                contigs_dict[taxon_list[0]] = taxon0seq
 
-            # read 1 line from all other taxa and save to the same dict but only if not complete N
+            # read 1 line from all other taxa and save to the same dict
             for dir in taxon_list[1:]:
-                taxonseq = consensus_handles[dir].readline().strip()
-                # only save if after removing all N there's something left - have to do additional strip
-                if len(taxonseq.replace("N", "").strip()) > 0:
+                taxonseq = consensus_handles[dir].readline().replace("N", "").strip()
+                # only save if after removing all N there's something left
+                if len(taxonseq) > 0:
                     contigs_dict[dir] = taxonseq
 
             # check how many taxa passed
@@ -81,6 +84,132 @@ def format_consensus_output(output_path, taxa_threshold):
     # close all input handles
     for dir in taxon_list:
         consensus_handles[dir].close()
+
+# get vcf-based consensus
+def vcf_consensus(output_path, coverage_threshold, hz_threshold):
+    ''' 
+    This function produces the consensus sequences from VCF data.
+    The function assumes all sites (including non variable) were
+    output.
+    First, get contig names from the header, this is needed since
+    even with all sites output, loci without any reads are completely
+    missing from the VCF body.
+    Then iterate over VCF body to get sites, keep track of current
+    contig in the body vs in the header, fill in empty contigs (loci),
+    for non empty, filter sites with low allelic coverage and
+    positions marked with '.', as well as filter out (replace with N)
+    sequences with high heterozygosity
+    '''
+
+    path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
+    path_to_taxon_dirs = output_path + "Reads/RawReads/"
+
+
+    # get a list of taxon dirs except Composite_Genome
+    taxon_list = []
+    taxon_list = os.listdir(path_to_taxon_dirs)
+    taxon_list.remove('fastqcOutput') # remove this directory from the list for easy traversal
+    taxon_list.remove('trimOutput') # remove this directory from the list for easy traversal
+
+    # open all taxa handles at once
+    consensus_handles = {}
+    for directory in taxon_list:
+        taxon_vcf_file = output_path + 'SISRS_Run/' + directory + \
+            '/' + directory + '.vcf.gz'
+        taxon_consensus_file = output_path + 'SISRS_Run/' + directory + \
+            '/' + directory + '_single_line_format_consensus.fa'
+        infile =  gzip.open(taxon_vcf_file, 'rt')
+        outfile = open(taxon_consensus_file, "w")
+        outputseq = ""
+        locname = ""
+        loclen = 0
+        hznum = 0
+        #data on heterozygosity - for debugging purposes
+        hzhandle = open(output_path + 'SISRS_Run/' + directory + \
+            '/' + directory +'_hztable.csv', 'w')
+        sisrs_contig_list = []
+        sisrs_contig_counter = 0
+        #iterate over VCF
+        for line in infile:
+            if line[0] == "#":
+                if line[0:13] == "##contig=<ID=":
+                    #get info on all contigs (loci) to detect completely
+                    #missing loci in the VCF
+                    sisrs_contig_list.append(line[13:].split(',')[0])
+                else:
+                    #ignore most of the header
+                    continue
+            else:
+                splitline = line.strip().split("\t")
+                if locname != splitline[0] and locname != "":
+                    #next locus in VCF - output the previous
+                    while sisrs_contig_list[sisrs_contig_counter] != locname:
+                        #if current locus in the header is diffent,
+                        #produce empty (N) output for loci that were up to this
+                        #point missing in the VCF body
+                        print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
+                        print ("N", file=outfile)
+                        print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+                        sisrs_contig_counter += 1
+                    # filter by heterozygosity
+                    if loclen > 0:
+                        hzval = hznum/loclen
+                        print (locname+","+str(hznum/loclen), file=hzhandle)
+                        if hzval > hz_threshold:
+                            outputseq = "N"
+                    else:
+                        print (locname+",NA", file=hzhandle)
+                        outputseq = "N"
+                    # write output and reset vars
+                    print (">"+locname, file=outfile)
+                    print (outputseq, file=outfile)
+                    sisrs_contig_counter += 1
+                    outputseq = ""
+                    hznum = 0
+                    loclen = 0
+                #actual VCF line parsing and saving
+                locname = splitline[0]
+                basecall = [splitline[3]] + splitline[4].split(",")
+                info = splitline[8].split(":")
+                ad_pos = info.index("AD")
+                coverage_list = [int(x) for x in splitline[9].split(":")[ad_pos].split(",")]
+                max_value = max(coverage_list)
+                #skip sites with low cov or '.'
+                if max_value >= coverage_threshold and basecall[1] != ".":
+                    max_index = coverage_list.index(max_value)
+                    outputseq += basecall[max_index]
+                    if len(basecall) > 2:
+                        hznum += 1
+                    loclen += 1
+        #produce the output for the final locus
+        while sisrs_contig_list[sisrs_contig_counter] != locname:
+            print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
+            print ("N", file=outfile)
+            print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+            sisrs_contig_counter += 1
+        if loclen > 0: 
+            hzval = hznum/loclen
+            print (locname+","+str(hznum/loclen), file=hzhandle)
+            if hzval > hz_threshold:
+                outputseq = "N"
+        else:
+            print (locname+",NA", file=hzhandle)
+            outputseq = "N"
+        print (">"+locname, file=outfile)
+        print (outputseq, file=outfile)
+        sisrs_contig_counter += 1
+        #given the contig list in the header, fill in the remaining missing loci
+        #in the VCF body
+        while sisrs_contig_counter < len(sisrs_contig_list):
+            print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
+            print ("N", file=outfile)
+            print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+            sisrs_contig_counter += 1
+        #close handles
+        infile.close()
+        outfile.close()
+        hzhandle.close()
+
 
 if __name__ == '__main__':
 
@@ -117,13 +246,26 @@ if __name__ == '__main__':
         print("SPECIFY THE TAXA THRESHOLD (-trh, --threshold). PROGRAM EXITING.")
         exit()
 
+    #I currently set these as optional
+    #perhaps need to consider using argparse instead of this and above
+    if '-cov' in cmd or '--coverage-threshold' in cmd:
+        cov_thresh = int(isFound('-cov','--coverage-threshold',cmd))
+    else:
+        print("Coverage threshold not specified, set to default (3)")
+        cov_thresh = 3
 
-    #first mask the ref sequence
-    os.chmod('mask_ref_seq.sh', 0o755)
-    subprocess.call("./mask_ref_seq.sh " + output_path + 'SISRS_Run/', shell=True)
+    if '-hz' in cmd or '--heterozygosity-threshold' in cmd:
+        hz_thresh = float(isFound('-hz','--heterozygosity-threshold',cmd))
+    else:
+        print("Heterozygosity threshold not specified, set to default (0.01)")
+        hz_thresh = 0.01
 
-    #generate consensus sequence
+    #generate variants from BAM without ref
     os.chmod('contigs_driver.sh', 0o755)
     subprocess.call("./contigs_driver.sh " + output_path + 'SISRS_Run/', shell=True)
 
+    #call consensus and filter by allelic coverage and ratio of heterozygous sites
+    vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
+
+    #recompile sequence of each taxon by locus
     format_consensus_output(output_path, taxa_threshold)
