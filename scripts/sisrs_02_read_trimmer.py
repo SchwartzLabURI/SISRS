@@ -18,12 +18,17 @@ import subprocess
 from subprocess import check_call
 import argparse
 
-'''
-This function is designed to Find BBDuk + Adapter File. It will return the path
-to the location of these files.
-'''
+
 def findAdapter():
-    ''' Finds and returns BBDuk + Adapter File. '''
+
+    '''
+    This function is designed to Find BBDuk + Adapter File.
+
+    Arguments: none.
+
+    Returns:  the path to the location of these files.
+    '''
+
 
     cmd = ['which', 'bbduk.sh']
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -39,13 +44,17 @@ def get_taxa(sisrs_dir):
     taxa = [x.rstrip() for x in taxa]
     return taxa
 
-'''
-This function is deisgned to do the remaining folder setup that is needed to do
-the genome triming. Its only argument is the directory where all of the sisrs
-output is being stored and will be returning the
-'''
+
 def setup(datadir, sisrs_dir, taxa):
-    ''' This function sets up the remaining of the SISRS file structure. '''
+
+    '''
+    This function is deisgned to do the remaining folder setup that is needed to do
+    the genome triming.
+
+    Arguments: SISRS input and output directory, taxon list.
+
+    Returns: list of raw read and trimmed data directories.
+    '''
 
     # Returned items as a list
     # raw_read_dir          --> 0
@@ -84,13 +93,17 @@ def setup(datadir, sisrs_dir, taxa):
 
     return rtn
 
-'''
-This function is designed to run the fastqc command with new data only. Modified
-to run both the raw and the trimmed data, takes the number of processors, the
-output directory, and the read directory.
-'''
+
 def newdFastqc(processors,fastqc_output,data_dir,newFiles):
-    ''' Runs FastQC on all trimmed files (new data only), using all available processors. '''
+
+    '''
+    This function is designed to run the FastQC command with new data only. Modified
+    to run both the raw and the trimmed data, using all available processors
+
+    Arguments: the number of processors, the output directory, and the read directory.
+
+    Returns: none.
+    '''
 
     #Run FastQC on all trimmed files, using all available processors
     fastqc_command = [
@@ -109,15 +122,19 @@ def newdFastqc(processors,fastqc_output,data_dir,newFiles):
 
     check_call(fastqc_command)
 
-'''
-This function is designed to run the fastqc command. Modified to run both the raw
-and the trimmed data, takes the number of processors, the output directory, and
-the read directory.
-'''
-def fastqcCommand(processors,fastqc_output,read_dir, taxa):
-    ''' Runs FastQC on fastq.gz in specified taxon folders, using all available processors. '''
 
-    #Run FastQC on all files, using all available processors
+def fastqcCommand(processors,fastqc_output,read_dir, taxa):
+
+    '''
+    This function runs FastQC on fastq.gz in specified taxon folders, using all available processors.
+    Modified to run both the raw and the trimmed data, takes the number of processors,
+    the output directory, and the read directory.
+
+    Arguments: the number of processors, path to fastqc output directory, path to raw reads directory, taxon list.
+
+    Returns: none.
+    '''
+
     fastqc_command = [
         'fastqc',
         '-t',
@@ -134,14 +151,18 @@ def fastqcCommand(processors,fastqc_output,read_dir, taxa):
 
     check_call(fastqc_command)
 
-'''
-This function is desinged to do setup work to obtain all of the possible
-single read and pair read files. Its main purpose is to clean up the large for
-loop that is seem below in the trim function. It only needs the current working
-raw read directory and the matching trim read directory as arguments.
-'''
+
 def trimHelper(tax_dir,trim_read_dir,newData):
-    ''' Helper function to obtain all of the possible single read and pair read files for file Trimming step. '''
+
+    '''
+    This function is desinged to do setup work to obtain all of the
+    single read and pair read files. Its main purpose is to clean up the large for
+    loop that is below in the trim function.
+
+    Arguments: current working raw read directory, trimmed read directory.
+
+    Returns: path to trimmed directory, left pair reads,right pair reads, single end reads.
+    '''
 
     #List all files and set output dir
     files = sorted(glob(tax_dir+"/*.fastq.gz"))
@@ -200,13 +221,19 @@ def trimHelper(tax_dir,trim_read_dir,newData):
     return out_trim_dir,left_pairs,right_pairs,single_end
 
 
-'''
-This function is designed to trim all of the rawdata that has been provided to
-the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
-bbduk_adapter file.
-'''
+
 def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
-    ''' This function trims all of the rawdata that has been provided to the program. '''
+
+    '''
+    This function is designed to trim all of the rawdata that has been provided to
+    the program. It requiers the raw_read_tax_dirs, trim_read_dir, trim_output, and
+    bbduk_adapter file.
+
+    Arguments: path to raw read directory, path to trimmed read directory, bbduk adapter, path to trim output directory.
+
+    Returns: none.
+    '''
+
 
     #For each taxa directory...
     for tax_dir in raw_read_tax_dirs:
@@ -266,7 +293,7 @@ if __name__ == "__main__":
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--datadir',action='store',nargs="?")
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
     args = my_parser.parse_args()

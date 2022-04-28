@@ -6,12 +6,10 @@
 #SBATCH --mail-user="user@example.edu" #CHANGE THIS to your user email address
 #SBATCH --mail-type=ALL
 #SBATCH --exclusive
-#SBATCH --array=[0-11]%4 # CHANGE this second bracketed number to the total jobs you need(taxa-1); CHANGE after % to number of  simultaneous jobs
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 cd $SLURM_SUBMIT_DIR
 
-#for advice on array jobs see https://github.com/nreid/using_array_jobs
 
 module purge
 
@@ -48,10 +46,13 @@ PROCESSORS=20 #CHANGE to number of processors
 OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
 SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
-echo ${SPP[@]}
-echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-python3 sisrs_06_align.py -d $OUTFOLDER -p $PROCESSORS -f ${SPP[$SLURM_ARRAY_TASK_ID]}
+ARRLEN=${#SPP[@]}
+
+for (( i = 0; i < $ARRLEN; i++ ))
+do
+    python3 sisrs_06_align.py -d $OUTFOLDER -p $PROCESSORS -f ${SPP[i]}
+done
 
 #move all .out and .err files to their correct dirs so they dont clutter the slurm submission directory
 

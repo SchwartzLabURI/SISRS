@@ -2,10 +2,13 @@
 
 '''
 
-This script preps the folder architecture for a SISRS run.
-Arguments: -d: Path to data folder
-TO DO: Optional Argument: -trm/--trimmed (lets system know the data has been pretrimmed)
-Output: Script will create a number of folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders
+This script prepares the folder architecture for a SISRS run.
+
+Arguments:
+-d, --directory : Path to data folder
+-dir, --outputdir : Path to the output directory
+
+Output: Script will create necessary folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders.
 '''
 
 import sys
@@ -17,7 +20,12 @@ from os.path import isdir, isfile, join
 import argparse
 
 def devTaxaList(taxon_ID_file):
-    ''' Returned list containes taxon list. '''
+
+    '''
+    Arguments: Takes in a taxon ID file which is generated automatically when running this script.
+    
+    Returns: Returned list containes taxon list.
+    '''
 
     # Error check to make sure the file can be opened
     if isfile(taxon_ID_file) == False:
@@ -28,13 +36,19 @@ def devTaxaList(taxon_ID_file):
 
     return taxa_list
 
-'''
-This function is relient on the fact that the folders inside the path are labeled
-according to the correct taxon. Takes as the main argumemt the path it will be
-searching for the arguments to the files.
-'''
+
 def readTaxaFromFolders(inpath,outpath):
-    ''' Returned list containes taxon list. '''
+
+    '''
+    This function is relient on the fact that the folders inside the path are labeled
+    according to the correct taxon.
+
+    Arguments: Takes as the main argumemt the path to the data directory it will be
+    searching for the arguments to the files and a path to the TaxonList file
+    to which the list of taxa will be writtent.
+
+    Returns: Returned list containes taxon list.
+    '''
 
     # Error check to make sure it is a path that exists
     if isdir(inpath) == False:
@@ -57,14 +71,19 @@ def readTaxaFromFolders(inpath,outpath):
 
     return taxa_list
 
-'''
-This function was desinged to make soft links to all the files and make links to
-them into the proper folders. This function requiers the path to the data, a list
-of tha taxons/folder names, and a boolean value determining if the reads are
-trimmer already or if it is raw data.
-'''
+
 def makeLinks(data_path, sisrs_dir, taxa_list, trim):
-    ''' This function makes soft links to the data files. '''
+
+    '''
+    This function was desinged to make soft links to all the files and makes links to
+    them into the proper folders.
+
+    Arguments: This function requiers the path to the data, a list of tha taxons/folder names,
+    and a boolean value determining if the reads are trimmed already or if it is raw data.
+
+    Returns: none.
+
+    '''
 
     dest = ""
     if trim:
@@ -80,13 +99,18 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
             os.link(data_path + '/' + x + '/' + i,
                 sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
 
-'''
-Function that is designed to build the necessary file structure
-for SISRS to properly run. It will take in as input the taxa list
-and the working sisrs directory
-'''
+
 def fileStructure(sisrs_dir):
-    ''' This function builds necessary file structure to run SISRS. '''
+
+    '''
+    Function designed to build the necessary file structure for SISRS to properly run.
+
+    Arguments: It will take in as input the taxa list and the working SISRS directory.
+
+    Returns: none.
+    '''
+
+
 
     if isdir(sisrs_dir) == False:
         os.mkdir(sisrs_dir)
@@ -111,7 +135,7 @@ def fileStructure(sisrs_dir):
 if __name__ == "__main__":
 
     #run as python3 sisrs_01_folder_setup.py -d $D -dir $DIR
-    
+
     # Get arguments
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d','--directory',action='store',nargs="?")

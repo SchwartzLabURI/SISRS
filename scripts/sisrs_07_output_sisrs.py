@@ -2,7 +2,7 @@
 
 """
 
-Input: -m/--missing
+Input: -d/--directory, -m/--missing
 """
 
 import argparse

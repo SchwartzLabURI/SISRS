@@ -21,13 +21,17 @@ import subprocess
 from subprocess import check_call
 import argparse
 
-'''
-This function is designed to obtain the neccessary file paths and data that is
-needed for the Ray command. It only requires the working directory for where all
-of the sisrs information is stationed.
-'''
+
 def getDirs(sisrs_dir):
-    ''' This function obtain the neccessary file paths and data that is needed for the Ray command. '''
+    '''
+    This function is designed to obtain the neccessary file paths and data that is
+    needed for the Ray command. It only requires the working directory for where all
+    of the sisrs information is stationed.
+
+    Arguments: path to the working SISRS directory.
+
+    Returns: path to ray genome directory, path to subsetted reads files.
+    '''
 
     #Set SubsetRead and Genome directories based off of script folder location
     subset_read_dir = sisrs_dir+"/Reads/SubsetReads"
@@ -37,12 +41,16 @@ def getDirs(sisrs_dir):
 
     return ray_genome_dir, subset_reads
 
-'''
-This function is designed to run Ray on all files that are found in the subset
-folders. Requieres the output folder developed, number of threads, and the files.
-'''
+
 def runRay(ray_genome_dir,subset_reads,threads):
-    ''' This function runs Ray command on all files that are found in the subset folders. '''
+    '''
+    This function is designed to run Ray on all files that are found in the subset
+    folders. Requieres the output folder developed, number of threads, and the files.
+
+    Arguments: path to ray genome directory, path to subsetted reads files, number of threads to use.
+
+    Returns: None.
+    '''
 
     ray_command = [
         'mpirun',
@@ -59,7 +67,7 @@ if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-dir','--directory',action='store',nargs="?")
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
     args = my_parser.parse_args()
 

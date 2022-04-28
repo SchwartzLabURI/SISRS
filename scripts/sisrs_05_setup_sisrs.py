@@ -19,13 +19,18 @@ from Bio import SeqIO
 import argparse
 import re
 
-'''
-This function is designed to obtain all of the directories needed to finish the
-setup of sisrs. This function only needs the working sisrs directory as a
-parameter.
-'''
+
 def obtainDir(outPath):
-    ''' This function is designed to obtain all of the directories needed to finish the setup of SISRS. '''
+    '''
+    This function is designed to obtain all of the directories needed to finish the
+    setup of SISRS. This function only needs the working sisrs directory as a
+    parameter.
+
+    Arguments: path to the output directory.
+
+    Returns: path to the trimmed reads directories,path to ray directory,
+             path to SISRS working directory, path to the composite genome directory.
+    '''
 
     #Set TrimRead + SISRS directories based off of script folder location
     trim_read_dir =  outPath+"/Reads/TrimReads"
@@ -33,7 +38,7 @@ def obtainDir(outPath):
     #taxa come from taxonlist file
     with open(outPath+'/TaxonList.txt') as f:
         taxa = f.readlines()
-    taxa = sorted([x.rstrip() for x in taxa]) 
+    taxa = sorted([x.rstrip() for x in taxa])
 
     trim_read_tax_dirs = [trim_read_dir+'/'+x for x in taxa]
     ray_dir = outPath+"/Ray_Composite_Genome"
@@ -50,13 +55,17 @@ def obtainDir(outPath):
 
     return trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir
 
-'''
-This function is designed to rename the contig files and make copies of the
-length files that are a product of the output from Ray. It requieres as input
-the directory were ray output all of its dated and the composite directory.
-'''
+
 def fileChanges(ray_dir,composite_dir):
-    ''' This function renames the contig files and make copies of the length files from Ray output. '''
+    '''
+    This function is designed to rename the contig files and make copies of the
+    length files that are a product of the output from Ray. It requieres as input
+    the directory were ray output all of its dated and the composite directory.
+
+    Arguments: path to Ray directory, path to the composite genome directory.
+
+    Returns: None.
+    '''
 
     #Create renamed contig file in SISRS_Run/Composite_Genome
     rename_command = [
@@ -74,14 +83,18 @@ def fileChanges(ray_dir,composite_dir):
     contig_length.Contig = ("SISRS_" + contig_length.Contig)
     contig_length.to_csv(composite_dir+"/contigs_SeqLength.tsv",sep="\t",header=None,index=False)
 
-'''
-This function is designed to call the bowtie command and the samtools command
-in order to index the composite genomes correctly. This function requiers two
-parameters the composite genome directory and the number of threads that it can
-run with
-'''
+
 def indexCompGenome(composite_dir,threads):
-    ''' This function calls Bowtie and Samtools for indexing the composite genome. '''
+    '''
+    This function is designed to call the bowtie command and the samtools command
+    in order to index the composite genomes correctly. This function requiers two
+    parameters the composite genome directory and the number of threads that it can
+    run with.
+
+    Arguments: path to the composite genome directory, number of threads to be used.
+
+    Returns: None.
+    '''
 
     #Index composite genome using Bowtie2 and Samtools
     bowtie_command = [
@@ -98,12 +111,16 @@ def indexCompGenome(composite_dir,threads):
         '{}'.format(composite_dir+'/contigs.fa')]
     os.system(" ".join(bowtie_command))
 
-'''
-This function is designed to start the file setups required for sisrs to run
-properly. It requires as parameters the composite_dir
-'''
+
 def beginSetUp(composite_dir):
-    ''' This function starts the file setups required for sisrs to run properly. '''
+    '''
+    This function is designed to start the file setups required for sisrs to run
+    properly.
+
+    Arguments: path to the composite genome directory.
+
+    Returns: None.
+    '''
 
     #Create file with an entry for each individual site in the alignment
     siteCount=0

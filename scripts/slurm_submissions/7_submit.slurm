@@ -3,7 +3,7 @@
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE to your user email address
+#SBATCH --mail-user="user@example.edu" #CHANGE to your user email address
 #SBATCH --mail-type=END,FAIL
 cd $SLURM_SUBMIT_DIR
 
@@ -23,4 +23,6 @@ module load BEDTools/2.29.2-GCC-8.3.0
 
 #CHANGE following example
 #python3 sisrs_07_output_sisrs.py -m <list of number of species allowed to be missing> -d <main output folder>
-python3 sisrs_07_output_sisrs.py -m 1 2 3 -d ~/SISRS_Small_test 
+OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
+
+python3 sisrs_07_output_sisrs.py -m 1 2 3 -d $OUTFOLDER
