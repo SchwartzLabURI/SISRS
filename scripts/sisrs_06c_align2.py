@@ -80,7 +80,7 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
-    
+    my_parser.add_argument('-f', '--folder', action='store',nargs="?")
     args = my_parser.parse_args()
 
     sis = args.directory
