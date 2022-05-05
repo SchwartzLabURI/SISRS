@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # Get arguments
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d','--directory',action='store',nargs="?")
-    
+    my_parser.add_argument('-s', '--species', action='store',nargs="?")
     args = my_parser.parse_args()
 
     sis = args.directory
