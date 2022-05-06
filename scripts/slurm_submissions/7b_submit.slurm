@@ -2,10 +2,11 @@
 #SBATCH --job-name="7_b"
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=10   # processor core(s) per node
-#SBATCH --mail-user="user@example.edu" #user email address
+#SBATCH --ntasks-per-node=20   # CHANGE processor core(s) per node
+#SBATCH --mail-user="user@example.edu" #CHANGE user email address
 #SBATCH --mail-type=END,FAIL
 #SBATCH --exclusive
+
 cd $SLURM_SUBMIT_DIR
 
 module purge
