@@ -200,6 +200,21 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
         outfile.close()
         hzhandle.close()
 
+def contig_driver(output_path):
+
+    # list of taxa
+    with open(output_path+'/TaxonList.txt') as f:
+        taxon_list = f.readlines()
+        taxon_list = sorted([x.rstrip() for x in taxon_list])
+
+    for tax in taxon_list:
+        bam_file = output_path+'SISRS_Run/'+tax+'/'+tax+'.bam'
+        vcf_zipped = output_path+'SISRS_Run/'+tax+'/'+tax+'.vcf.gz'
+
+        #do pileup using no reference and report allelic depth
+        #then call variants using all sites (M) and zip the output
+        bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz -mM -o {vcf_zipped}"
+        os.system(bcf_command)
 
 if __name__ == '__main__':
 
@@ -218,9 +233,7 @@ if __name__ == '__main__':
     cov_thresh = args.cov
     hz_thresh = args.hz
 
-    #generate variants from BAM without ref
-    os.chmod('contigs_driver.sh', 0o755)
-    subprocess.call("./contigs_driver.sh " + output_path + 'SISRS_Run/', shell=True)
+    contig_driver(output_path)
 
     #call consensus and filter by allelic coverage and ratio of heterozygous sites
     vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
