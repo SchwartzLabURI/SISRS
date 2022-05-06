@@ -5,12 +5,10 @@
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - only use 1 for this!
 #SBATCH --mail-user="user@example.edu" #CHANGE to user email address
 #SBATCH --mail-type=ALL
-#SBATCH --array=[0-11]%4 #bracketed numbers indicate number of total jobs you need(taxa-1) - 0 based, inclusive; following number = simultaneous
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 cd $SLURM_SUBMIT_DIR
 
-#for advice on array jobs see https://github.com/nreid/using_array_jobs
 
 module purge
 
@@ -25,10 +23,37 @@ module load Ray/2.3.1-foss-2019b
 module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
+#housekeeping
+#if no 6_out_files dir mkdir 6_out_files
+#if no 6_err_files dir mkdir 6_err_files
+
+DIRECTORY_OUT_6="6_out_files"
+
+if [ ! -d "$DIRECTORY_OUT_6" ]; then
+  mkdir $DIRECTORY_OUT_6
+fi
+
+DIRECTORY_ERR_6="6_err_files"
+
+if [ ! -d "$DIRECTORY_ERR_6" ]; then
+  mkdir $DIRECTORY_ERR_6
+fi
+
+
 OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
 
 SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
-echo ${SPP[@]}
-echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-python3 sisrs_06b_pileup.py -d $OUTFOLDER -s ${SPP[$SLURM_ARRAY_TASK_ID]}
+ARRLEN=${#SPP[@]}
+
+for (( i = 0; i < $ARRLEN; i++ ))
+do
+    python3 sisrs_06b_pileup.py -d $OUTFOLDER -s ${SPP[i]}
+done
+
+
+#move all .out and .err files to their correct dirs so they dont clutter the slurm submission directory
+
+mv 6*.out $DIRECTORY_OUT_6
+
+mv 6*.err $DIRECTORY_ERR_6

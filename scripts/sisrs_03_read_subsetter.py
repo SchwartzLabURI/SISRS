@@ -28,24 +28,29 @@ import pandas as pd
 import re
 import argparse
 
-'''
-This function is designed to do the remaining folder setup for the read subsetting.
-It also finishes up the other minor setups needed for this script. The arguments
-that are needed for this script are the working sisrs directory and the genomeSize
-estimation and output path
-'''
-def setupDir(sisrs_dir,genomeSize):
-    ''' This function does the remaining folder setup for the read subsetting. '''
 
-    # returned list of items
-    # trim_read_dir         --> 0
-    # subset_output_dir     --> 1
-    # subset_log_dir        --> 2
-    # trim_read_tax_dirs    --> 3
-    # subsetDepth           --> 4
-    # df                    --> 5
-    # compiled_paired       --> 6
-    # compiled_single_end   --> 7
+def setupDir(sisrs_dir,genomeSize):
+
+    '''
+    This function is designed to do the remaining folder setup for the read subsetting.
+    It also finishes up the other minor setups needed for this script.
+
+    Arguments: path to the working directory, genome size estimate in basepairs.
+
+    Returns: list of items
+
+             trim_read_dir         --> 0
+             subset_output_dir     --> 1
+             subset_log_dir        --> 2
+             trim_read_tax_dirs    --> 3
+             subsetDepth           --> 4
+             df                    --> 5
+             compiled_paired       --> 6
+             compiled_single_end   --> 7
+
+    '''
+
+
     rtn = []
 
     #Set TrimRead directories based off of script folder location
@@ -57,7 +62,7 @@ def setupDir(sisrs_dir,genomeSize):
         taxa = f.readlines()
     taxa = [x.rstrip() for x in taxa]
     taxa = sorted(taxa)
-    
+
     #Find taxa folders within TrimRead folder
     trim_read_tax_dirs = [trim_read_dir+"/"+x for x in taxa]
     print(trim_read_tax_dirs)
@@ -90,11 +95,17 @@ def setupDir(sisrs_dir,genomeSize):
 
     return rtn
 
-'''
-This function is designed to break up the load that is carried by countBasePair.
-'''
+#TODO: ask Rachel what is  compiled_paired,compiled_single_end
 def countHelper(tax_dir,compiled_paired,compiled_single_end):
-    ''' This is helper function for countBasePair function to break up the load. '''
+
+    '''
+    This helper function is designed to break up the load that is carried by countBasePair().
+
+    Arguments: path to taxa directory, compiled_paired, compiled_single_end
+
+    Returns: compiled_paired, compiled_single_end, left-pair read, right-pair read,
+             single_end, taxon list, dataset list, basecount list, taxon ID.
+    '''
 
     #List all files and set output dir
     files = sorted(glob(tax_dir+"/*.fastq.gz"))
@@ -133,15 +144,20 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
     right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
-    # This return statement looks this way because of an error that is assosicated
-    # with turning it into a list. I will attempt to fix it again later
+
     return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_list,dataset_list,basecount_list,taxon_ID
 
-'''
-Function to execute the first for loop using helper function
-'''
+
 def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
-    ''' This function counts bases in single-end files and paired-end files if present. '''
+    '''
+    This function counts bases in single-end files and paired-end files if present.
+
+    Arguments: path to trimmed reads taxa directories, compiled_paired,
+               compiled_single_end, dataframe with 'Taxon','Dataset','Basecount'.
+
+    Returns: updated dataframe with 'Taxon','Dataset','Basecount', compiled_paired, compiled_single_end.
+
+    '''
 
     #For each taxa directory...
     for tax_dir in trim_read_tax_dirs:
@@ -195,11 +211,18 @@ def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 
     return df, compiled_paired, compiled_single_end
 
-'''
-Function to execute the second for loop
-'''
+
 def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
-    ''' This function checks taxa total coverage. '''
+    '''
+    This function checks taxa total coverage.
+
+    Arguments: dataframe with 'Taxon','Dataset','Basecount',
+              subset depth, path to subset output directory,
+              compiled_paired,compiled_single_end.
+
+    Returns: list with compiled_paired, compiled_single_end, dataframe with 'Taxon','Dataset','Basecount'.
+
+    '''
 
     df = df.reset_index(drop=True)
     df["Basecount"] = pd.to_numeric(df["Basecount"])
@@ -260,13 +283,20 @@ def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_sing
 
     return out
 
-'''
-This function is designed to help strip the list of files that are going to be
-subsetted. They will be stripped of the file path, file extension, and if there
-is paired files the _1 and _2 will also be stripped
-'''
+#TODO: Ask Rachel args and returns for this function
 def stripFiles(aList):
-    ''' This function strip the list of files that are going to be subsetted. '''
+
+    '''
+    This function is designed to help strip the list of files that are going to be
+    subsetted. They will be stripped of the file path, file extension, and if there
+    is paired files the _1 and _2 will also be stripped.
+
+    Arguments: compiled_paired.
+
+    Returns: nList.
+
+    '''
+
 
     nList = []
     for item in aList:
@@ -280,12 +310,20 @@ def stripFiles(aList):
             nList += [save]
     return nList
 
-'''
-Function to do all of the subsetting the is needed by sisrs. This is a general
-function and can handle single and paired ends genomes.
-'''
+
 def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
-    ''' This function performs file subsetting (single and paired-end). '''
+
+    '''
+    This function processes subsetting that is needed by sisrs. This is a general
+    function and can handle single and paired ends genomes.
+
+    Arguments: compiledList, dataframe with 'Taxon','Dataset','Basecount',
+               path to trimmed reads directory, path to subset output directory,
+               path to subset log directory, bool True or False for paired reads.
+
+    Returns: None.
+
+    '''
 
     cList = stripFiles(compiledList)
 
@@ -323,7 +361,7 @@ if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-dir','--directory',action='store',nargs="?")
+    my_parser.add_argument('-d','--directory',action='store',nargs="?")
     my_parser.add_argument('-gs','--genome_size',type=int, action='store',nargs="?")
     args = my_parser.parse_args()
 

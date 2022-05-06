@@ -3,7 +3,7 @@
 #SBATCH --time=100:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=20   # CHANGE THIS to the number of processors
-#SBATCH --mail-user="yana_hrytsenko@uri.edu" #CHANGE THIS to your email address
+#SBATCH --mail-user="user@example.edu" #CHANGE THIS to your email address
 #SBATCH --mail-type=END,FAIL
 #SBATCH --exclusive
 
@@ -25,4 +25,4 @@ module load BEDTools/2.29.2-GCC-8.3.0
 GENOME=1000000000 #CHANGE THIS to the approximate size of your genome
 DIR=~/SISRS_Small_test #CHANGE this to your analysis folder
 
-python3 sisrs_03_read_subsetter.py -gs $GENOME -dir $DIR
+python3 sisrs_03_read_subsetter.py -gs $GENOME -d $DIR

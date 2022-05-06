@@ -51,7 +51,7 @@ def specific_genome(outPath, sp):
 
 def faidx(outPath, sp):
     ''' This function indexes the files. '''
-    
+
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)
     faid = ['samtools faidx ', f, '/contigs.fa' ] #samtools faidx SISRS_DIR/TAXA/contigs.fa

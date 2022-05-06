@@ -19,11 +19,11 @@ This function runs bowtie2 on the reads in a folder treating all reads as unpair
 def runBowtie(outPath,threads,sp):
     ''' This function runs bowtie2 on the reads in a folder treating all reads as unpaired. '''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp, 
+    outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',
         sp,
         '_Temp.bam'])
-    outbamb = "".join([outPath, '/SISRS_Run/', sp, 
+    outbamb = "".join([outPath, '/SISRS_Run/', sp,
         '/',
         sp,
         '.bam'])

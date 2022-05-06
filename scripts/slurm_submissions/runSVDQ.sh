@@ -3,7 +3,7 @@
 #SBATCH --time=150:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node
-#SBATCH --mail-user=your_email #CHANGE to your email
+#SBATCH --mail-user="user@example.edu" #CHANGE to your email
 
 cd $SLURM_SUBMIT_DIR
 module load PAUP/4.0a168-centos64
