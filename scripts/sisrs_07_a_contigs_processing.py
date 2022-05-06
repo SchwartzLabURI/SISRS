@@ -228,7 +228,7 @@ if __name__ == '__main__':
 
     args = my_parser.parse_args()
 
-    output_path = args.dir
+    output_path = args.dir +'/'
     taxa_threshold = args.threshold
     cov_thresh = args.cov
     hz_thresh = args.hz
