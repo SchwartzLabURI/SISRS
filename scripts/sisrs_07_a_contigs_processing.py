@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-
-'''
-Last edit: Alexander Knyshov Mar 22, 2022
-'''
 import os
 import sys
 import gzip
 import subprocess
+import argparse
 from subprocess import call
 from cmdCheck import *
 from Bio.Seq import Seq
@@ -16,20 +13,18 @@ from os import listdir
 from os.path import isfile, join
 import statistics
 
-
-# format the file outputs
 def format_consensus_output(output_path, taxa_threshold):
     ''' This function formats the consensus files outputs.  '''
 
-    path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
-    path_to_taxon_dirs = output_path + "Reads/RawReads/"
+    #where to put contigs
+    p = output_path + 'SISRS_Run/contigs_outputs/'
+    if not os.path.exists(p):
+        os.makedirs(p)
 
-
-    # get a list of taxon dirs except Composite_Genome
-    taxon_list = []
-    taxon_list = os.listdir(path_to_taxon_dirs)
-    taxon_list.remove('fastqcOutput') # remove this directory from the list for easy traversal
-    taxon_list.remove('trimOutput') # remove this directory from the list for easy traversal
+    # list of taxa
+    with open(output_path+'/TaxonList.txt') as f:
+    	taxon_list = f.readlines()
+    	taxon_list = sorted([x.rstrip() for x in taxon_list])
 
     # open all taxa handles at once
     consensus_handles = {}
@@ -101,15 +96,10 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
     sequences with high heterozygosity
     '''
 
-    path_to_contigs_LocList_file = output_path + 'SISRS_Run/Composite_Genome/'
-    path_to_taxon_dirs = output_path + "Reads/RawReads/"
-
-
-    # get a list of taxon dirs except Composite_Genome
-    taxon_list = []
-    taxon_list = os.listdir(path_to_taxon_dirs)
-    taxon_list.remove('fastqcOutput') # remove this directory from the list for easy traversal
-    taxon_list.remove('trimOutput') # remove this directory from the list for easy traversal
+    # list of taxa
+    with open(output_path+'/TaxonList.txt') as f:
+        taxon_list = f.readlines()
+        taxon_list = sorted([x.rstrip() for x in taxon_list])
 
     # open all taxa handles at once
     consensus_handles = {}
@@ -213,52 +203,20 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
 
 if __name__ == '__main__':
 
-    # Store the command line in a seperate argument
-    cmd = sys.argv
+    # python3 sisrs_07_a_contigs_processing.py -t $T -dir $OUTFOLDER
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-t','--threshold',action='store',nargs="?", type = int)
+    my_parser.add_argument('-d', '--dir', action='store',nargs="?")
+    my_parser.add_argument('-c', '--cov', action='store',default=3,nargs="?", type = int)
+    my_parser.add_argument('-z', '--hz', action='store',default=0.01,nargs="?", type = float)
 
-    if len(cmd) < 4:
-        print("THIS SCRIPT REQUIERS 4 ARGUMENTS (-trh <taxon threshold> -dir <path to output data directory>)")
-        exit()
+    args = my_parser.parse_args()
 
-    out_dir = ""
-    sisrs = ""
-
-    if '-dir' in cmd or '--directory' in cmd:
-        out_dir = isFound('-dir','--directory',cmd)
-        sisrs = out_dir
-        if (sisrs[-1] != '/'):
-            output_path = sisrs + '/'
-        else:
-            output_path = sisrs
-
-        contigs_from_consensus = output_path + "SISRS_Run/" + "contigs_outputs"
-
-        if not os.path.exists(contigs_from_consensus):
-            os.mkdir(contigs_from_consensus)
-    else:
-        print("SPECIFY THE OUTPUT PATH (-dir, --directory). PROGRAM EXITING.")
-        exit()
-
-    if '-trh' in cmd or '--threshold' in cmd:
-        num_taxa = isFound('-trh','--threshold',cmd)
-        taxa_threshold = int(num_taxa)
-    else:
-        print("SPECIFY THE TAXA THRESHOLD (-trh, --threshold). PROGRAM EXITING.")
-        exit()
-
-    #I currently set these as optional
-    #perhaps need to consider using argparse instead of this and above
-    if '-cov' in cmd or '--coverage-threshold' in cmd:
-        cov_thresh = int(isFound('-cov','--coverage-threshold',cmd))
-    else:
-        print("Coverage threshold not specified, set to default (3)")
-        cov_thresh = 3
-
-    if '-hz' in cmd or '--heterozygosity-threshold' in cmd:
-        hz_thresh = float(isFound('-hz','--heterozygosity-threshold',cmd))
-    else:
-        print("Heterozygosity threshold not specified, set to default (0.01)")
-        hz_thresh = 0.01
+    output_path = args.dir
+    taxa_threshold = args.threshold
+    cov_thresh = args.cov
+    hz_thresh = args.hz
 
     #generate variants from BAM without ref
     os.chmod('contigs_driver.sh', 0o755)
