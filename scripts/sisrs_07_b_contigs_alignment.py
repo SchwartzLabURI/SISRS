@@ -10,6 +10,13 @@ from os.path import isfile, join
 import argparse
 
 def align_contigs(output_path, thr):
+    '''
+    This function is designed to alighn contigs with MAFFT.
+
+    Arguments: path to the output directory, numper of processors to use.
+
+    Returns: none.
+    '''
 
     path_in = output_path + "/SISRS_Run/contigs_outputs/"
     path_out = output_path + "/SISRS_Run/aligned_contigs/"

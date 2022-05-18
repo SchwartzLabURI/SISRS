@@ -2,7 +2,7 @@
 
 '''
 
-This script runs one sisrs alignment - specific taxon contigs
+This script runs one SISRS alignment - specific taxon contigs
 '''
 
 import os
@@ -17,7 +17,13 @@ import re
 specific contigs
 '''
 def pileup(outPath,sp):
-    ''' This function runs samtools mpileup command. '''
+    '''
+    This function runs samtools mpileup command.
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
         '/',
@@ -36,7 +42,13 @@ def pileup(outPath,sp):
     os.system("".join(pileup))
 
 def specific_genome(outPath, sp):
-    ''' This function calls specific_genome.py ''' #Ask Rachel about this function description
+    '''
+    This function calls specific_genome.py. Applies pileup to a reference genome.
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     #put the script here instead of calling a new interpreter
 
@@ -50,7 +62,13 @@ def specific_genome(outPath, sp):
     os.system("".join(spec))
 
 def faidx(outPath, sp):
-    ''' This function indexes the files. '''
+    '''
+    This function indexes the files.
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)

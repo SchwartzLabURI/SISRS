@@ -14,7 +14,13 @@ import argparse
 import re
 
 def sindex(outPath,sp):
-    ''' This function runs samtools index command. '''
+    '''
+    This function runs samtools index command.
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',
@@ -23,11 +29,16 @@ def sindex(outPath,sp):
     sin = ['samtools index ', outbam]
     os.system("".join(sin))
 
-'''
-specific contigs
-'''
+
 def pileup(outPath,sp):
-    ''' This function performs samtools mpileup on composite genome. '''
+    '''
+
+    This function performs samtools mpileup on composite genome (specific contigs).
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
         '/',
@@ -45,7 +56,15 @@ def pileup(outPath,sp):
     os.system("".join(pileup))
 
 def prune(outPath, sp, minread, threshold):
-    ''' This function calls get_pruned_dict.py '''
+    '''
+    This function calls get_pruned_dict.py
+
+    Arguments: path to the output directory, taxon name directory,
+               threshold for the number of reads to call a site,
+               threshold [<=1] for the proportion of sites required to be the same to call a site.
+
+    Returns: none.
+    '''
 
     #put the script here instead of calling a new interpreter
 

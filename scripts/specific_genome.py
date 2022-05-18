@@ -24,7 +24,7 @@ def getallbases(path):
     return allbases
 
 def getCleanList(ref,bases):
-    ''' This function builds and returns clean list of bases without indels. ''' #ask Rachel
+    ''' This function builds and returns clean list of bases without indels. ''' 
 
     bases=bases.replace('.',ref) #insert ref base
     bases=bases.replace(',',ref)

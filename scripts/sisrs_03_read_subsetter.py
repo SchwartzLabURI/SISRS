@@ -97,7 +97,6 @@ def setupDir(sisrs_dir,genomeSize):
 
 #TODO: ask Rachel what is  compiled_paired,compiled_single_end
 def countHelper(tax_dir,compiled_paired,compiled_single_end):
-
     '''
     This helper function is designed to break up the load that is carried by countBasePair().
 
