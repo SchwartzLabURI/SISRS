@@ -98,7 +98,7 @@ def getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothP
 
 
 
-def main(path, contig_dir, minread, thresh):
+def getallbases_main(path, contig_dir, minread, thresh):
 
     allbases=getallbases(path,contig_dir,minread,thresh)      #dictionary of combined pileups - locus/pos:bases(as list)
     if allbases==0:
@@ -110,4 +110,4 @@ if __name__ == '__main__':
     contig_dir = sys.argv[2]
     minread = int(sys.argv[3])
     thresh = float(sys.argv[4])
-    main(path, contig_dir, minread, thresh)
+    getallbases_main(path, contig_dir, minread, thresh)

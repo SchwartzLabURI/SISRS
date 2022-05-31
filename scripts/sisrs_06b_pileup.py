@@ -10,6 +10,7 @@ from os import path
 import sys
 from glob import glob
 from cmdCheck import *
+from specific_genome import *
 import argparse
 import re
 
@@ -49,17 +50,11 @@ def specific_genome(outPath, sp):
 
     Returns: none.
     '''
-
-    #put the script here instead of calling a new interpreter
-
     script_dir = os.path.dirname(os.path.abspath(__file__))
     print(script_dir)
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)
-    spec = ['python3 ', script_dir, '/specific_genome.py ', f, ' ', outPath,'/SISRS_Run/Composite_Genome/contigs.fa' ]
-    # python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
-    print(spec)
-    os.system("".join(spec))
+    getbases_main(f, outPath+'/SISRS_Run/Composite_Genome/contigs.fa')
 
 def faidx(outPath, sp):
     '''

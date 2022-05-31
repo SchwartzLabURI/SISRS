@@ -10,6 +10,7 @@ from os import path
 import sys
 from glob import glob
 from cmdCheck import *
+from get_pruned_dict import *
 import argparse
 import re
 
@@ -65,15 +66,14 @@ def prune(outPath, sp, minread, threshold):
 
     Returns: none.
     '''
-
-    #put the script here instead of calling a new interpreter
-
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    print(script_dir)
     f = "".join([outPath, '/SISRS_Run/', sp])
-    specific = ['python3 ', script_dir, '/get_pruned_dict.py ', f, ' ', outPath,'/SISRS_Run/Composite_Genome ',
-    minread, ' ', threshold ]# python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
+    print(f)
+    thresh = threshold
+    mr = minread
+    getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', mr, thresh)
 
-    os.system("".join(specific))
 
 
 if __name__ == '__main__':

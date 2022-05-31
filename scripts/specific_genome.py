@@ -24,7 +24,7 @@ def getallbases(path):
     return allbases
 
 def getCleanList(ref,bases):
-    ''' This function builds and returns clean list of bases without indels. ''' 
+    ''' This function builds and returns clean list of bases without indels. '''
 
     bases=bases.replace('.',ref) #insert ref base
     bases=bases.replace(',',ref)
@@ -99,7 +99,7 @@ def getFinalBase_Specific(cleanBases):
     #return finalBase
 
 ###############################################
-def main(path, contig_file):
+def getbases_main(path, contig_file):
 
     allbases=getallbases(path)      #dictionary of combined pileups - locus/pos:bases(as list)
     if len(allbases)==0:
@@ -124,4 +124,4 @@ def main(path, contig_file):
 if __name__ == '__main__':
     path = sys.argv[1]
     contig_file = sys.argv[2]
-    main(path, contig_file)
+    getbases_main(path, contig_file)
