@@ -2,7 +2,7 @@
 
 '''
 
-This script runs one sisrs alignment
+This script runs one SISRS alignment
 '''
 
 import os
@@ -13,11 +13,15 @@ from cmdCheck import *
 import argparse
 import re
 
-'''
-This function runs bowtie2 on the reads in a folder treating all reads as unpaired
-'''
+
 def runBowtie(outPath,threads,sp):
-    ''' This function runs bowtie2 on the reads in a folder treating all reads as unpaired. '''
+    '''
+    This function runs bowtie2 on the reads in a folder treating all reads as unpaired.
+
+    Arguments: path to the output directory, number of threads to use, taxon directory to process
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',

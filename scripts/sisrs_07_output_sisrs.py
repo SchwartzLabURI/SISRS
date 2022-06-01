@@ -18,14 +18,17 @@ from get_alignment import *
 from filter_nexus_for_missing import *
 from filter_nexus_for_missing_nogap import *
 
-"""
 
-This function is designed to get the appropriate directories needed to finish the
-sisrs run. The parameters that is needed for it to properly run is just the
-current sisrs working directory.
-"""
 def getData(outPath):
-    """ This function gets the appropriate directories needed to finish the SISRS run. """
+    '''
+    This function is designed to get the appropriate directories needed to finish the
+    sisrs run. The parameters that is needed for it to properly run is just the
+    current sisrs working directory.
+
+    Arguments: path to the output directory.
+
+    Returns: none.
+    '''
 
     sisrs_dir = outPath+"/SISRS_Run"
     composite_dir = sisrs_dir + '/Composite_Genome'
@@ -35,7 +38,14 @@ def getData(outPath):
     return composite_dir,sisrs_tax_dirs,sisrs_dir
 
 
-def run_alignment_locs_m(sisrs, ms):
+def run_alignment_locs_m(sisrs, ms): #ask Alex
+    '''
+    This function is designed to run alignments of ....
+
+    Arguments: path to the output directory, number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     alignment_locs_m_command = [
 
@@ -56,7 +66,14 @@ def run_alignment_locs_m(sisrs, ms):
     print(alignment_locs_m_command)
     os.system("".join(alignment_locs_m_command))
 
-def run_alignment_locs_m_nogap(sisrs, ms):
+def run_alignment_locs_m_nogap(sisrs, ms): #ask Alex
+    '''
+    This function is designed to run no gap alignments of ....
+
+    Arguments: path to the output directory, number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     alignment_locs_m_nogap_command = [
 
@@ -77,7 +94,14 @@ def run_alignment_locs_m_nogap(sisrs, ms):
     print(alignment_locs_m_nogap_command)
     os.system("".join(alignment_locs_m_nogap_command))
 
-def run_alignment_bi_locs(sisrs, ms):
+def run_alignment_bi_locs(sisrs, ms): #ask Alex
+    '''
+    This function is designed to run bi locs alignments of ....
+
+    Arguments: path to the output directory, number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     alignment_bi_locs_m_command = [
 
@@ -98,7 +122,14 @@ def run_alignment_bi_locs(sisrs, ms):
     print(alignment_bi_locs_m_command)
     os.system("".join(alignment_bi_locs_m_command))
 
-def run_alignment_bi_locs_nogap(sisrs, ms):
+def run_alignment_bi_locs_nogap(sisrs, ms): #ask Alex
+    '''
+    This function is designed to run bi locs no gap alignments of ....
+
+    Arguments: path to the output directory, number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     alignment_bi_locs_m_nogap_command = [
 
@@ -119,7 +150,14 @@ def run_alignment_bi_locs_nogap(sisrs, ms):
     print(alignment_bi_locs_m_nogap_command)
     os.system("".join(alignment_bi_locs_m_nogap_command))
 
-def run_alignment_pi_locs_m(sisrs, ms):
+def run_alignment_pi_locs_m(sisrs, ms): #ask Alex
+    '''
+    This function is designed to run pi locs m alignments of ....
+
+    Arguments: path to the output directory, number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     alignment_pi_locs_m_command = [
 
@@ -140,7 +178,14 @@ def run_alignment_pi_locs_m(sisrs, ms):
     os.system("".join(alignment_pi_locs_m_command))
 
 
-def run_alignment_pi_locs_m_nogap(sisrs, ms):
+def run_alignment_pi_locs_m_nogap(sisrs, ms): #ask Alex
+    '''
+    This function is designed to run pi locs m no gap alignments of ....
+
+    Arguments: path to the output directory, number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     alignment_pi_locs_m_nogap_command = [
 

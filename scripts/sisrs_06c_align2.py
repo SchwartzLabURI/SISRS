@@ -15,7 +15,13 @@ import re
 
 
 def bbuild(outPath, readfolder, proc):
-    ''' This function runs bowtie2-build on contigs.fa '''
+    '''
+    This function runs bowtie2-build on contigs.fa
+
+    Arguments: path to the output directory, taxon name directory, number of processors to use.
+
+    Returns: none.
+    '''
 
     f = "".join([outPath, '/SISRS_Run/', readfolder ])
     b = ['bowtie2-build ', f, '/contigs.fa ', f, '/contigs -p ',proc ]
@@ -23,11 +29,18 @@ def bbuild(outPath, readfolder, proc):
 
     os.system("".join(b))
 
-'''
-This function runs bowtie2 on the reads in a folder treating all reads as unpaired
-'''
+
+
+
 def runBowtie(outPath,threads,sp):
-    ''' This function runs  bowtie2, samtools view and samtools sort commands.'''
+    '''
+    This function runs  bowtie2, samtools view and samtools sort commands.
+    The function runs bowtie2 on the reads in a folder treating all reads as unpaired.
+
+    Arguments: path to the output directory, number of processors to use, taxon name directory.
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',

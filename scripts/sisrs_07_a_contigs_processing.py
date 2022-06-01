@@ -14,7 +14,13 @@ from os.path import isfile, join
 import statistics
 
 def format_consensus_output(output_path, taxa_threshold):
-    ''' This function formats the consensus files outputs.  '''
+    '''
+    This function formats the consensus files outputs.
+
+    Arguments: path to the output directory, taxa threshold.
+
+    Returns: none.
+    '''
 
     #where to put contigs
     p = output_path + 'SISRS_Run/contigs_outputs/'
@@ -82,7 +88,7 @@ def format_consensus_output(output_path, taxa_threshold):
 
 # get vcf-based consensus
 def vcf_consensus(output_path, coverage_threshold, hz_threshold):
-    ''' 
+    '''
     This function produces the consensus sequences from VCF data.
     The function assumes all sites (including non variable) were
     output.
@@ -93,7 +99,11 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
     contig in the body vs in the header, fill in empty contigs (loci),
     for non empty, filter sites with low allelic coverage and
     positions marked with '.', as well as filter out (replace with N)
-    sequences with high heterozygosity
+    sequences with high heterozygosity.
+
+    Arguments: path to the output directory, coverage threshold, heterozygosity threshold.
+
+    Returns: none.
     '''
 
     # list of taxa
@@ -177,7 +187,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
             print ("N", file=outfile)
             print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
             sisrs_contig_counter += 1
-        if loclen > 0: 
+        if loclen > 0:
             hzval = hznum/loclen
             print (locname+","+str(hznum/loclen), file=hzhandle)
             if hzval > hz_threshold:
@@ -201,6 +211,14 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
         hzhandle.close()
 
 def contig_driver(output_path):
+    '''
+    This funcction is designed to call mpileup command and perform pileups on each of the bam files.
+
+    Arguments: path to the output directory.
+
+    Returns: none.
+
+    '''
 
     # list of taxa
     with open(output_path+'/TaxonList.txt') as f:

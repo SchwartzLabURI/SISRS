@@ -16,7 +16,7 @@ module load BBMap/38.87-foss-2020b
 module load BEDTools/2.30.0-GCC-10.2.0
 module load Biopython/1.78-foss-2020b
 
-
+#Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
 
 T=1 #CHANGE THIS to the threshold number
 

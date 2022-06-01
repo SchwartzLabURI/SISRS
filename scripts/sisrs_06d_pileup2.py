@@ -10,11 +10,18 @@ from os import path
 import sys
 from glob import glob
 from cmdCheck import *
+from get_pruned_dict import *
 import argparse
 import re
 
 def sindex(outPath,sp):
-    ''' This function runs samtools index command. '''
+    '''
+    This function runs samtools index command.
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',
@@ -23,11 +30,16 @@ def sindex(outPath,sp):
     sin = ['samtools index ', outbam]
     os.system("".join(sin))
 
-'''
-specific contigs
-'''
+
 def pileup(outPath,sp):
-    ''' This function performs samtools mpileup on composite genome. '''
+    '''
+
+    This function performs samtools mpileup on composite genome (specific contigs).
+
+    Arguments: path to the output directory, taxon name directory.
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
         '/',
@@ -45,16 +57,23 @@ def pileup(outPath,sp):
     os.system("".join(pileup))
 
 def prune(outPath, sp, minread, threshold):
-    ''' This function calls get_pruned_dict.py '''
+    '''
+    This function calls get_pruned_dict.py
 
-    #put the script here instead of calling a new interpreter
+    Arguments: path to the output directory, taxon name directory,
+               threshold for the number of reads to call a site,
+               threshold [<=1] for the proportion of sites required to be the same to call a site.
 
+    Returns: none.
+    '''
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    print(script_dir)
     f = "".join([outPath, '/SISRS_Run/', sp])
-    specific = ['python3 ', script_dir, '/get_pruned_dict.py ', f, ' ', outPath,'/SISRS_Run/Composite_Genome ',
-    minread, ' ', threshold ]# python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
+    print(f)
+    thresh = threshold
+    mr = minread
+    getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', mr, thresh)
 
-    os.system("".join(specific))
 
 
 if __name__ == '__main__':

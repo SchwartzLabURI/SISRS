@@ -21,14 +21,14 @@ if __name__ == '__main__':
     folder = fo+"/Reads/TrimReads/"+taxon
     output = fo+"/Reads/TrimReads_nocl/"+taxon
     #forward_end, reverse_end, output = sys.argv[1], sys.argv[2], sys.argv[3]
-    
+
     if not os.path.exists(output):
         os.makedirs(output) #make dir and enclosing folders
 
     #get paired reads
     tax_dir = folder #has fastqs
     trim_read_dir = fo+"/Reads/TrimReads/"
-    newData = [] 
+    newData = []
     out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir,newData)
 
     for left in left_pairs:
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         #at some point fix this so we don't call python from python
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -1 {forward_end} -2 {reverse_end} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
-        
+
         cl_genomes = glob(output+'/*.fasta') #find fasta in output folder  eg embplant_pt.K115.complete.graph1.1.path_sequence.fasta
         cl_genome = max(cl_genomes, key=os.path.getctime)
 
@@ -50,9 +50,9 @@ if __name__ == '__main__':
         reads = singlef + '_Trim.fastq.gz'
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -u {reads} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
-        
-        cl_genomes = glob(output+'/*.fasta') 
+
+        cl_genomes = glob(output+'/*.fasta')
         cl_genome = max(cl_genomes, key=os.path.getctime)
-        
+
         filter_chloroplasts = f"bbmap.sh in={reads} ref={cl_genome} ambiguous=all threads={proc} outm={output}/{sample}_mappedChloroplast.fastq outu={output}/{sample}_Nuclear_Trim.fastq.gz"
         os.system(filter_chloroplasts)
