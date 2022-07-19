@@ -15,39 +15,42 @@ import sys
 import cProfile
 import os
 from os import listdir,path
-from cmdCheck import *
+#from cmdCheck import *
 from os.path import isdir, isfile, join
 import argparse
 
-def devTaxaList(taxon_ID_file):
-
-    '''
-    Arguments: Takes in a taxon ID file which is generated automatically when running this script.
-    
-    Returns: Returned list containes taxon list.
-    '''
-
-    # Error check to make sure the file can be opened
-    if isfile(taxon_ID_file) == False:
-        print("ERROR WHILE PROCESSING FILE!")
-        exit()
-
-    taxa_list = [line.rstrip('\n') for line in open(taxon_ID_file)]
-
-    return taxa_list
-
+#def devTaxaList(taxon_ID_file):
+#    '''
+#    Gets the list of taxa from the taxon ID file
+#
+#    Parameters: 
+#    taxon_ID_file (string): taxon ID file name
+#    
+#    Returns: 
+#    list: contains taxon list
+#
+#    '''
+#
+#    # Error check to make sure the file can be opened
+#    if isfile(taxon_ID_file) == False:
+#        print("ERROR WHILE PROCESSING FILE!")
+#        exit()
+#
+#    taxa_list = [line.rstrip('\n') for line in open(taxon_ID_file)]
+#
+#    return taxa_list
 
 def readTaxaFromFolders(inpath,outpath):
 
     '''
-    This function is relient on the fact that the folders inside the path are labeled
-    according to the correct taxon.
+    Makes a file containing the list of taxa (based on the names of taxon folders in the input folder). Makes a folder for each taxon in various output folders. 
 
-    Arguments: Takes as the main argumemt the path to the data directory it will be
-    searching for the arguments to the files and a path to the TaxonList file
-    to which the list of taxa will be writtent.
+    Arguments: 
+    inpath (string): folder containing the folders that contain reads
+    outpath (string): folder where output will go
 
-    Returns: Returned list containes taxon list.
+    Returns: 
+    list: contains taxon list
     '''
 
     # Error check to make sure it is a path that exists
@@ -101,11 +104,11 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
 
 
 def fileStructure(sisrs_dir):
-
     '''
     Function designed to build the necessary file structure for SISRS to properly run.
 
-    Arguments: It will take in as input the taxa list and the working SISRS directory.
+    Arguments: 
+    sisrs_dir (string): the folder containing the folders containing the input data
 
     Returns: none.
     '''
@@ -159,9 +162,6 @@ if __name__ == "__main__":
     #    tl = devTaxaList(id)
     #else:
     tl = readTaxaFromFolders(d, outputdir)
-
-    # Create the file structure
-    fileStructure(outputdir)
 
     #fix given new argparse
 #    if rd != "":
