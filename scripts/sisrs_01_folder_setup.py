@@ -15,7 +15,6 @@ import sys
 import cProfile
 import os
 from os import listdir,path
-#from cmdCheck import *
 from os.path import isdir, isfile, join
 import argparse
 
