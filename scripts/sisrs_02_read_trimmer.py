@@ -15,7 +15,6 @@ import os
 from os import path
 import sys
 from glob import glob
-#from cmdCheck import *
 import subprocess
 from subprocess import check_call
 import argparse
