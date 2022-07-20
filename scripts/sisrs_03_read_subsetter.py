@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 
 '''
+Subset reads to 10x total for assembly into a composite genome
 
 IMPORTANT: Trimmed reads should be QC checked prior to this step to remove
-datasets with low quality or high deplication rates
+datasets with low quality 
 This script performs read subsetting for a SISRS composite genome assembly
 This script calls reformat.sh  (part of BBMap Suite)
 
 All reads for all taxa should be in .fastq.gz format (To change this, find/replace
 this script, replacing '.fastq.gz' with your chosen extension)
 Paired-end read files must be identically basenamed and end in _Trim_1.fastq.gz/_Trim_2.fastq.gz
+
 Input: (1) -gs/--genomesize Genome size estimate in basepairs (e.g. Human: 3500000000)
 Output: For an analysis with X taxa and a genome size estimate of Y bp,  this script
 will subset each taxons reads down to (10*Y)/X bases (~10X total coverage when summed)
-
 
 '''
 
@@ -22,7 +23,6 @@ from os import path
 import sys
 from glob import glob
 import subprocess
-from cmdCheck import *
 from subprocess import check_call
 import pandas as pd
 import re
@@ -30,26 +30,23 @@ import argparse
 
 
 def setupDir(sisrs_dir,genomeSize):
-
     '''
     This function is designed to do the remaining folder setup for the read subsetting.
     It also finishes up the other minor setups needed for this script.
 
-    Arguments: path to the working directory, genome size estimate in basepairs.
+    Arguments: 
+    sisrs_dir (string): path to the output directory
+    genomeSize (int): genome size estimate in basepairs.
 
-    Returns: list of items
+    Returns: 
+    list:
 
-             trim_read_dir         --> 0
-             subset_output_dir     --> 1
-             subset_log_dir        --> 2
-             trim_read_tax_dirs    --> 3
-             subsetDepth           --> 4
-             df                    --> 5
-             compiled_paired       --> 6
-             compiled_single_end   --> 7
-
+             trim_read_dir (string)         --> 0
+             subset_output_dir (string)    --> 1
+             subset_log_dir (string)       --> 2
+             trim_read_tax_dirs (list)   --> 3
+             subsetDepth (float)          --> 4
     '''
-
 
     rtn = []
 
@@ -79,31 +76,29 @@ def setupDir(sisrs_dir,genomeSize):
     subset_log_dir = trim_read_dir+"/subsetOutput/"
     rtn += [subset_log_dir]
 
-    #Ensure Trim Log/FastQC/subset Log output directories not included in taxa list
-    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('trimOutput/')]
-    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('fastqcOutput/')]
-    trim_read_tax_dirs = [x for x in trim_read_tax_dirs if not x.endswith('subsetOutput/')]
     rtn += [trim_read_tax_dirs]
 
     #Calculate subset depth
     rtn += [int((10*genomeSize)/len(trim_read_tax_dirs))]
 
-    #Initialize Pandas DF to get base counts and lists of paired and single-end files
-    rtn += [pd.DataFrame(columns=['Taxon','Dataset','Basecount'])]
-    rtn += [list()]
-    rtn += [list()]
-
     return rtn
 
-#TODO: ask Rachel what is  compiled_paired,compiled_single_end
 def countHelper(tax_dir,compiled_paired,compiled_single_end):
     '''
     This helper function is designed to break up the load that is carried by countBasePair().
 
-    Arguments: path to taxa directory, compiled_paired, compiled_single_end
+    Arguments: 
+    tax_dir (string): path to taxa directory
+    compiled_paired (list): 
+    compiled_single_end (list): 
 
-    Returns: compiled_paired, compiled_single_end, left-pair read, right-pair read,
-             single_end, taxon list, dataset list, basecount list, taxon ID.
+    Returns: 
+    list: filenames with left and right so far including input and this new taxon, 
+    list: filenames for single end so far including input and this new taxon 
+    list: filenames with left for this new taxon
+    list: filenames with right for this new taxon
+    list: filenames for single end for this new taxon
+    string: name of taxon (also folder name)
     '''
 
     #List all files and set output dir
@@ -113,11 +108,6 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
     left_pairs = list()
     right_pairs = list()
     single_end = list()
-
-    taxon_list = list()
-
-    dataset_list = list()
-    basecount_list = list()
 
     #Find files ending in _1/_2.fastq.gz
     left_files = [s for s in files if "_Trim_1.fastq.gz" in s]
@@ -143,36 +133,35 @@ def countHelper(tax_dir,compiled_paired,compiled_single_end):
     right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
+    return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_ID
 
-    return compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_list,dataset_list,basecount_list,taxon_ID
 
-
-def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
+def countBasePair(trim_read_tax_dirs): 
     '''
     This function counts bases in single-end files and paired-end files if present.
 
-    Arguments: path to trimmed reads taxa directories, compiled_paired,
-               compiled_single_end, dataframe with 'Taxon','Dataset','Basecount'.
+    Arguments: 
+    trim_read_tax_dirs (string): path to trimmed reads taxa directories
 
-    Returns: updated dataframe with 'Taxon','Dataset','Basecount', compiled_paired, compiled_single_end.
+    Returns: 
+    dataframe with 'Taxon','Dataset','Basecount', 
+    list: compiled_paired, 
+    list: compiled_single_end.
 
     '''
+
+    df = pd.DataFrame(columns=['Taxon','Dataset','Basecount'])
+    compiled_paired = list()
+    compiled_single_end = list()
 
     #For each taxa directory...
     for tax_dir in trim_read_tax_dirs:
 
-        outPut = []
-        outPut += countHelper(tax_dir,compiled_paired,compiled_single_end)
-        compiled_paired = outPut[0]
-        compiled_single_end = outPut[1]
-        left_pairs = outPut[2]
-        right_pairs = outPut[3]
-        single_end = outPut[4]
-        taxon_list = outPut[5]
-        dataset_list = outPut[6]
-        basecount_list = outPut[7]
-        taxon_ID = outPut[8]
-
+        compiled_paired,compiled_single_end,left_pairs,right_pairs,single_end,taxon_ID = countHelper(tax_dir,compiled_paired,compiled_single_end)
+        taxon_list = list()
+        dataset_list = list()
+        basecount_list = list()
+        
         #Count bases in single-end files if present...
         if len(single_end) > 0:
             for x in single_end:
@@ -213,13 +202,17 @@ def countBasePair(trim_read_tax_dirs,compiled_paired,compiled_single_end,df):
 
 def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_single_end):
     '''
-    This function checks taxa total coverage.
+    This function figures out how many bases should be sampled from each sample from each taxon (some don't have enough so we need to compensate from other samples).
 
-    Arguments: dataframe with 'Taxon','Dataset','Basecount',
-              subset depth, path to subset output directory,
-              compiled_paired,compiled_single_end.
+    Arguments: 
+    df: dataframe with 'Taxon','Dataset','Basecount'
+    subsetDepth (int): number of reads needed per taxon
+    subset_output_dir (string): path to subset output directory,
+    compiled_paired (list): all paired read paths
+    compiled_single_end (list): all se read paths.
 
-    Returns: list with compiled_paired, compiled_single_end, dataframe with 'Taxon','Dataset','Basecount'.
+    Returns: 
+    list: compiled_paired, compiled_single_end, dataframe with 'Taxon','Dataset','Basecount'.
 
     '''
 
@@ -274,28 +267,21 @@ def checkCoverage(df,subsetDepth,subset_output_dir,compiled_paired,compiled_sing
     compiled_paired = [path.basename(x).replace('_2.fastq.gz', '') for x in compiled_paired]
     compiled_single_end = [path.basename(x).replace('.fastq.gz', '') for x in compiled_single_end]
 
-    out = []
-    # Return the three necessary pieces of information
-    out += [compiled_paired]
-    out += [compiled_single_end]
-    out += [df]
+    return df
 
-    return out
-
-#TODO: Ask Rachel args and returns for this function
 def stripFiles(aList):
-
     '''
     This function is designed to help strip the list of files that are going to be
     subsetted. They will be stripped of the file path, file extension, and if there
     is paired files the _1 and _2 will also be stripped.
 
-    Arguments: compiled_paired.
+    Arguments:
+    aList (list): list of files
 
-    Returns: nList.
+    Returns:
+    list: input list of files but without extension
 
     '''
-
 
     nList = []
     for item in aList:
@@ -311,14 +297,17 @@ def stripFiles(aList):
 
 
 def subset(compiledList,df,trim_read_dir,subset_output_dir,subset_log_dir,paired):
-
     '''
-    This function processes subsetting that is needed by sisrs. This is a general
-    function and can handle single and paired ends genomes.
+    Subsets fastq files based on specified values. This is a general
+    function and can handle single and paired ends reads.
 
-    Arguments: compiledList, dataframe with 'Taxon','Dataset','Basecount',
-               path to trimmed reads directory, path to subset output directory,
-               path to subset log directory, bool True or False for paired reads.
+    Arguments: 
+    compiledList (list): files to be subset 
+    df: dataframe with 'Taxon','Dataset','Basecount'
+    trim_read_dir (string): path to trimmed reads directory
+    subset_output_dir (string): path to subset output directory
+    subset_log_dir (string): path to subset log directory
+    paired (bool): True or False for paired reads.
 
     Returns: None.
 
@@ -367,16 +356,22 @@ if __name__ == '__main__':
     sis = args.directory
     gs = args.genome_size
 
-    setupInfo = setupDir(sis,gs)
+    setupInfo = setupDir(sis,gs) #outputs list below
 
-    df, compiled_paired, compiled_single_end = countBasePair(setupInfo[3],setupInfo[6], setupInfo[7],setupInfo[5])
+             #trim_read_dir         --> 0
+             #subset_output_dir     --> 1
+             #subset_log_dir        --> 2
+             #trim_read_tax_dirs    --> 3
+             #subsetDepth           --> 4
+
+    df, compiled_paired, compiled_single_end = countBasePair(setupInfo[3]) 
 
     print("Based on a genome size estimate of " + str(gs) + " bp, and with " + str(len(setupInfo[3])) + " species, the requested subset depth is " + str(setupInfo[4]) + " bp per species")
 
-    out = checkCoverage(df,setupInfo[4],setupInfo[1],compiled_paired, compiled_single_end)
+    df = checkCoverage(df,setupInfo[4],setupInfo[1],compiled_paired, compiled_single_end)
 
     # Subset Single End
-    subset(compiled_single_end,out[2],setupInfo[0],setupInfo[1],setupInfo[2],False)
+    subset(compiled_single_end,df,setupInfo[0],setupInfo[1],setupInfo[2],False)
 
     #Subset paired ends
-    subset(compiled_paired,out[2],setupInfo[0],setupInfo[1],setupInfo[2],True)
+    subset(compiled_paired,df,setupInfo[0],setupInfo[1],setupInfo[2],True)
