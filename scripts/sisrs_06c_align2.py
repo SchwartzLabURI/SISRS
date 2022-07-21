@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 
 '''
-
-This script runs one sisrs alignment - specific contigs
+This script outputs a sorted bam by aligning reads to the contigs.fa for the specific species
 '''
 
 import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import *
 import argparse
 import re
 
 
 def bbuild(outPath, readfolder, proc):
     '''
-    This function runs bowtie2-build on contigs.fa
+    This function runs bowtie2-build on contigs.fa in the specified folder in the SISRS run
 
-    Arguments: path to the output directory, taxon name directory, number of processors to use.
+    Arguments: 
+    outPath (string): path to the output directory
+    readfolder (string): taxon name
+    proc (string? int?): number of processors to use.
 
     Returns: none.
     '''
@@ -29,15 +30,15 @@ def bbuild(outPath, readfolder, proc):
 
     os.system("".join(b))
 
-
-
-
 def runBowtie(outPath,threads,sp):
     '''
-    This function runs  bowtie2, samtools view and samtools sort commands.
-    The function runs bowtie2 on the reads in a folder treating all reads as unpaired.
+    This function runs  bowtie2 on all fastq.gz in a folder and outputs a sorted bam.
+    The function treats all reads as unpaired.
 
-    Arguments: path to the output directory, number of processors to use, taxon name directory.
+    Arguments: 
+    outPath (string): path to the output directory
+    threads (int? string?): number of processors to use
+    sp: taxon name (folder name not path)
 
     Returns: none.
     '''
