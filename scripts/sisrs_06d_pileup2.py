@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
 '''
-
-This script runs one sisrs alignment - specific taxon contigs
+This script does a pileup for the specific species genome contigs then calls a base for each site
 '''
 
 import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import *
 from get_pruned_dict import *
 import argparse
 import re
@@ -18,7 +16,9 @@ def sindex(outPath,sp):
     '''
     This function runs samtools index command.
 
-    Arguments: path to the output directory, taxon name directory.
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name 
 
     Returns: none.
     '''
@@ -58,7 +58,7 @@ def pileup(outPath,sp):
 
 def prune(outPath, sp, minread, threshold):
     '''
-    This function calls get_pruned_dict.py
+    This function runs the scripts to output LocList file containing a called base for each site for a species relative the positions in the composite genome
 
     Arguments: path to the output directory, taxon name directory,
                threshold for the number of reads to call a site,
@@ -66,14 +66,11 @@ def prune(outPath, sp, minread, threshold):
 
     Returns: none.
     '''
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(script_dir)
+    #script_dir = os.path.dirname(os.path.abspath(__file__))
+    #print(script_dir)
     f = "".join([outPath, '/SISRS_Run/', sp])
     print(f)
-    thresh = threshold
-    mr = minread
-    getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', mr, thresh)
-
+    getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', minread, threshold)
 
 
 if __name__ == '__main__':
