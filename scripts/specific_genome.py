@@ -126,6 +126,8 @@ def getFinalBase_Specific(cleanBases):
 ###############################################
 def getbases_main(path, contig_file):
     '''
+    Write a contigs.fa file specif to the species
+
     Arguments:
     path (string): path to folder containing pileup file 
     contig_file (string): path to fa file containing contigs

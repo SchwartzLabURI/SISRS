@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 '''
-
-This script runs one SISRS alignment - specific taxon contigs
+Pileup from the bowtie2 alignment
+Make a genome specific to the species by replacing sites
+Index new genome
 '''
 
 import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import *
 from specific_genome import *
 import argparse
 import re
@@ -21,22 +21,24 @@ def pileup(outPath,sp):
     '''
     This function runs samtools mpileup command.
 
-    Arguments: path to the output directory, taxon name directory.
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name (not path) 
 
     Returns: none.
     '''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
+    outbam = "".join([outPath, '/SISRS_Run/', sp, #eg AotNan
         '/',
         sp,
         '.bam'])
 
-    outpile = "".join([outPath, '/SISRS_Run/', sp, #AotNan
+    outpile = "".join([outPath, '/SISRS_Run/', sp, #eg AotNan
         '/',
         sp,
         '.pileups'])
 
-    pileup = ['samtools mpileup -f ', #samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
+    pileup = ['samtools mpileup -f ', #equivalent to: samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
         outPath,'/SISRS_Run/Composite_Genome/contigs.fa ',
         outbam, ' > ', outpile ]
 
@@ -44,23 +46,27 @@ def pileup(outPath,sp):
 
 def specific_genome(outPath, sp):
     '''
-    This function calls specific_genome.py. Applies pileup to a reference genome.
+    Write a contigs.fa file specif to the species
 
-    Arguments: path to the output directory, taxon name directory.
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name (not path)
 
     Returns: none.
     '''
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(script_dir)
+    #script_dir = os.path.dirname(os.path.abspath(__file__))
+    #print(script_dir)
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)
     getbases_main(f, outPath+'/SISRS_Run/Composite_Genome/contigs.fa')
 
 def faidx(outPath, sp):
     '''
-    This function indexes the files.
+    This function indexes the files with samtools faidx.
 
-    Arguments: path to the output directory, taxon name directory.
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name 
 
     Returns: none.
     '''
