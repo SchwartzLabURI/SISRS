@@ -2,22 +2,28 @@
 
 '''
 
-This script runs one sisrs alignment
+This script aligns data from one taxon to the composite genome
 '''
 
 import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import *
 import argparse
 import re
 
-'''
-This function runs bowtie2 on the reads in a folder treating all reads as unpaired
-'''
+
 def runBowtie(outPath,threads,sp):
-    ''' This function runs bowtie2 on the reads in a folder treating all reads as unpaired. '''
+    '''
+    This function runs bowtie2 on the reads in a folder treating all reads as unpaired.
+
+    Arguments: 
+    outPath (string): path to the output directory
+    threads: number of threads to use
+    sp (string): taxon directory to process
+
+    Returns: none.
+    '''
 
     outbam = "".join([outPath, '/SISRS_Run/', sp,
         '/',

@@ -13,11 +13,15 @@ from sisrs_06_run_sisrs import *
 from sisrs_07_output_sisrs import *
 from cmdCheck import *
 
-'''
-Function to run all of the first script
-'''
+
 def sisrs01(data_path,sisrs_dir,trimmed):
-    ''' This function runs step 1 of SISRS. '''
+    '''
+    This function runs step 1 of SISRS.
+
+    Arguments: path to the input data (reads), path to the output directory, Bool value for trimmed reads.
+
+    Returns: none.
+    '''
 
     taxa_list = []
 
@@ -31,11 +35,15 @@ def sisrs01(data_path,sisrs_dir,trimmed):
     else:
         makeLinks(data_path, sisrs_dir, taxa_list, False)
 
-'''
-Function to run all of the second script
-'''
+
 def sisrs2(trimmed,processors,sisrs_dir):
-    ''' This function runs step 2 of SISRS. '''
+    '''
+    This function runs step 2 of SISRS.
+
+    Arguments:  Bool value for trimmed reads, number of processors to use, path to the output directory.
+
+    Returns: none.
+    '''
 
     if not trimmed:
         bbduk_adapter = findAdapter()
@@ -51,11 +59,15 @@ def sisrs2(trimmed,processors,sisrs_dir):
     else:
         print("FILES ALREADY TRIMMED")
 
-'''
-Function to run all of the thrid script
-'''
+
 def sisrs3(genomeSize, sisrs_dir):
-    ''' This function runs step 3 of SISRS. '''
+    '''
+    This function runs step 3 of SISRS.
+
+    Arguments:  size of the genome analyzed in basepairs, path to the output directory.
+
+    Returns: none.
+    '''
 
     setupInfo = setupDir(sisrs_dir,genomeSize)
 
@@ -71,11 +83,15 @@ def sisrs3(genomeSize, sisrs_dir):
     #Subset paired ends
     subset(compiled_paired,out[2],setupInfo[0],setupInfo[1],setupInfo[2],True)
 
-'''
-Function to run all of the fourth script
-'''
+
 def sisrs4(sisrs_dir,threads):
-    ''' This function runs step 4 of SISRS. '''
+    '''
+    This function runs step 4 of SISRS.
+
+    Arguments: path to the output directory, number of processors to use.
+
+    Returns: none.
+    '''
 
     # obtain the directories and files needed for Ray
     ray_genome_dir, subset_reads = getDirs(sisrs_dir)
@@ -83,11 +99,14 @@ def sisrs4(sisrs_dir,threads):
     # Run the ray command
     runRay(ray_genome_dir,subset_reads,threads)
 
-'''
-Function to run all of the fifth script
-'''
-def sisrs05(outPath,threads,minread,threshold):
-    ''' This function runs step 5 of SISRS. '''
+def sisrs05(outPath,threads,minread,threshold): #ask nRachel, we don't use minread,threshold in this script
+    '''
+    This function runs step 5 of SISRS.
+
+    Arguments: path to the output directory, number of processors to use.
+
+    Returns: none.
+    '''
 
     # Grab the folders and files that are needed to setup sisrs
     trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir = obtainDir(outPath)
@@ -104,11 +123,15 @@ def sisrs05(outPath,threads,minread,threshold):
     # Make a bash script for all Taxons
     copyShFile(trim_read_tax_dirs,sisrs_dir,sisrs_template,composite_dir,outPath,threads,minread,threshold,sys.path[0])
 
-'''
-Function to run all of the sixth script
-'''
+
 def sisrs06(sisrs_dir):
-    ''' This function runs step 6 of SISRS. '''
+    '''
+    This function runs step 6 of SISRS.
+
+    Arguments: path to the output directory.
+
+    Returns: none.
+    '''
 
     # Get all folders and files needed to run sisrs
     sisrs_tax_dirs = sisrsSetup(sisrs_dir)
@@ -117,7 +140,13 @@ def sisrs06(sisrs_dir):
     runSisrs(sisrs_tax_dirs)
 
 def sisrs07(outPath,missing):
-    ''' This function runs step 7 of SISRS. '''
+    '''
+    This function runs step 7 of SISRS.
+
+    Arguments: path to the output directory, list of number of species allowed to be missing.
+
+    Returns: none.
+    '''
 
     # Grab the neccessary folders and files
     composite_dir,sisrs_tax_dirs,sisrs_dir = getData(outPath)

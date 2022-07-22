@@ -16,7 +16,6 @@ import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import *
 import subprocess
 from subprocess import check_call
 import argparse
@@ -28,9 +27,12 @@ def getDirs(sisrs_dir):
     needed for the Ray command. It only requires the working directory for where all
     of the sisrs information is stationed.
 
-    Arguments: path to the working SISRS directory.
+    Arguments: 
+    sisrs_dir (string): path to the working output directory.
 
-    Returns: path to ray genome directory, path to subsetted reads files.
+    Returns: 
+    string: path to ray genome directory (in the working dir)
+    list: paths to gz subsetted reads files.
     '''
 
     #Set SubsetRead and Genome directories based off of script folder location
@@ -45,9 +47,12 @@ def getDirs(sisrs_dir):
 def runRay(ray_genome_dir,subset_reads,threads):
     '''
     This function is designed to run Ray on all files that are found in the subset
-    folders. Requieres the output folder developed, number of threads, and the files.
+    folders. 
 
-    Arguments: path to ray genome directory, path to subsetted reads files, number of threads to use.
+    Arguments: 
+    ray_genome_dir (string): path to ray composite genome directory for output
+    subset_reads (list): paths to subsetted reads files
+    threads (int? string?): number of threads to use.
 
     Returns: None.
     '''

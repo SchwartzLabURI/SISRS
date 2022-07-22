@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
 '''
-
-This script runs one sisrs alignment - specific taxon contigs
+Pileup from the bowtie2 alignment
+Make a genome specific to the species by replacing sites
+Index new genome
 '''
 
 import os
 from os import path
 import sys
 from glob import glob
-from cmdCheck import *
+from specific_genome import *
 import argparse
 import re
 
@@ -17,40 +18,58 @@ import re
 specific contigs
 '''
 def pileup(outPath,sp):
-    ''' This function runs samtools mpileup command. '''
+    '''
+    This function runs samtools mpileup command.
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name (not path) 
+
+    Returns: none.
+    '''
+
+    outbam = "".join([outPath, '/SISRS_Run/', sp, #eg AotNan
         '/',
         sp,
         '.bam'])
 
-    outpile = "".join([outPath, '/SISRS_Run/', sp, #AotNan
+    outpile = "".join([outPath, '/SISRS_Run/', sp, #eg AotNan
         '/',
         sp,
         '.pileups'])
 
-    pileup = ['samtools mpileup -f ', #samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
+    pileup = ['samtools mpileup -f ', #equivalent to: samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
         outPath,'/SISRS_Run/Composite_Genome/contigs.fa ',
         outbam, ' > ', outpile ]
 
     os.system("".join(pileup))
 
 def specific_genome(outPath, sp):
-    ''' This function calls specific_genome.py ''' #Ask Rachel about this function description
+    '''
+    Write a contigs.fa file specif to the species
 
-    #put the script here instead of calling a new interpreter
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name (not path)
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    print(script_dir)
+    Returns: none.
+    '''
+    #script_dir = os.path.dirname(os.path.abspath(__file__))
+    #print(script_dir)
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)
-    spec = ['python3 ', script_dir, '/specific_genome.py ', f, ' ', outPath,'/SISRS_Run/Composite_Genome/contigs.fa' ]
-    # python SCRIPT_DIR/specific_genome.py SISRS_DIR/TAXA COMPOSITE_GENOME
-    print(spec)
-    os.system("".join(spec))
+    getbases_main(f, outPath+'/SISRS_Run/Composite_Genome/contigs.fa')
 
 def faidx(outPath, sp):
-    ''' This function indexes the files. '''
+    '''
+    This function indexes the files with samtools faidx.
+
+    Arguments: 
+    outPath (string): path to the output directory
+    sp (string): taxon name 
+
+    Returns: none.
+    '''
 
     f = "".join([outPath, '/SISRS_Run/', sp ])
     print(f)

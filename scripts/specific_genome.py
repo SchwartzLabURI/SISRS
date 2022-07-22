@@ -7,7 +7,15 @@ import glob
 
 #get combined pileup info
 def getallbases(path):
-    ''' This function gets combined pileup information. '''
+    ''' 
+    This function gets combined pileup information. 
+
+    Arguments:
+    path (string): path to folder containing pileup file
+
+    Returns:
+    dict: for each location in the composite genome we get one final base call
+    '''
 
     assert len(glob.glob1(path,"*.pileups"))==1,'More than one pileup file in'+path
     allbases=dict()
@@ -24,7 +32,16 @@ def getallbases(path):
     return allbases
 
 def getCleanList(ref,bases):
-    ''' This function builds and returns clean list of bases without indels. ''' #ask Rachel
+    ''' 
+    This function builds and returns clean list of bases without indels. 
+
+    Arguments:
+    ref (chr): the reference base
+    bases (string): bases in the reads at the site from the pileup
+
+    Returns: 
+    list: bases from the pileup in uppercase, either A, C, G, T, no indels
+    '''
 
     bases=bases.replace('.',ref) #insert ref base
     bases=bases.replace(',',ref)
@@ -57,7 +74,15 @@ def getCleanList(ref,bases):
     return new_base_list
 
 def getFinalBase_Specific(cleanBases):
-    ''' This function returns the base if the site is homozygous or finds bases with highest read support. '''
+    ''' 
+    This function returns the base if the site is homozygous or finds bases with highest read support. 
+
+    Arguments:
+    cleanBases (list): bases from the pileup in uppercase, either A, C, G, T, no indels 
+
+    Returns:
+    chr: final base call given list of input 
+    '''
 
     baseCount = Counter(cleanBases)
     #If the site is homozygous, return the base
@@ -99,8 +124,17 @@ def getFinalBase_Specific(cleanBases):
     #return finalBase
 
 ###############################################
-def main(path, contig_file):
+def getbases_main(path, contig_file):
+    '''
+    Write a contigs.fa file specif to the species
 
+    Arguments:
+    path (string): path to folder containing pileup file 
+    contig_file (string): path to fa file containing contigs
+
+    Returns: None
+
+    '''
     allbases=getallbases(path)      #dictionary of combined pileups - locus/pos:bases(as list)
     if len(allbases)==0:
         print('No data for '+path,flush=True)
@@ -124,4 +158,4 @@ def main(path, contig_file):
 if __name__ == '__main__':
     path = sys.argv[1]
     contig_file = sys.argv[2]
-    main(path, contig_file)
+    getbases_main(path, contig_file)

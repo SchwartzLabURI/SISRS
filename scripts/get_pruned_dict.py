@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-"""Take multiple mpileup files and determine the base at each position of the reference genome
+"""
+Take multiple mpileup files and determine the base at each position of the reference genome
 
     arguments:
         path: folder containing mpileup files ending in pileups
@@ -21,14 +22,24 @@ import os
 from specific_genome import getCleanList
 from collections import defaultdict
 
-#get combined pileup info
 def getallbases(path,contig_dir,minread,thresh):
-    ''' This function gets combined pileup information. '''
+    ''' 
+    This function calls a site for each position in the composite genome and outputs to a LocList file.
+    It prints information about how much data was available and output
+
+    arguments:
+        path: folder containing mpileup files ending in pileups
+        contig_dir: folder containing assembled composite genome
+        minread: number of reads at a position required to call a base
+        thresh: proportion of reads that must be one base for calling to occur
+
+    returns: 
+    int: total sites with bases called
+    '''
 
     count_sites_no_pileup_data = 0
 
     basePath=os.path.dirname(path)
-
 
     assert len(glob.glob1(path,"*.pileups"))==1,'More than one pileup file in'+path
 
@@ -76,7 +87,30 @@ def getallbases(path,contig_dir,minread,thresh):
     return siteCount
 
 def getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothPenalty):
-    ''' This function gets final bases pruned. '''
+    ''' 
+    This function gets the final base call for a site 
+
+    Arguments:
+    cleanBases (list): clean list of bases without indels.
+    minread (int): number of reads at a position required to call a base
+    thresh (int): proportion of reads that must be one base for calling to occur    
+    minPenalty (int): total sites so far under number of min reads
+    threshPenalty (int): total sites so far over threshold (apparent heterozygosity) for calling
+    bothPenalty (int): total sites so far of both
+
+    Returns:
+    chr: final base call
+    int: total sites so far under number of min reads
+    int: total sites so far over threshold (apparent heterozygosity) for calling
+    int: total sites so far of both
+
+    '''
+
+    minread = int(minread)
+    thresh = int(thresh)
+    minPenalty = int(minPenalty)
+    threshPenalty = int(threshPenalty)
+    bothPenalty = int(bothPenalty)
 
     singleBase=(Counter(cleanBases).most_common()[0][0])
     if singleBase == '*':
@@ -90,15 +124,25 @@ def getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothP
         if counts < minread and counts/float(len(cleanBases)) < thresh:
             bothPenalty+=1
         elif counts < minread:
-                minPenalty+=1
+            minPenalty+=1
         elif counts/float(len(cleanBases)) < thresh:
-                threshPenalty+=1
+            threshPenalty+=1
 
     return finalBase,minPenalty,threshPenalty,bothPenalty
 
 
 
-def main(path, contig_dir, minread, thresh):
+def getallbases_main(path, contig_dir, minread, thresh):
+    '''
+    Checks that getallbases function (which gets the final base call for each site) returns more that one called base 
+
+    arguments:
+        path: folder containing mpileup files ending in pileups
+        contig_dir: folder containing assembled composite genome
+        minread: number of reads at a position required to call a base
+        thresh: proportion of reads that must be one base for calling to occur
+
+    '''
 
     allbases=getallbases(path,contig_dir,minread,thresh)      #dictionary of combined pileups - locus/pos:bases(as list)
     if allbases==0:
@@ -110,4 +154,4 @@ if __name__ == '__main__':
     contig_dir = sys.argv[2]
     minread = int(sys.argv[3])
     thresh = float(sys.argv[4])
-    main(path, contig_dir, minread, thresh)
+    getallbases_main(path, contig_dir, minread, thresh)

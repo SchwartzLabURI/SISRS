@@ -39,7 +39,12 @@ class Alignment:
         self.single = single
 
     def numsnps(self):
-        ''' This function gets a number of biallelic sites. '''
+        ''' 
+        Add single (list of bool) for singletons and flag (list of int) for number of different bases for each site
+
+        Returns:
+        int: count of biallelic site (times that 2 occurs in list)
+        '''
 
         print(str(len(self.locations))+' total variable sites (alignment.nex)')
         for i in range(len(self.locations)):
@@ -57,7 +62,20 @@ class Alignment:
 
 
 def get_phy_sites(sisrs_dir,composite_dir,num_missing):
-    ''' This function builds alignment. '''
+    ''' 
+    This function builds an Alignment including only sites with sufficient species info (based on num_missing). 
+    
+    Arguments:
+    sisrs_dir (string):
+    composite_dir (string): path to folder containing composite genome
+    num_missing (int): max number of species allowed to be missing data for inclusion in output alignment 
+
+    Returns:
+    Alignment: 
+        dictionary of species: list of bases
+        list of locations of sites with sufficient data
+
+    '''
 
     #Fetch contig data
     contigList=glob.glob(composite_dir +'/contigs_LocList')
@@ -86,8 +104,16 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
                 alignment.species_data[splist[j]].append(speciesData[j])
     return alignment
 
-def write_alignment(fi,alignment,numbi):
-    ''' This function writes the alignmetn to file. ''' #Ask Rachel
+def write_alignment(fi,alignment):
+    ''' 
+    Writes an Alignment to nexus files - all data; bi locs only; pi locs only. 
+
+    Arguments:
+    fi (string) : filename to write to
+    alignment (Alignment): Alignment to be written
+
+    Returns: none
+    '''
 
     spp = sorted(alignment.species_data.keys())
     ntax = str(len(alignment.species_data))
@@ -137,7 +163,7 @@ def main(num_missing, sisrs_dir, composite_dir):
 
     alignment=get_phy_sites(sisrs_dir,composite_dir,num_missing)
     numbi=alignment.numsnps() #prints numbers of snps, biallelic snps, and singletons
-    alignment = write_alignment(sisrs_dir+'/alignment.nex',alignment,numbi)
+    alignment = write_alignment(sisrs_dir+'/alignment.nex',alignment)
 
 if __name__ == '__main__':
     num_missing = int(sys.argv[1])
