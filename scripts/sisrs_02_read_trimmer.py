@@ -160,8 +160,11 @@ def fastqcCommand(processors,fastqc_output,read_dir, taxa):
 
     for t in taxa:
         print(read_dir+"/"+t+"/*.fastq.gz")
-        print(glob(read_dir+"/"+t+"/*.fastq.gz"))
-        for x in glob(read_dir+"/"+t+"/*.fastq.gz"): #can add recursive here
+        flist = glob(read_dir+"/"+t+"/*.fastq.gz")
+        if len(flist) == 0:
+            sys.exit("No fastq.gz files found - please check your paths and extensions")
+        print(flist)
+        for x in flist: #can add recursive here
             print(x)
             fastqc_command.append(x)
 
