@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     for singlef in single_end:
         sample = os.path.basename(singlef)
-        reads = singlef + '_Trim.fastq.gz'
+        reads = singlef + '.fastq.gz'
         find_chloroplasts = f"python3 GetOrganelle/get_organelle_from_reads.py --continue -u {reads} -o {output}/ -F embplant_pt"
         os.system(find_chloroplasts)
 
