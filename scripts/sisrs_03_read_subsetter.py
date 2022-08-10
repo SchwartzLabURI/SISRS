@@ -51,7 +51,10 @@ def setupDir(sisrs_dir,genomeSize):
     rtn = []
 
     #Set TrimRead directories based off of script folder location
-    trim_read_dir = sisrs_dir + "/Reads/TrimReads"
+    if path.isdir(sisrs_dir + "/Reads/TrimReads_nocl"):
+        trim_read_dir = sisrs_dir + "/Reads/TrimReads_nocl"
+    else:
+        trim_read_dir = sisrs_dir + "/Reads/TrimReads"
     rtn += [trim_read_dir]
 
     #taxa come from taxonlist file
