@@ -53,12 +53,17 @@ def runBowtie(outPath,threads,sp):
         '.bam'])
     print(outbam)
 
+    if path.isdir(outPath + "/Reads/TrimReads_nocl"):
+        trim_read_dir = outPath + "/Reads/TrimReads_nocl/"
+    else:
+        trim_read_dir = outPath + "/Reads/TrimReads/"
+
     bowtie_command = [
         'bowtie2 -p ',
         str(threads),
         ' -N 1 --local -x ',
         outPath,'/SISRS_Run/', sp, '/contigs -U ', #contigs base of filename
-        ",".join(glob(os.path.expanduser("".join([outPath, '/Reads/TrimReads/', sp, '/*.fastq.gz'])))), #files in the readfolder
+        ",".join(glob(os.path.expanduser("".join([trim_read_dir, sp, '/*.fastq.gz'])))), #files in the readfolder
         ' | samtools view -Su -@ ',
         str(threads),
         ' -F 4 - | samtools sort -@ ',
@@ -100,8 +105,6 @@ if __name__ == '__main__':
     sis = args.directory
     proc = args.processors
     f2 = args.folder
-    folder = sis+"/Reads/TrimReads/"+f2
-    print(sis, folder)
 
     bbuild(sis, f2, proc)
     runBowtie(sis,proc,f2)
