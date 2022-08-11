@@ -56,7 +56,7 @@ num_sp = len(taxon_list)
 #less than X% missing per site - info for each spp
 
 
-good_contigs = []
+good_contigs = {}
 
 new_contig_folder = outPath + "/SISRS_Run/contigs_outputs2/"
 if not path.exists(new_contig_folder):
@@ -103,15 +103,16 @@ for k in high_count_contigs:
                 distances[sp] = distances[sp] / len(seq2.replace('-',''))
                 #print(distances[sp])
         if max(distances.values()) < 0.08:
-            good_contigs.append(k)
+            good_contigs[k] = contigcounts[k]
         else:
             print(sorted(distances.values()))
 
 
 with open(outPath + "/SISRS_Run/contigs_for_probes.fa", 'w') as f:
-    for line in good_contigs:
-        f.write('>' + line +"\n")
-        f.write(str(composite[line].seq) + "\n")
+    for k, v in sorted(good_contigs.items(), key=lambda item: item[1]):    #line in good_contigs.items():
+        print(v)
+        f.write('>' + k +"\n")
+        f.write(str(composite[k].seq) + "\n")
         
 
 #This function works similar to grep in R or bash, but it searches for an input string through
