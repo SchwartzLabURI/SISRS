@@ -108,10 +108,11 @@ for k in high_count_contigs:
             print(sorted(distances.values()))
 
 
-with open(outPath + "/SISRS_Run/contigs_for_probes.txt", 'w') as f:
+with open(outPath + "/SISRS_Run/contigs_for_probes.fa", 'w') as f:
     for line in good_contigs:
-        f.write(f"{line}\n")
-
+        f.write('>' + line +"\n")
+        f.write(str(composite[line].seq) + "\n")
+        
 
 #This function works similar to grep in R or bash, but it searches for an input string through
 #a list rather than a file/directory. Strings in the list 'stringList' that contain the substring 'searchString'
