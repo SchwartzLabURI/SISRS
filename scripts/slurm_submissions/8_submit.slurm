@@ -21,4 +21,4 @@ OUTFOLDER=../../SISRS_Small_test/ #CHANGE THIS to the analysis directory
 ALIGNMENT_INFO=alignment_pi_locs_m2.txt #CHANGE
 THRESHOLD=0 #CHANGE
 
-python3 sisrs_08_filter_contigs.py $OUTFOLDER $ALIGNMENT_INFO $THRESHOLD 
+python3 sisrs_08_filter_contigs.py $OUTFOLDER $ALIGNMENT_INFO $THRESHOLD $P 

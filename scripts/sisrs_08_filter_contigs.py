@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import csv
+import sys
 from collections import Counter
 from Bio import SeqIO
 from os import path, mkdir, listdir, system
@@ -16,6 +17,7 @@ from os import path, mkdir, listdir, system
 #path_to_output: Path to write filtered_data.tsv to. Must include the final backslash.
 #                 Ex: "C://Users/caleb/OneDrive/Desktop/"
 
+thr = sys.argv[4]
 outPath = sys.argv[1]
 #outPath = '../../SISRS_Small_test'
 min_threshold = int(sys.argv[3]) #number of variable sites (not as described above)
@@ -107,7 +109,7 @@ for k in high_count_contigs:
 
 
 with open(outPath + "/SISRS_Run/contigs_for_probes.txt", 'w') as f:
-    for line in good_contigss:
+    for line in good_contigs:
         f.write(f"{line}\n")
 
 
