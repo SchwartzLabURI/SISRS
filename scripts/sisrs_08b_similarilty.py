@@ -38,7 +38,7 @@ with open(fasta) as handle:
     for record in SeqIO.parse(handle, "fasta"):
         if record.id not in loci_to_drop:
             contig_seqs.append(record)
-
+contig_seqs.sort(key=lambda r: -len(r))
 SeqIO.write(contig_seqs, fasta + '.fasta', "fasta")
 
 print('done comparison')
