@@ -39,6 +39,11 @@ with open(fasta) as handle:
         if record.id not in loci_to_drop:
             contig_seqs.append(record)
 contig_seqs.sort(key=lambda r: -len(r))
-SeqIO.write(contig_seqs, fasta + '.fasta', "fasta")
+
+if sys.argv[2] == 'ALL':
+    SeqIO.write(contig_seqs, fasta + '.fasta', "fasta")
+else:
+    final_total = int(sys.argv[2])
+    SeqIO.write(contig_seqs[0:final_total], fasta + '.fasta', "fasta")
 
 print('done comparison')

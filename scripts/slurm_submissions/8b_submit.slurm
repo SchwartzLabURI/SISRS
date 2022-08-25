@@ -14,5 +14,6 @@ module load Biopython/1.75-foss-2019b-Python-3.7.4
 module load BLAST+/2.8.1-foss-2018b
 
 OUTFOLDER=../../SISRS_Small_test/ #CHANGE THIS to the analysis directory
+MAX_CONTIGS=ALL #CHANGE to reduce output
 
-python3 sisrs_08b_similarilty.py $OUTFOLDER 
+python3 sisrs_08b_similarilty.py $OUTFOLDER $MAX_CONTIGS
