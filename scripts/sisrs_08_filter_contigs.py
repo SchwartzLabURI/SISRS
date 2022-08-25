@@ -26,6 +26,9 @@ path_to_seq_lengths = outPath + '/SISRS_Run/Composite_Genome/contigs_SeqLength.t
 path_to_sites = outPath + '/SISRS_Run/' + sys.argv[2] #name of file eg alignment_pi_locs_m2.txt - use something minimally missing
 #path_to_sites = outPath + '/SISRS_Run/alignment_pi_locs_m2.txt'
 path_to_output = outPath + '/SISRS_Run/'
+length_of_locus = int(sys.argv[5]) #160 = 2 probes
+max_dist = float(sys.argv[6]) #probably 0.08 or less than 8% difference from composite
+num_miss = int(sys.argv[7]) #number missing in locus alignment
 
 #read in informative site names
 with open(path_to_sites) as file:
@@ -36,7 +39,7 @@ with open(path_to_seq_lengths, newline = '') as file:
     contigs = dict(csv.reader(file, delimiter='\t')) #SISRS_contig-2    351
 
 contigcounts = dict(Counter(sites.keys())) #number of variable sites
-high_count_contigs = [k for k, v in contigcounts.items() if int(v) > min_threshold and int(contigs[k]) > 160]
+high_count_contigs = [k for k, v in contigcounts.items() if int(v) > min_threshold and int(contigs[k]) > length_of_locus]
 
 composite = SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))     #>SISRS_contig-2000001 186 nucleotides
 
@@ -45,6 +48,8 @@ with open(outPath+'/TaxonList.txt') as f:
     taxon_list = sorted([x.rstrip() for x in taxon_list])
 
 num_sp = len(taxon_list)
+num_sp = num_sp - num_miss
+
 
 #see https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.5260
 
@@ -102,7 +107,7 @@ for k in high_count_contigs:
                             distances[sp]+=1
                 distances[sp] = distances[sp] / len(seq2.replace('-',''))
                 #print(distances[sp])
-        if max(distances.values()) < 0.08:
+        if max(distances.values()) < max_dist:
             good_contigs[k] = contigcounts[k]
         else:
             print(sorted(distances.values()))
