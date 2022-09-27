@@ -88,6 +88,8 @@ for con in contig_list:
     mafft_command = f"mafft --auto --thread {thr} {con_p_in} > {con_p_out}"
     system(mafft_command)
 
+#good ideas here: http://www.mossmatters.com/blog/SequenceClusters.html
+
 for k in high_count_contigs:
     distances = {}    
     a_file = newnew_contig_folder + k + '.fasta'
@@ -101,6 +103,10 @@ for k in high_count_contigs:
                 #print(seq2)
                 #print(str(composite_seq.seq))
                 distances[sp] = 0
+                if len(seq2) != len(composite_seq):
+                    print(composite_seq)
+                    print(seq2)
+                    sys.exit("Seqs don't match")
                 for i in range(len(seq2)): #go through seq site by site to get distance
                     if seq2[i] != '-':
                         if composite_seq[i] != seq2[i]:
