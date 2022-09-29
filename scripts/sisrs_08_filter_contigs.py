@@ -95,10 +95,10 @@ for k in high_count_contigs:
     a_file = newnew_contig_folder + k + '.fasta'
     if path.exists(a_file):
         alignment = SeqIO.to_dict(SeqIO.parse(a_file, "fasta"))
-        composite_seq = composite[k]
+        composite_seq = str(alignment[k].seq).upper()
         
         for sp, seq in alignment.items():
-            if sp in taxon_list:
+            if sp in taxon_list: #not composite
                 seq2 = str(seq.seq).upper()
                 #print(seq2)
                 #print(str(composite_seq.seq))
