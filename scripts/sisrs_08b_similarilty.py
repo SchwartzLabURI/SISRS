@@ -4,6 +4,7 @@ import csv
 import sys
 from Bio import SeqIO
 from os import system
+from math import ceil
 
 outpath = sys.argv[1]
 fasta = outpath + "/SISRS_Run/contigs_for_probes.fa"
@@ -60,10 +61,21 @@ print(loci_to_drop)
 
 #read fasta and remove loci
 contig_seqs = []
+total_length_probes = 0
+total_tiles_80 = 0
+total_tiles_60 = 0
 with open(fasta) as handle:
     for record in SeqIO.parse(handle, "fasta"):
         if record.id not in loci_to_drop:
             contig_seqs.append(record)
+            total_length_probes += len(str(record.seq))
+            total_tiles_80 += ceil(len(str(record.seq)) / 80)
+            total_tiles_60 += ceil(len(str(record.seq)) / 60)
+
+print(total_length_probes)
+print(total_tiles_60)
+print(total_tiles_80)
+
 contig_seqs.sort(key=lambda r: -len(r))
 
 if sys.argv[2] == 'ALL':

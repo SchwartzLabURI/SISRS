@@ -5,6 +5,7 @@ import sys
 from collections import Counter
 from Bio import SeqIO
 from os import path, mkdir, listdir, system
+from math import ceil
 
 #get file paths to alignment_pi_locs_m25.txt and contigs_SeqLength.tsv
 #path_to_seq_lengths: Path to .tsv where contig lengths are located.
@@ -118,13 +119,21 @@ for k in high_count_contigs:
         else:
             print(sorted(distances.values()))
 
-
+total_length_probes = 0
+total_tiles_80 = 0
+total_tiles_60 = 0
 with open(outPath + "/SISRS_Run/contigs_for_probes.fa", 'w') as f:
     for k, v in sorted(good_contigs.items(), key=lambda item: item[1]):    #line in good_contigs.items():
         print(v)
         f.write('>' + k +"\n")
         f.write(str(composite[k].seq) + "\n")
-        
+        total_length_probes += len(str(composite[k].seq))
+        total_tiles_80 += ceil(len(str(composite[k].seq)) / 80)
+        total_tiles_60 += ceil(len(str(composite[k].seq)) / 60)
+
+print(total_length_probes)
+print(total_tiles_60)
+print(total_tiles_80)
 
 #This function works similar to grep in R or bash, but it searches for an input string through
 #a list rather than a file/directory. Strings in the list 'stringList' that contain the substring 'searchString'
