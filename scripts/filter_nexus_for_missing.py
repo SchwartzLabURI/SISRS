@@ -98,6 +98,8 @@ def filter_nexus1(alignment_filename, data, locs, missing, bases):
 
 
 if __name__ == '__main__':
+    import argparse
+
     # Get arguments
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-f','--filename',action='store',nargs="?")

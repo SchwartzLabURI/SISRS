@@ -86,4 +86,5 @@ if __name__ == '__main__':
         filter_nexus(sisrs + f, ms)
         
     #get counts of sites per contig (sorted most to least)
-    count_sites_by_contig(sisrs, i)
+    for i in ms:
+        count_sites_by_contig(sisrs, i)
