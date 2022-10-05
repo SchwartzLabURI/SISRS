@@ -98,7 +98,14 @@ def filter_nexus1(alignment_filename, data, locs, missing, bases):
 
 
 if __name__ == '__main__':
-    alignment_filename = sys.argv[1]
-    missinglist = sys.argv[2]
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-f','--filename',action='store',nargs="?")
+    my_parser.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
+    args = my_parser.parse_args()
+
+    alignment_filename = args.filename
+    missinglist = args.missing #contains a list of missing
+
     filter_nexus(alignment_filename, missinglist)
 
