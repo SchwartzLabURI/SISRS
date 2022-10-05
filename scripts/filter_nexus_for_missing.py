@@ -18,7 +18,6 @@ from os import path
 import linecache
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-#from Bio.Alphabet import generic_dna, IUPAC, Gapped
 from Bio.Align import MultipleSeqAlignment, AlignInfo
 from Bio import AlignIO, SeqIO
 
@@ -44,7 +43,7 @@ def filter_nexus(alignment_filename, missing_list):
     for k in data:
         data[k] = list(data[k].seq)
 
-    for missing in missinglist:
+    for missing in missing_list:
         for bases in [['A', 'C', 'G', 'T', 'a', 'c', 'g', 't'], ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't', '-']]:
             filter_nexus1(alignment_filename, data, locs, int(missing), bases)
 
