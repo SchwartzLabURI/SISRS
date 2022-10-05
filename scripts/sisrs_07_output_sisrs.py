@@ -15,6 +15,7 @@ from subprocess import Popen
 from itertools import islice
 from get_alignment import *
 from filter_nexus_for_missing import *
+import gc
 
 def getData(outPath):
     '''
@@ -75,14 +76,14 @@ if __name__ == '__main__':
 
     numbi=alignment.numsnps() #prints numbers of snps, biallelic snps, and singletons
 
-    alignment = write_alignment(sisrs + '/alignment.nex', alignment) #write nexus alignments
+    write_alignment(sisrs + '/alignment.nex', alignment) #write nexus alignments
 
+    del(alignment)
+    gc.collect()
 
-    for i in ms:
-        i = int(i)
-        for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
-            filter_nexus(sisrs + f, i, True)
-            filter_nexus(sisrs + f, i, False)
+    for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
+        filter_nexus(sisrs + f, ms)
+        filter_nexus(sisrs + f, ms)
         
-        #get counts of sites per contig (sorted most to least)
-        count_sites_by_contig(sisrs, i)
+    #get counts of sites per contig (sorted most to least)
+    count_sites_by_contig(sisrs, i)
