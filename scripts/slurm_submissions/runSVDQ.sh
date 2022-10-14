@@ -8,7 +8,7 @@
 cd $SLURM_SUBMIT_DIR
 module load PAUP/4.0a168-centos64
 
-alignmentFile="svdquartets_tutorial/anomaly_zone.nex" #Change to the path to your phylip file
+alignmentFile="../../SISRS_Small_test/SISRS_Run/alignment_pi_m3_nogap.phylip-relaxed" #Change to the path to your phylip file - don't make the path too long
 logFile="${alignmentFile}.svdq.log"
 treeFile="${alignmentFile}.svdq.tre"
 
