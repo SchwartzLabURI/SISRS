@@ -30,8 +30,9 @@ def align_contigs(output_path, thr):
     for con in contig_list:
         con_p_in = os.path.join(path_in, con)
         con_p_out = os.path.join(path_out, con)
-        mafft_command = f"mafft --auto --thread {thr} {con_p_in} > {con_p_out}"
-        os.system(mafft_command)
+        if not os.path.exists(con_p_out):
+            mafft_command = f"mafft --auto --thread {thr} {con_p_in} > {con_p_out}"
+            os.system(mafft_command)
 
 if __name__ == '__main__':
 
