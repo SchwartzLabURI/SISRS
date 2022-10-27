@@ -81,6 +81,9 @@ if __name__ == '__main__':
 
     # obtain the directories and files needed for Ray
     ray_genome_dir, subset_reads = getDirs(sis)
+    
+    if os.path.exists(ray_genome_dir):
+        os.rmdir(ray_genome_dir)
 
     # Run the ray command
     runRay(ray_genome_dir,subset_reads,proc)
