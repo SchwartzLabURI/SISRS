@@ -48,7 +48,7 @@ ARRLEN=${#SPP[@]}
 
 for (( i = 0; i < $ARRLEN; i++ ))
 do
-    python3 sisrs_06d_pileup2.py -d $OUTFOLDER -mr $MINREAD -trh $THRESHOLD -s ${SPP[i]}
+    python3 sisrs_06d_pileup2.py -d $OUTFOLDER -m $MINREAD -t $THRESHOLD -s ${SPP[i]}
 done
 
 #move all .out and .err files to their correct dirs so they dont clutter the slurm submission directory
