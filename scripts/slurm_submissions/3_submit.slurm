@@ -2,10 +2,12 @@
 #SBATCH --job-name="3_step"
 #SBATCH --time=100:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=20   # CHANGE THIS to the number of processors
+#SBATCH --ntasks-per-node=36   # CHANGE THIS to the number of processors
 #SBATCH --mail-user="user@example.edu" #CHANGE THIS to your email address
-#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-type=ALL
 #SBATCH --exclusive
+#SBATCH --output=slurm_%x_%j.out
+#SBATCH --error=slurm_%x_%j.err
 
 cd $SLURM_SUBMIT_DIR
 
