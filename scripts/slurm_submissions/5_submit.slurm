@@ -2,9 +2,11 @@
 #SBATCH --job-name="5_step"
 #SBATCH --time=10:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=20   # CHANGE THIS to processor core(s) per node
+#SBATCH --ntasks-per-node=36   # CHANGE THIS to processor core(s) per node
 #SBATCH --mail-user="user@example.edu" #CHANGE THIS to your user email address
-#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-type=ALL
+#SBATCH --output=slurm_%x_%j.out
+#SBATCH --error=slurm_%x_%j.err
 #SBATCH --exclusive
 
 cd $SLURM_SUBMIT_DIR
@@ -23,6 +25,6 @@ module load SAMtools/1.10-GCC-8.3.0
 module load BEDTools/2.29.2-GCC-8.3.0
 
 
-P=20 #CHANGE THIS to the number of processors
+P=36 #CHANGE THIS to the number of processors
 DIR=~/SISRS_Small_test #CHANGE THIS to the analysis directory
 python3 sisrs_05_setup_sisrs.py -p $P -d $DIR
