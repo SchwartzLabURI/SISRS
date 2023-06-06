@@ -15,12 +15,12 @@ module purge
 
 #CHANGE THESE IF NOT ON A URI SYSTEM
 
-module load SPAdes/3.15.2-GCC-10.3.0
+module load BBMap/38.98-GCC-11.2.0
+module load SPAdes/3.15.3-GCC-11.2.0
+module load BLAST+/2.12.0-gompi-2021b
+module load Bowtie2/2.4.4-GCC-11.2.0
+module load sympy/1.9-foss-2021b
 module load SciPy-bundle/2021.10-foss-2021b
-module load BLAST+/2.11.0-gompi-2021a 
-module load Bowtie2/2.3.5.1-GCC-8.3.0
-module load BBMap/38.96-foss-2020b
-module load sympy/1.8-foss-2021a
 
 #    fo = sys.argv[1]
 #    taxon = sys.argv[2]
