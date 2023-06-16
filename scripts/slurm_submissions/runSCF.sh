@@ -19,4 +19,4 @@ ALIGNMENT=alignment_pi_m2_nogap_clean.phylip-relaxed #CHANGE to the file used to
 OUTPUT=ALGN1_SCF #CHANGE to a name that will indicate the output information relevant to this tree
 T=20 #CHANGE to the number of processors (20 or 36)
 
-iqtree2 -t $TREE -s $ALIGNMENT --scf 100 --prefix ALGN1_SCF -nt $T
+iqtree2 -t $TREE -s $ALIGNMENT --scf 100 --prefix $OUTPUT -nt $T
