@@ -79,11 +79,12 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
     assert len(contigList) > 0, 'Total site list not found in assembly folder'
 
     #Fetch sorted species data
-    dataLists = sorted(glob.glob(sisrs_dir + '/*/*_LocList'))
+    #dataLists = sorted(glob.glob(sisrs_dir + '/*/*_LocList'))
+    dataLists = sorted(glob.glob(sisrs_dir + '/*_LocList')) #LOCAL USE ONLY - FIX FOR REAL SISRS
     dataLists = [x for x in dataLists if 'contigs_LocList' not in x]
     splist=[os.path.basename(os.path.dirname(path)) for path in dataLists]
     speciesCount=len(dataLists)
-    assert len(dataLists) > 0, 'No species had data from the pileup'
+    assert speciesCount > 0, 'No species had data from the pileup'
 
     allLists = contigList+dataLists
 
@@ -95,7 +96,7 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
     for rows in zip(*files):
         rowList = list(map(lambda foo: foo.replace('\n', ''), list(rows)))
         speciesData = rowList[1:(speciesCount+1)]
-        newrow = filter_sites(speciesData, rowList,num_missing)
+        newrow = filter_sites(speciesData, rowList[0],num_missing)
         if len(newrow)==2:  #we have data that is useful
             outfile.write(" ".join(newrow))
             outfile.write('\n')
@@ -109,16 +110,11 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
     outfile.close()
     return site_dict_labels,species_data
 
-def filter_sites(speciesData, rowList,num_missing):
-    newrow = []
+def filter_sites(speciesData,contig_site,num_missing):
     if speciesData.count("N") <= num_missing and len(set(filter(lambda a: a != "N", speciesData))) > 1: #enough data points & variation
-        newrow.append(rowList[0])
-        d = []
-        for j in range(0, (len(speciesData))):
-            d.append(speciesData[j])
-            s = "".join(d)
-        newrow.append(s)
-    return newrow
+        return [contig_site, "".join(speciesData)]
+    else:
+        return []
 
 def generic_write_alignment(fi, ntax, varsites, alignment_locations, species_data):
     spp = sorted(species_data.keys())
@@ -141,7 +137,7 @@ def write_alignment(fi,site_dict_labels, species_data):
     Returns: none
     '''
 
-    spp = species_data.keys()
+    spp = sorted(species_data.keys())
     ntax = len(spp)
     varsites = len(site_dict_labels)
     alignment_locations = sorted(site_dict_labels.keys())
@@ -151,7 +147,7 @@ def write_alignment(fi,site_dict_labels, species_data):
 
     #Process alignment_bi.nex
     biallelic_num = sum(x == 2 for x in site_dict_labels.values())
-    loc = [k for k,v in site_dict_labels.items() if v == 2 or v==1]
+    loc = sorted([k for k,v in site_dict_labels.items() if v == 2 or v==1])
     flags = []
     for i in sorted(site_dict_labels.keys()):
         if site_dict_labels[i] == 2:
@@ -168,7 +164,7 @@ def write_alignment(fi,site_dict_labels, species_data):
 
     #Process alignment_pi.nex
     singletons = sum(x == 1 for x in site_dict_labels.values())
-    loc = [k for k, v in site_dict_labels.items() if v > 1] #keep non singletons
+    loc = sorted([k for k, v in site_dict_labels.items() if v > 1]) #keep non singletons
     flags = []
     for i in sorted(site_dict_labels.keys()):
         if site_dict_labels[i] >1:
