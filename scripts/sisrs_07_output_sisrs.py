@@ -71,14 +71,12 @@ if __name__ == '__main__':
     ms = args.missing #contains a list of missing
 
     composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
+    site_dict_labels,species_data = get_phy_sites(sisrs,composite_dir,len(sisrs_tax_dirs) - 2)
+    numsnps(site_dict_labels) #prints numbers of snps, biallelic snps, and singletons
+    write_alignment(sisrs+'/alignment.nex',site_dict_labels, species_data)
 
-    alignment=get_phy_sites(sisrs, composite_dir, len(sisrs_tax_dirs) - 2)
-
-    numbi=alignment.numsnps() #prints numbers of snps, biallelic snps, and singletons
-
-    write_alignment(sisrs + '/alignment.nex', alignment) #write nexus alignments
-
-    del(alignment)
+    del site_dict_labels
+    del species_data
     gc.collect()
 
     for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
