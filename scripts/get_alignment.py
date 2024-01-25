@@ -79,8 +79,7 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
     assert len(contigList) > 0, 'Total site list not found in assembly folder'
 
     #Fetch sorted species data
-    #dataLists = sorted(glob.glob(sisrs_dir + '/*/*_LocList'))
-    dataLists = sorted(glob.glob(sisrs_dir + '/*_LocList')) #LOCAL USE ONLY - FIX FOR REAL SISRS
+    dataLists = sorted(glob.glob(sisrs_dir + '/*/*_LocList'))
     dataLists = [x for x in dataLists if 'contigs_LocList' not in x]
     splist=[os.path.basename(os.path.dirname(path)) for path in dataLists]
     speciesCount=len(dataLists)
