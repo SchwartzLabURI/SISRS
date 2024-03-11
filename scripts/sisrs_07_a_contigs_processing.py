@@ -6,7 +6,6 @@ import gzip
 import subprocess
 import argparse
 from subprocess import call
-from cmdCheck import *
 from Bio.Seq import Seq
 from Bio import SeqIO
 from os import listdir

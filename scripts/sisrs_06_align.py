@@ -35,7 +35,11 @@ def runBowtie(outPath,threads,sp):
         '.bam'])
     print(outbam)
 
-    readfolder = outPath+'/'+'Reads/TrimReads/'+sp
+    if path.isdir(outPath + "/Reads/TrimReads_nocl"):
+        readfolder = outPath + "/Reads/TrimReads_nocl/"+sp
+    else:
+        readfolder = outPath + "/Reads/TrimReads/"+sp
+
     bowtie_command = [
         'bowtie2 -p ',
         str(threads),

@@ -18,42 +18,53 @@ from os import path
 import linecache
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-#from Bio.Alphabet import generic_dna, IUPAC, Gapped
 from Bio.Align import MultipleSeqAlignment, AlignInfo
 from Bio import AlignIO, SeqIO
 
-def filter_nexus(alignment_filename, missing_str, gap_allowed):
+def filter_nexus(alignment_filename, missing_list):
     '''
-    Writes phylip file reducing data to max missing per site
-    Prints info about output
+    Reads nexus, passes to filtering function that Writes phylip file reducing data to max missing per site
 
     Arguments:
     alignment_filename (string): path to alignment file (in theory can use different types but since it gets loc IDs from nexus format.... (fix this)
-    missing_str (string): number of taxa allowed to be missing
-    gap_allowed (bool): whether gaps should be included
+    missinglist (list): number of taxa allowed to be missing
 
     Returns: none
 
     '''
-    bases = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't']
-    if gap_allowed:
-        bases.append('-')
-
     formats = {'nex':'nexus', 'phy':'phylip-relaxed', 'fa':'fasta'}
     fformat = formats[alignment_filename.split('.')[-1]]
-    missing = int(missing_str)
     data = SeqIO.to_dict(SeqIO.parse(alignment_filename, fformat))
 
     #Extract loc IDs from nexus
     locline = linecache.getline(alignment_filename, 7) # ASSUMES NEXUS (fix?)
     locs = locline.split()[1:-1] #Remove brackets from top and bottom
 
+    for k in data:
+        data[k] = list(data[k].seq)
+
+    for missing in missing_list:
+        for bases in [['A', 'C', 'G', 'T', 'a', 'c', 'g', 't'], ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't', '-']]:
+            filter_nexus1(alignment_filename, data, locs, int(missing), bases)
+
+def filter_nexus1(alignment_filename, data, locs, missing, bases):
+    '''
+    Writes phylip file reducing data to max missing per site
+    Prints info about output
+
+    Arguments:
+    alignment_filename (string): path to alignment file - not reading data in this function, just used for path
+    data (dict): species: sequence as list
+    missing (int): number of taxa allowed to be missing
+    bases (list): list of bases - either includes gap or not
+
+    Returns: none
+
+    '''
+
     species = list(data.keys())
     minsp = len(species)-missing
     newlocs = list()
-
-    for k in data:
-        data[k] = list(data[k].seq)
 
     newdata = {sp: list() for sp in species}
     for i in range(len(data[species[0]])):
@@ -68,27 +79,35 @@ def filter_nexus(alignment_filename, missing_str, gap_allowed):
         seq = SeqRecord(Seq(''.join(v)), id=k)
         datalist.append(seq)
 
-    if gap_allowed:
-        SeqIO.write(datalist, path.dirname(alignment_filename) + '/'+ path.basename(alignment_filename).split('.')[0] + '_m'+str(missing_str)+'.phylip-relaxed', "phylip-relaxed")
-        locfile = open(path.dirname(alignment_filename)+'/'+ path.basename(alignment_filename).replace('.nex','') + '_locs_m'+str(missing_str)+'.txt', 'w')    
+    if '-' in bases:
+        SeqIO.write(datalist, path.dirname(alignment_filename) + '/'+ path.basename(alignment_filename).split('.')[0] + '_m'+str(missing)+'.phylip-relaxed', "phylip-relaxed")
+        locfile = open(path.dirname(alignment_filename)+'/'+ path.basename(alignment_filename).replace('.nex','') + '_locs_m'+str(missing)+'.txt', 'w')    
     else:
-        SeqIO.write(datalist, path.dirname(alignment_filename) + '/'+ path.basename(alignment_filename).split('.')[0] + '_m'+str(missing_str)+'_nogap.phylip-relaxed', "phylip-relaxed")
-        locfile = open(path.dirname(alignment_filename)+'/'+ path.basename(alignment_filename).replace('.nex','') + '_locs_m'+str(missing_str)+'_nogap.txt', 'w')
+        SeqIO.write(datalist, path.dirname(alignment_filename) + '/'+ path.basename(alignment_filename).split('.')[0] + '_m'+str(missing)+'_nogap.phylip-relaxed', "phylip-relaxed")
+        locfile = open(path.dirname(alignment_filename)+'/'+ path.basename(alignment_filename).replace('.nex','') + '_locs_m'+str(missing)+'_nogap.txt', 'w')
 
     locfile.write("\n".join(newlocs))
     locfile.close()
     origLength = len(data[species[0]])
     newLength = len(newlocs)
 
-    if gap_allowed:
-        print('With '+str(missing_str)+' taxa allowed to be missing, '+str(origLength)+' sites from '+path.basename(alignment_filename)+' ('+str(len(species)-2)+' allowed missing) are reduced to '+str(len(newlocs))+' sites ('+str(origLength-newLength)+' sites or '+str('%.2f' % (((origLength-newLength)/origLength)*100))+'% lost)')
+    if '-' in bases:
+        print('With '+str(missing)+' taxa allowed to be missing, '+str(origLength)+' sites from '+path.basename(alignment_filename)+' ('+str(len(species)-2)+' allowed missing) are reduced to '+str(len(newlocs))+' sites ('+str(origLength-newLength)+' sites or '+str('%.2f' % (((origLength-newLength)/origLength)*100))+'% lost)')
     else:
-        print('With '+str(missing_str)+' taxa allowed to be missing, and with no gaps allowed, '+str(origLength)+' sites from '+path.basename(alignment_filename)+' ('+str(len(species)-2)+' allowed missing) are reduced to '+str(len(newlocs))+' sites ('+str(origLength-newLength)+' sites or '+str('%.2f' % (((origLength-newLength)/origLength)*100))+'% lost)')
+        print('With '+str(missing)+' taxa allowed to be missing, and with no gaps allowed, '+str(origLength)+' sites from '+path.basename(alignment_filename)+' ('+str(len(species)-2)+' allowed missing) are reduced to '+str(len(newlocs))+' sites ('+str(origLength-newLength)+' sites or '+str('%.2f' % (((origLength-newLength)/origLength)*100))+'% lost)')
 
 
 if __name__ == '__main__':
-    alignment_filename = sys.argv[1]
-    missing_str = sys.argv[2]
-    gap_allowed = sys.argv[3]
-    filter_nexus(alignment_filename, missing_str, gap_allowed)
+    import argparse
+
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-f','--filename',action='store',nargs="?")
+    my_parser.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
+    args = my_parser.parse_args()
+
+    alignment_filename = args.filename
+    missinglist = args.missing #contains a list of missing
+
+    filter_nexus(alignment_filename, missinglist)
 

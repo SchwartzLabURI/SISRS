@@ -36,7 +36,11 @@ def obtainDir(outPath):
     '''
 
     #Set TrimRead + SISRS directories based off of script folder location
-    trim_read_dir =  outPath+"/Reads/TrimReads"
+
+    if path.isdir(outPath + "/Reads/TrimReads_nocl"):
+        trim_read_dir = outPath + "/Reads/TrimReads_nocl"
+    else:
+        trim_read_dir = outPath + "/Reads/TrimReads"
 
     #taxa come from taxonlist file
     with open(outPath+'/TaxonList.txt') as f:
