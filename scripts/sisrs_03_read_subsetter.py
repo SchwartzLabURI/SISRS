@@ -40,7 +40,7 @@ def setupDir(sisrs_dir,genomeSize):
       subset_output_dir (string)
       subset_log_dir (string) 
       trim_read_tax_dirs (list)
-      subsetDepth (float)
+      subsetDepth (int)
     '''
 
     #Set TrimRead directories based off of script folder location
@@ -71,7 +71,7 @@ def setupDir(sisrs_dir,genomeSize):
     subset_log_dir = trim_read_dir+"/subsetOutput/"
 
     #Calculate subset depth
-    subsetDepth = [int((10*genomeSize)/len(trim_read_tax_dirs))]
+    subsetDepth = int((10*genomeSize)/len(trim_read_tax_dirs))
 
     return trim_read_dir, subset_output_dir, subset_log_dir, trim_read_tax_dirs, subsetDepth
 
