@@ -262,11 +262,10 @@ def subset(df,trim_read_dir,subset_output_dir,subset_log_dir):
     for i in range(len(df)):
         ToSample = int(df.loc[i, "ToSample"])
         Basecount = int(df.loc[i, "Basecount"])
+        Taxon = str(df.loc[i, "Taxon"])
+        Dataset = str(df.loc[i, "Dataset"])
         if ToSample < Basecount:
           
-            Taxon = str(df.loc[i, "Taxon"])
-            Dataset = str(df.loc[i, "Dataset"])
-            
             if df.loc[i, "Paired"] == 'True':
                 subset_command = [
                     'reformat.sh',
@@ -288,6 +287,10 @@ def subset(df,trim_read_dir,subset_output_dir,subset_log_dir):
                     '&>',
                     '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=Dataset)]
             check_call(subset_command)
+        else:
+            cp_command = ['cp', '{}'.format(trim_read_dir+"/"+Taxon+"/"+Dataset+"_Trim*"), '{}'.format(subset_output_dir)]
+            os.system(" ".join(cp_command)) 
+
 
 if __name__ == '__main__':
 
