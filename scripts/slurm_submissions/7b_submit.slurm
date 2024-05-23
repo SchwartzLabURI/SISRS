@@ -20,4 +20,4 @@ P=36 #CHANGE THIS to the number of processors
 
 OUTFOLDER=../../SISRS_Small_test/ #CHANGE THIS to the analysis directory
 
-python3 sisrs_07_b_contigs_alignment.py -p $P -d $OUTFOLDER
+./sisrs contigs_alignment -p $P -d $OUTFOLDER

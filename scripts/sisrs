@@ -16,9 +16,9 @@ from sisrs_06d_pileup2 import *
 from sisrs_07_output_sisrs import *
 from sisrs_07_a_contigs_processing import *
 from sisrs_07_b_contigs_alignment import *
-#from sisrs_08_filter_contigs import *
-#from sisrs_08b_similarilty import *
-
+from sisrs_08_filter_contigs import *
+from sisrs_08b_similarilty import *
+from filter_nexus_for_missing import *
 
 def main():
     parser = argparse.ArgumentParser()
@@ -72,12 +72,31 @@ def main():
     setup_parser7.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
 
     setup_parser7a = subparsers.add_parser("contig_processing", help="")
+    setup_parser7a.add_argument('-t','--threshold',action='store',nargs="?", type = int)
+    setup_parser7a.add_argument('-d', '--dir', action='store',nargs="?")
+    setup_parser7a.add_argument('-c', '--cov', action='store',default=3,nargs="?", type = int)
+    setup_parser7a.add_argument('-z', '--hz', action='store',default=0.01,nargs="?", type = float)
 
     setup_parser7b = subparsers.add_parser("contig_alignment", help="")
+    setup_parser7b.add_argument('-d', '--dir', action='store', nargs="?")
+    setup_parser7b.add_argument('-p', '--proc', action='store', default=1, nargs="?", type=int)
 
     setup_parser8 = subparsers.add_parser("filter", help="Filter contigs")
+    setup_parser8.add_argument('-d', '--outPath', action='store', nargs="?")
+    setup_parser8.add_argument('-a', '--alignment', action='store', nargs="?")
+    setup_parser8.add_argument('-t', '--min_threshold', type=int, action='store')
+    setup_parser8.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
+    setup_parser8.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
+    setup_parser8.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
+    setup_parser8.add_argument('-n', '--num_miss', type=int, action='store', default=-1, nargs="?")
 
     setup_parser8b = subparsers.add_parser("filter2", help="Filter contigs based on similarity")
+    setup_parser8b.add_argument('-d', '--outpath', action='store', nargs="?")
+    setup_parser8b.add_argument('-m', '--final_total', action='store', default='ALL')
+
+    setup_parser_filternexus = subparsers.add_parser("filter_nexus", help="Filter nexus alignment for missing")
+    setup_parser_filternexus.add_argument('-f', '--filename', action='store', nargs="?")
+    setup_parser_filternexus.add_argument('-m', '--missing', type=int, action='store', default=[0], nargs="*")
 
     args = parser.parse_args()
 
@@ -143,6 +162,46 @@ def main():
         else:
             raise NotImplementedError(
                 f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "contig_processing":
+        if args.directory:
+            return run7a(args.threshold, args.dir, args.cov, args.hz)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "contig_alignment":
+        if args.output_path:
+            return align_contigs(args.dir, args.proc)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "filter":
+        if args.outPath and args.alignment and args.min_threshold:
+            return all_of_step8(args.outPath, args.alignment_file, args.min_threshold, args.processors, args.length_of_locus, args.max_dist, args.num_miss)
+        else:
+            raise NotImplementedError(
+                f"Path and alignment file and a threshold must be provided.",
+            )
+
+    elif args.command == "filter2":
+        if args.outpath:
+            return all_of_8b(args.outPath, args.final_total)
+        else:
+            raise NotImplementedError(
+                f"Path and alignment file and a threshold must be provided.",
+            )
+
+    elif args.command == "filter_nexus":
+        if args.alignment_filename:
+            return filter_nexus(args.alignment_filename, args.missinglist)
+        else:
+            raise NotImplementedError(
+                f"Alignment file must be provided.",
             )
 
     elif args.command == "trimmer":

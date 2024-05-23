@@ -233,6 +233,15 @@ def contig_driver(output_path):
         bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz -mM -o {vcf_zipped}"
         os.system(bcf_command)
 
+def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh):
+    contig_driver(output_path)
+
+    #call consensus and filter by allelic coverage and ratio of heterozygous sites
+    vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
+
+    #recompile sequence of each taxon by locus
+    format_consensus_output(output_path, taxa_threshold)
+
 if __name__ == '__main__':
 
     # python3 sisrs_07_a_contigs_processing.py -t $T -dir $OUTFOLDER
@@ -250,10 +259,4 @@ if __name__ == '__main__':
     cov_thresh = args.cov
     hz_thresh = args.hz
 
-    contig_driver(output_path)
-
-    #call consensus and filter by allelic coverage and ratio of heterozygous sites
-    vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
-
-    #recompile sequence of each taxon by locus
-    format_consensus_output(output_path, taxa_threshold)
+    run7a(output_path, taxa_threshold, cov_thresh, hz_thresh)

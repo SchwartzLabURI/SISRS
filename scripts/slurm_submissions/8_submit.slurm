@@ -24,4 +24,4 @@ LOC_LENGTH=160
 MAX_DIST=0.08 #CHANGE - 0.08 = throw out loci more than 8% dif from composite
 NUM_MISS=0 #CHANGE number missing in locus alignment
 
-python3 sisrs_08_filter_contigs.py $OUTFOLDER $ALIGNMENT_INFO $THRESHOLD $P $LOC_LENGTH $MAX_DIST $NUM_MISS
+./sisrs filter -d $OUTFOLDER -a $ALIGNMENT_INFO -t $THRESHOLD -p $P -l $LOC_LENGTH -m $MAX_DIST -n $NUM_MISS

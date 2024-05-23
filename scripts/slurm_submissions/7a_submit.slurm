@@ -19,4 +19,4 @@ T=1 #CHANGE THIS to the threshold number
 
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 
-python3 sisrs_07_a_contigs_processing.py -t $T -d $OUTFOLDER
+./sisrs contigs_processing -t $T -d $OUTFOLDER

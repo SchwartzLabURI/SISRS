@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="7_step"
+#SBATCH --job-name="filter_nexus"
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel
@@ -25,4 +25,4 @@ module load BEDTools/2.29.2-GCC-8.3.0
 #python3 sisrs_07_output_sisrs.py -m <list of number of species allowed to be missing> -d <main output folder>
 OUTFOLDER=../../solanum #CHANGE to analysis directory
 
-python3 filter_nexus_for_missing.py -m 10 20 30 40 -f ${OUTFOLDER}/SISRS_Run/alignment_pi.nex
+./sisrs filter_nexus -m 4 8 -f ${OUTFOLDER}/SISRS_Run/alignment_pi.nex
