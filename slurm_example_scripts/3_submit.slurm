@@ -20,4 +20,4 @@ module load BBMap/39.01-GCC-11.3.0
 GENOME=1000000000 #CHANGE THIS to the approximate size of your genome
 DIR=../../SISRS_Small_test #CHANGE this to your analysis folder
 
-./sisrs subset -gs $GENOME -d $DIR
+../scripts/sisrs subset -gs $GENOME -d $DIR

@@ -4,8 +4,11 @@
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=10   # processor core(s) per node
 #SBATCH --mail-user="rsschwartz@uri.edu" #user email address
-#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-type=ALL
+#SBATCH --output=slurm_%x_%j.out
+#SBATCH --error=slurm_%x_%j.err
 #SBATCH --exclusive
+
 cd $SLURM_SUBMIT_DIR
 
 module purge
@@ -19,4 +22,4 @@ T=1 #CHANGE THIS to the threshold number
 
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 
-./sisrs contigs_processing -t $T -d $OUTFOLDER
+../scripts/sisrs contig_processing -t $T -d $OUTFOLDER

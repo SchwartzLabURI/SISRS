@@ -84,7 +84,7 @@ def main():
     setup_parser8 = subparsers.add_parser("filter", help="Filter contigs")
     setup_parser8.add_argument('-d', '--outPath', action='store', nargs="?")
     setup_parser8.add_argument('-a', '--alignment', action='store', nargs="?")
-    setup_parser8.add_argument('-t', '--min_threshold', type=int, action='store')
+    setup_parser8.add_argument('-t', '--min_threshold', type=int, action='store',default=1,nargs="?")
     setup_parser8.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
     setup_parser8.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
     setup_parser8.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
@@ -165,15 +165,15 @@ def main():
             )
 
     elif args.command == "contig_processing":
-        if args.directory:
-            return run7a(args.threshold, args.dir, args.cov, args.hz)
+        if args.dir:
+            return run7a(args.dir +'/', args.threshold, args.cov, args.hz)
         else:
             raise NotImplementedError(
                 f"Analysis directory must be provided.",
             )
 
     elif args.command == "contig_alignment":
-        if args.output_path:
+        if args.dir:
             return align_contigs(args.dir, args.proc)
         else:
             raise NotImplementedError(
@@ -181,24 +181,38 @@ def main():
             )
 
     elif args.command == "filter":
-        if args.outPath and args.alignment and args.min_threshold:
-            return all_of_step8(args.outPath, args.alignment_file, args.min_threshold, args.processors, args.length_of_locus, args.max_dist, args.num_miss)
+        if args.outPath:
+            if args.alignment:
+                if args.min_threshold:
+                    print(args)
+                    return all_of_step8(args.outPath, args.alignment, args.min_threshold, args.processors, args.length_of_locus, args.max_dist, args.num_miss)
+                else:
+                    print(args)
+                    raise NotImplementedError(
+                        f"a threshold must be provided.",
+                    )
+            else:
+                print(args)
+                raise NotImplementedError(
+                    f"an alignment must be provided.",
+                )
         else:
+            print(args)
             raise NotImplementedError(
-                f"Path and alignment file and a threshold must be provided.",
+                f"a path must be provided.",
             )
 
     elif args.command == "filter2":
         if args.outpath:
-            return all_of_8b(args.outPath, args.final_total)
+            return all_of_8b(args.outpath, args.final_total)
         else:
             raise NotImplementedError(
                 f"Path and alignment file and a threshold must be provided.",
             )
 
     elif args.command == "filter_nexus":
-        if args.alignment_filename:
-            return filter_nexus(args.alignment_filename, args.missinglist)
+        if args.filename:
+            return filter_nexus(args.filename, args.missing)
         else:
             raise NotImplementedError(
                 f"Alignment file must be provided.",

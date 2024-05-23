@@ -19,4 +19,4 @@ module load Biopython/1.83-foss-2023b #Python/3.11.5
 D=../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
 DIR=../../SISRS_Small_test #CHANGE THIS to the path for the output of your analysis
 
-./sisrs setup -d $D -dir $DIR
+../scripts/sisrs setup -d $D -dir $DIR

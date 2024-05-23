@@ -24,4 +24,4 @@ SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-./sisrs pileup -d $OUTFOLDER -s ${SPP[$SLURM_ARRAY_TASK_ID]}
+../scripts/sisrs pileup -d $OUTFOLDER -s ${SPP[$SLURM_ARRAY_TASK_ID]}

@@ -93,7 +93,4 @@ if __name__ == '__main__':
     my_parser.add_argument('-m', '--final_total', action='store', default='ALL')
     args = my_parser.parse_args()
 
-    outpath = args.outpath
-    final_total = args.final_total
-
-    all_of_8b(outpath, final_total)
+    all_of_8b(args.outpath, args.final_total)

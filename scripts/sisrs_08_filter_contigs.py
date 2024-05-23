@@ -157,7 +157,7 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d', '--outPath', action='store', nargs="?")
     my_parser.add_argument('-a', '--alignment', action='store', nargs="?")
-    my_parser.add_argument('-t', '--min_threshold', type=int, action='store')
+    my_parser.add_argument('-t', '--min_threshold', type=int, action='store',default=1,nargs="?")
     my_parser.add_argument('-p','--processors', type=int ,action='store',default=1,nargs="?")
     my_parser.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
     my_parser.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
@@ -165,11 +165,11 @@ if __name__ == '__main__':
     args = my_parser.parse_args()
 
     outPath = args.outPath  #outPath = '../../SISRS_Small_test'
-    alignment_file = args.alignment
+    alignment = args.alignment
     min_threshold = args.min_threshold #number of variable sites (not as described above)
     processors = args.processors
     length_of_locus = args.length_of_locus #160 = 2 probes
     max_dist = args.max_dist #probably 0.08 or less than 8% difference from composite
     num_miss = args.num_miss #number missing in locus alignment
 
-    all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_locus, max_dist, num_miss)
+    all_of_step8(outPath, alignment, min_threshold, processors, length_of_locus, max_dist, num_miss)

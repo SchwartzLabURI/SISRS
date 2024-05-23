@@ -4,9 +4,9 @@
 #SBATCH --nodes=1  # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE to the number of processor core(s) per node
 #SBATCH --mail-user="user@example.edu" #CHANGE to your email address
-#SBATCH --mail-type=END,FAIL
-#SBATCH --output="out_scfRun"
-#SBATCH --error="err_scfRun"
+#SBATCH --mail-type=ALL
+#SBATCH --output=slurm_%x_%j.out
+#SBATCH --error=slurm_%x_%j.err
 
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
 

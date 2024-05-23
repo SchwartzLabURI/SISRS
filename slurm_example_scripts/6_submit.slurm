@@ -25,6 +25,6 @@ ARRLEN=${#SPP[@]}
 
 for (( i = 0; i < $ARRLEN; i++ ))
 do
-    ./sisrs align -d $OUTFOLDER -p $PROCESSORS -f ${SPP[i]}
+    ../scripts/sisrs align -d $OUTFOLDER -p $PROCESSORS -f ${SPP[i]}
 done
 

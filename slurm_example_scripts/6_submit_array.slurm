@@ -29,4 +29,4 @@ SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
 echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
-./sisrs align -d $OUTFOLDER -p $PROCESSORS -f ${SPP[$SLURM_ARRAY_TASK_ID]}
+../scripts/sisrs align -d $OUTFOLDER -p $PROCESSORS -f ${SPP[$SLURM_ARRAY_TASK_ID]}

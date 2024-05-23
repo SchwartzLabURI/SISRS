@@ -25,4 +25,4 @@ DIR=../../SISRS_Small_test #CHANGE THIS to the analysis (output) directory
 
 #Note - the only taxa used will be in TaxonList.txt so edit that for fewer taxa
 
-./sisrs trimmer -p $P -d $D -dir $DIR
+../scripts/sisrs trimmer -p $P -d $D -dir $DIR

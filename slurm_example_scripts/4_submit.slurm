@@ -20,4 +20,5 @@ module load Ray/2.3.1-foss-2019b
 
 P=36 #CHANGE THIS to the number of processors
 DIR=../../SISRS_Small_test #CHANGE THIS to the analysis directory
-./sisrs composite -p $P -d $DIR
+
+../scripts/sisrs composite -p $P -d $DIR

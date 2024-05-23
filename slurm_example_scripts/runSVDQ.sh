@@ -4,6 +4,9 @@
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node
 #SBATCH --mail-user="user@example.edu" #CHANGE to your email
+#SBATCH --mail-type=ALL
+#SBATCH --output=slurm_%x_%j.out
+#SBATCH --error=slurm_%x_%j.err
 
 cd $SLURM_SUBMIT_DIR
 module load PAUP/4.0a168-centos64

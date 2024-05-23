@@ -254,9 +254,4 @@ if __name__ == '__main__':
 
     args = my_parser.parse_args()
 
-    output_path = args.dir +'/'
-    taxa_threshold = args.threshold
-    cov_thresh = args.cov
-    hz_thresh = args.hz
-
-    run7a(output_path, taxa_threshold, cov_thresh, hz_thresh)
+    run7a(args.dir +'/', args.threshold, args.cov, args.hz)

@@ -24,5 +24,5 @@ ARRLEN=${#SPP[@]}
 
 for (( i = 0; i < $ARRLEN; i++ ))
 do
-    ./sisrs pileup -d $OUTFOLDER -s ${SPP[i]}
+    ../scripts/sisrs pileup -d $OUTFOLDER -s ${SPP[i]}
 done
