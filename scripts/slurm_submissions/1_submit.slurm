@@ -16,7 +16,7 @@ module purge
 
 module load Biopython/1.83-foss-2023b #Python/3.11.5
 
-D=../../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
+D=../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
 DIR=../../SISRS_Small_test #CHANGE THIS to the path for the output of your analysis
 
-python3 sisrs_01_folder_setup.py -d $D -dir $DIR
+./sisrs setup -d $D -dir $DIR

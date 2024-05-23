@@ -76,6 +76,14 @@ def faidx(outPath, sp):
     faid = ['samtools faidx ', f, '/contigs.fa' ] #samtools faidx SISRS_DIR/TAXA/contigs.fa
     os.system("".join(faid))
 
+def run6b(sis, sp):
+    #    sp = sp.rstrip("/")
+    print(sis, sp)
+
+    pileup(sis, sp)
+    specific_genome(sis, sp)
+    faidx(sis, sp)
+
 if __name__ == '__main__':
 
     # Get arguments
@@ -86,9 +94,5 @@ if __name__ == '__main__':
 
     sis = args.directory
     sp = args.species
-#    sp = sp.rstrip("/")
-    print(sis, sp)
 
-    pileup(sis,sp)
-    specific_genome(sis, sp)
-    faidx(sis, sp)
+    run6b(sis, sp)

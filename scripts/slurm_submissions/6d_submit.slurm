@@ -16,7 +16,7 @@ module purge
 module load Biopython/1.83-foss-2023b
 module load SAMtools/1.16.1-GCC-11.3.0
 
-OUTFOLDER=~/SISRS_Small_test #CHANGE to analysis directory
+OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 MINREAD=3 #CHANGE to set the threshold for the number of reads to call a site
 THRESHOLD=1 #CHANGE to set the threshold [<=1] for the proportion of sites required to be the same to call a site
 
@@ -25,5 +25,5 @@ ARRLEN=${#SPP[@]}
 
 for (( i = 0; i < $ARRLEN; i++ ))
 do
-    python3 sisrs_06d_pileup2.py -d $OUTFOLDER -m $MINREAD -t $THRESHOLD -s ${SPP[i]}
+    ./sisrs pileup2 -d $OUTFOLDER -m $MINREAD -t $THRESHOLD -s ${SPP[i]}
 done

@@ -316,6 +316,28 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
                     '{outDir}out_{fileName}_Trim'.format(outDir=trim_output,fileName=file_name)]
                 check_call(pe_trim_command)
 
+def run2(datadir, outputdir, processors):
+    bba = findAdapter()  # returns path to adapter file in bbduk
+    tl = get_taxa(outputdir)  # get taxa from TaxonList.txt
+    out = setup(datadir, outputdir, tl)  # list of the folders
+    # raw_read_dir          --> 0
+    # trim_read_dir         --> 1
+    # trim_output           --> 2
+    # raw_fastqc_output     --> 3
+    # trim_fastqc_output    --> 4
+    # raw_read_tax_dirs     --> 5
+
+    # fastqc raw data
+    fastqcCommand(processors, out[3], datadir, tl)  # raw_fastqc_output, raw_read_dir=datadir
+
+    print(out[5])
+    print(out[1])
+    print(out[2])
+    trim(out[5], out[1], bba, out[2], [])  # raw_read_tax_dirs, trim_read_dir, path to adapters, trim_output
+
+    # fastqc trimmed data
+    fastqcCommand(processors, out[4], out[1], tl)  # trim_fastqc_output, trim_read_dir folders
+
 if __name__ == "__main__":
 
     # Get arguments
@@ -325,23 +347,4 @@ if __name__ == "__main__":
     my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
     args = my_parser.parse_args()
 
-    bba = findAdapter() #returns path to adapter file in bbduk
-    tl = get_taxa(args.outputdir) #get taxa from TaxonList.txt
-    out = setup(args.datadir, args.outputdir,tl) #list of the folders
-        # raw_read_dir          --> 0
-        # trim_read_dir         --> 1
-        # trim_output           --> 2
-        # raw_fastqc_output     --> 3
-        # trim_fastqc_output    --> 4
-        # raw_read_tax_dirs     --> 5
-
-    # fastqc raw data
-    fastqcCommand(args.processors,out[3],args.datadir,tl) #raw_fastqc_output, raw_read_dir=datadir
-
-    print(out[5])
-    print(out[1])
-    print(out[2])
-    trim(out[5],out[1],bba,out[2],[]) #raw_read_tax_dirs, trim_read_dir, path to adapters, trim_output
-
-    # fastqc trimmed data
-    fastqcCommand(args.processors,out[4],out[1], tl) #trim_fastqc_output, trim_read_dir folders
+    run2(args.datadir, args.outputdir, args.processors)

@@ -72,6 +72,12 @@ def prune(outPath, sp, minread, threshold):
     print(f)
     getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', minread, threshold)
 
+def run6d(sis, minread, folder, threshold):
+    print(sis, folder)
+
+    sindex(sis, folder)
+    pileup(sis,folder)
+    prune(sis, folder, minread, threshold)
 
 if __name__ == '__main__':
 
@@ -89,8 +95,4 @@ if __name__ == '__main__':
     folder = args.species#.rstrip('/')
     threshold = args.threshold
 
-    print(sis, folder)
 
-    sindex(sis, folder)
-    pileup(sis,folder)
-    prune(sis, folder, minread, threshold)

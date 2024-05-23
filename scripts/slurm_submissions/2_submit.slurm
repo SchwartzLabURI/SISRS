@@ -20,9 +20,9 @@ module load BBMap/39.01-GCC-11.3.0
 
 P=36 #CHANGE THIS to the number of processors
 
-D=../../SISRS_Small #CHANGE THIS to the directory with input data
+D=../SISRS_Small #CHANGE THIS to the directory with input data
 DIR=../../SISRS_Small_test #CHANGE THIS to the analysis (output) directory
 
 #Note - the only taxa used will be in TaxonList.txt so edit that for fewer taxa
 
-python3 sisrs_02_read_trimmer.py -p $P -d $D -dir $DIR
+./sisrs trimmer -p $P -d $D -dir $DIR

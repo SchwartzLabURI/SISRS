@@ -75,6 +75,11 @@ def runBowtie(outPath,threads,sp):
     os.remove(outbam)  #rm SISRS_DIR/TAXA/TAXA_Temp.bam
     os.remove(outbam+'_Header.sam') #rm SISRS_DIR/TAXA/TAXA_Header.sam
 
+def run6(sis, proc, folder):
+    print(sis, folder)
+
+    runBowtie(sis, proc, folder)
+
 if __name__ == '__main__':
 
     # Get arguments
@@ -88,6 +93,4 @@ if __name__ == '__main__':
     proc = args.processors
     folder = args.folder
 
-    print(sis, folder)
-
-    runBowtie(sis,proc,folder)
+    run6(sis, proc, folder)

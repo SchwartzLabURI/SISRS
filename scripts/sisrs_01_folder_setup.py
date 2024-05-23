@@ -134,6 +134,31 @@ def fileStructure(sisrs_dir):
 #        print("OTHERWISE CHANGE DIRECTORIES AND TRY AGAIN. PROGRAM EXITING!")
 #        exit()
 
+def run1(d, outputdir):
+    # check if dir exists and dir is a dir and dir has files - stop
+    if os.path.exists(outputdir):
+        print("This directory already exists. Please specify a name for a new directory.")
+        exit()
+
+    # Create the file structure
+    fileStructure(outputdir)
+
+    # Grab the taxon names
+    # tl = []
+    # if id != "":
+    #    tl = devTaxaList(id)
+    # else:
+    tl = readTaxaFromFolders(d, outputdir)
+
+    # fix given new argparse
+
+
+#    if rd != "":
+#        if '-trm' in cmd or '--trimmed' in cmd:
+#            makeLinks(rd, sisrs, tl, True)
+#        else:
+#    makeLinks(d, outputdir, tl, False)
+
 if __name__ == "__main__":
 
     #run as python3 sisrs_01_folder_setup.py -d $D -dir $DIR
@@ -147,24 +172,4 @@ if __name__ == "__main__":
     d = args.directory
     outputdir = args.outputdir
 
-    #check if dir exists and dir is a dir and dir has files - stop
-    if os.path.exists(outputdir):
-        print("This directory already exists. Please specify a name for a new directory.")
-        exit()
-
-    # Create the file structure
-    fileStructure(outputdir)
-
-    # Grab the taxon names
-    #tl = []
-    #if id != "":
-    #    tl = devTaxaList(id)
-    #else:
-    tl = readTaxaFromFolders(d, outputdir)
-
-    #fix given new argparse
-#    if rd != "":
-#        if '-trm' in cmd or '--trimmed' in cmd:
-#            makeLinks(rd, sisrs, tl, True)
-#        else:
-#    makeLinks(d, outputdir, tl, False)
+    run1(d, outputdir)

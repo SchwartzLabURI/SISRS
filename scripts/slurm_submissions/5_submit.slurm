@@ -21,4 +21,4 @@ module load SAMtools/1.16.1-GCC-11.3.0
 
 P=36 #CHANGE THIS to the number of processors
 DIR=../../SISRS_Small_test #CHANGE THIS to the analysis directory
-python3 sisrs_05_setup_sisrs.py -p $P -d $DIR
+./sisrs setup2 -p $P -d $DIR

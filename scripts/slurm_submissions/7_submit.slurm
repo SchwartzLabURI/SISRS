@@ -19,4 +19,4 @@ module load Biopython/1.83-foss-2023b
 #python3 sisrs_07_output_sisrs.py -m <list of number of species allowed to be missing> -d <main output folder>
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 
-python3 sisrs_07_output_sisrs.py -m 1 2 3 -d $OUTFOLDER
+./sisrs output -m 1 2 3 -d $OUTFOLDER

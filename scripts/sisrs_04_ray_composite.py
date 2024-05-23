@@ -68,6 +68,16 @@ def runRay(ray_genome_dir,subset_reads,threads):
         '{}'.format(ray_genome_dir)]
     os.system(" ".join(ray_command))
 
+def run4(sis, proc):
+    # obtain the directories and files needed for Ray
+    ray_genome_dir, subset_reads = getDirs(sis)
+
+    if os.path.exists(ray_genome_dir):
+        os.rmdir(ray_genome_dir)
+
+    # Run the ray command
+    runRay(ray_genome_dir, subset_reads, proc)
+
 if __name__ == '__main__':
 
     # Get arguments
@@ -79,11 +89,5 @@ if __name__ == '__main__':
     sis = args.directory
     proc = args.processors
 
-    # obtain the directories and files needed for Ray
-    ray_genome_dir, subset_reads = getDirs(sis)
-    
-    if os.path.exists(ray_genome_dir):
-        os.rmdir(ray_genome_dir)
+    run4(sis, proc)
 
-    # Run the ray command
-    runRay(ray_genome_dir,subset_reads,proc)

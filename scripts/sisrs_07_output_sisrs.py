@@ -58,6 +58,23 @@ def count_sites_by_contig(sisrs, ms):
             print(alignment_count_command)
             os.system(alignment_count_command)   
 
+def run7(sis, ms):
+    composite_dir, sisrs_tax_dirs, sisrs = getData(sis)
+    site_dict_labels, species_data = get_phy_sites(sisrs, composite_dir, len(sisrs_tax_dirs) - 2)
+    numsnps(site_dict_labels)  # prints numbers of snps, biallelic snps, and singletons
+    write_alignment(sisrs + '/alignment.nex', site_dict_labels, species_data)
+
+    del site_dict_labels
+    del species_data
+    gc.collect()
+
+    for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
+        filter_nexus(sisrs + f, ms)
+        filter_nexus(sisrs + f, ms)
+
+    # get counts of sites per contig (sorted most to least)
+    for i in ms:
+        count_sites_by_contig(sisrs, i)
 
 if __name__ == '__main__':
 
@@ -70,19 +87,4 @@ if __name__ == '__main__':
     sis = args.directory
     ms = args.missing #contains a list of missing
 
-    composite_dir,sisrs_tax_dirs,sisrs = getData(sis)
-    site_dict_labels,species_data = get_phy_sites(sisrs,composite_dir,len(sisrs_tax_dirs) - 2)
-    numsnps(site_dict_labels) #prints numbers of snps, biallelic snps, and singletons
-    write_alignment(sisrs+'/alignment.nex',site_dict_labels, species_data)
-
-    del site_dict_labels
-    del species_data
-    gc.collect()
-
-    for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
-        filter_nexus(sisrs + f, ms)
-        filter_nexus(sisrs + f, ms)
-        
-    #get counts of sites per contig (sorted most to least)
-    for i in ms:
-        count_sites_by_contig(sisrs, i)
+    run7(sis, ms)

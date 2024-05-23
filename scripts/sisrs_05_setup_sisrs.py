@@ -136,6 +136,12 @@ def beginSetUp(composite_dir):
 
     print("==== Site list created: " + str(siteCount) + " total sites ==== \n",flush=True)
 
+def run5(sis, proc):
+    trim_read_tax_dirs, ray_dir, sisrs, composite_dir = obtainDir(sis)
+    fileChanges(ray_dir, composite_dir)
+    indexCompGenome(composite_dir, proc)
+    beginSetUp(composite_dir)
+
 if __name__ == '__main__':
 
     # Get arguments
@@ -146,6 +152,8 @@ if __name__ == '__main__':
 
     sis = args.directory
     proc = args.processors
+
+    run5(sis, proc)
 
     trim_read_tax_dirs,ray_dir,sisrs,composite_dir = obtainDir(sis)
     fileChanges(ray_dir,composite_dir)
