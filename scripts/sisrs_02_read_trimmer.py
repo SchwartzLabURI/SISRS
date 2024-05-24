@@ -33,7 +33,7 @@ def findAdapter():
     cmd = ['which', 'bbduk.sh']
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     o, e = proc.communicate()
-    bbduk_adapter = path.dirname(o.decode('ascii'))+"/resources/adapters.fa"
+    bbduk_adapter = path.dirname(o.decode('ascii')) + "/resources/adapters.fa"
 
     return bbduk_adapter
 
@@ -46,15 +46,13 @@ def get_taxa(sisrs_dir):
 
     Returns:
     list: names of taxa
-
     '''
 
     #taxa come from taxonlist file
-    with open(sisrs_dir+'/TaxonList.txt') as f:
+    with open(sisrs_dir + '/TaxonList.txt') as f:
         taxa = f.readlines()
     taxa = [x.rstrip() for x in taxa]
     return taxa
-
 
 def setup(datadir, sisrs_dir, taxa):
     '''
@@ -67,50 +65,34 @@ def setup(datadir, sisrs_dir, taxa):
     taxa (list): taxon list
 
     Returns: 
-    list: raw read and trimmed data directories.
-
-      Returned items as a list
-      raw_read_dir          --> 0
-      trim_read_dir         --> 1
-      trim_output           --> 2
-      raw_fastqc_output     --> 3
-      trim_fastqc_output    --> 4
-      raw_read_tax_dirs     --> 5
+    raw read and trimmed data directories.
     '''
-
-    rtn = []
 
     #Set RawRead and TrimRead directories based off of script folder location
     raw_read_dir = datadir
-    trim_read_dir = sisrs_dir+"/Reads/TrimReads"
-    rtn += [raw_read_dir]
-    rtn += [trim_read_dir]
+    trim_read_dir = sisrs_dir + "/Reads/TrimReads"
 
     #Find taxa folders within RawRead folder
-    raw_read_tax_dirs = [raw_read_dir+'/'+x for x in taxa]
+    raw_read_tax_dirs = [raw_read_dir + '/' + x for x in taxa]
 
     #Create folder for BBDuk StdOut
-    if not path.isdir(sisrs_dir+"/Reads/RawReads/trimOutput"):
-        os.mkdir(sisrs_dir+"/Reads/RawReads/trimOutput")
-    rtn += [sisrs_dir+"/Reads/RawReads/trimOutput"]
+    if not path.isdir(sisrs_dir + "/Reads/RawReads/trimOutput"):
+        os.mkdir(sisrs_dir + "/Reads/RawReads/trimOutput")
+    trim_output = sisrs_dir + "/Reads/RawReads/trimOutput"
 
     #Create folder for Raw FastQC output
-    if not path.isdir(sisrs_dir+"/Reads/RawReads/fastqcOutput"):
-        os.mkdir(sisrs_dir+"/Reads/RawReads/fastqcOutput")
-    rtn += [sisrs_dir+"/Reads/RawReads/fastqcOutput"]
+    if not path.isdir(sisrs_dir + "/Reads/RawReads/fastqcOutput"):
+        os.mkdir(sisrs_dir + "/Reads/RawReads/fastqcOutput")
+    raw_fastqc_output = sisrs_dir + "/Reads/RawReads/fastqcOutput"
 
     #Create folder for Trimmed FastQC output
-    if not path.isdir(trim_read_dir+"/fastqcOutput"):
-        os.mkdir(trim_read_dir+"/fastqcOutput")
-    rtn += [trim_read_dir+"/fastqcOutput/"]
+    if not path.isdir(trim_read_dir + "/fastqcOutput"):
+        os.mkdir(trim_read_dir + "/fastqcOutput")
+    trim_fastqc_output = trim_read_dir + "/fastqcOutput/"
 
-    rtn += [raw_read_tax_dirs]
+    return raw_read_dir, trim_read_dir, trim_output, raw_fastqc_output, trim_fastqc_output, raw_read_tax_dirs
 
-    return rtn
-
-
-def newdFastqc(processors,fastqc_output,data_dir,newFiles):
-
+def newdFastqc(processors, fastqc_output, data_dir, newFiles):
     '''
     This function is designed to run the FastQC command with new data only. Modified
     to run both the raw and the trimmed data, using all available processors
@@ -129,7 +111,7 @@ def newdFastqc(processors,fastqc_output,data_dir,newFiles):
         '{}'.format(fastqc_output)]
 
     for item in data_dir:
-        for x in glob(item+"/*.fastq.gz"):
+        for x in glob(item + "/*.fastq.gz"):
             f = x.split('/')
 
             if f[-1] in newFiles:
@@ -137,8 +119,7 @@ def newdFastqc(processors,fastqc_output,data_dir,newFiles):
 
     check_call(fastqc_command)
 
-
-def fastqcCommand(processors,fastqc_output,read_dir, taxa):
+def fastqcCommand(processors, fastqc_output, read_dir, taxa):
     '''
     Run FastQC on fastq.gz in specified taxon folders, using specified number of processors.
 
@@ -159,19 +140,18 @@ def fastqcCommand(processors,fastqc_output,read_dir, taxa):
         '{}'.format(fastqc_output)]
 
     for t in taxa:
-        print(read_dir+"/"+t+"/*.fastq.gz")
-        flist = glob(read_dir+"/"+t+"/*.fastq.gz")
+        print(read_dir + "/" + t + "/*.fastq.gz")
+        flist = glob(read_dir + "/" + t + "/*.fastq.gz")
         if len(flist) == 0:
             sys.exit("No fastq.gz files found - please check your paths and extensions")
         print(flist)
-        for x in flist: #can add recursive here
+        for x in flist:  #can add recursive here
             print(x)
             fastqc_command.append(x)
 
     check_call(fastqc_command)
 
-
-def trimHelper(tax_dir,trim_read_dir,newData):
+def trimHelper(tax_dir, trim_read_dir, newData):
     '''
     This function obtains all of the
     single end and paired end read files in a folder.
@@ -189,7 +169,7 @@ def trimHelper(tax_dir,trim_read_dir,newData):
     '''
 
     #List all files and set output dir
-    files = sorted(glob(tax_dir+"/*.fastq.gz"))
+    files = sorted(glob(tax_dir + "/*.fastq.gz"))
     taxon_ID = path.basename(tax_dir)
     out_trim_dir = trim_read_dir + "/" + taxon_ID
 
@@ -223,8 +203,8 @@ def trimHelper(tax_dir,trim_read_dir,newData):
 
     #Reset file names and filter out single-end files
     for pair in paired_files:
-        left_pairs.append(pair+"_1.fastq.gz")
-        right_pairs.append(pair+"_2.fastq.gz")
+        left_pairs.append(pair + "_1.fastq.gz")
+        right_pairs.append(pair + "_2.fastq.gz")
     paired_files = sorted(left_pairs + right_pairs)
 
     single_end = [x for x in files if x not in paired_files]
@@ -242,11 +222,9 @@ def trimHelper(tax_dir,trim_read_dir,newData):
     right_pairs = [x.replace('_2.fastq.gz', '') for x in right_pairs]
     single_end = [x.replace('.fastq.gz', '') for x in single_end]
 
-    return out_trim_dir,left_pairs,right_pairs,single_end
+    return out_trim_dir, left_pairs, right_pairs, single_end
 
-
-
-def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
+def trim(raw_read_tax_dirs, trim_read_dir, bbduk_adapter, trim_output, newData):
     '''
     Trim fastq files provided to
     the program and write to new folder. 
@@ -258,14 +236,12 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
     trim_output (string): path to trim output directory
     new_Data (list):
 
-    Returns: none.
+    Returns: none
     '''
-
 
     #For each taxa directory...
     for tax_dir in raw_read_tax_dirs:
-
-        out_trim_dir,left_pairs,right_pairs,single_end = trimHelper(tax_dir,trim_read_dir,newData)
+        out_trim_dir, left_pairs, right_pairs, single_end = trimHelper(tax_dir, trim_read_dir, newData)
 
         #Trim single-end files if present...
         if len(single_end) > 0:
@@ -278,8 +254,8 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
                     'trimq=15',
                     'minlength=35',
                     'maq=25',
-                    'in={}'.format(x+'.fastq.gz'),
-                    'out={}'.format(out_trim_dir+"/"+path.basename(x)+'_Trim.fastq.gz'),
+                    'in={}'.format(x + '.fastq.gz'),
+                    'out={}'.format(out_trim_dir + "/" + path.basename(x) + '_Trim.fastq.gz'),
                     'k=23',
                     'mink=11',
                     'hdist=1',
@@ -287,11 +263,11 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
                     'ktrim=r',
                     'ow=t',
                     '&>',
-                    '{outDir}out_{fileName}_Trim'.format(outDir=trim_output,fileName=path.basename(x))]
+                    '{outDir}out_{fileName}_Trim'.format(outDir=trim_output, fileName=path.basename(x))]
                 check_call(se_trim_command)
 
         #Trim paired-end files if present...
-        if(len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
+        if (len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
             for x in range(len(left_pairs)):
                 file_name = path.basename(left_pairs[x])
                 pe_trim_command = [
@@ -302,10 +278,10 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
                     'trimq=15',
                     'minlength=35',
                     'maq=25',
-                    'in={}'.format(left_pairs[x]+'_1.fastq.gz'),
-                    'in2={}'.format(right_pairs[x]+'_2.fastq.gz'),
-                    'out={}'.format(out_trim_dir+"/"+path.basename(left_pairs[x])+'_Trim_1.fastq.gz'),
-                    'out2={}'.format(out_trim_dir+"/"+path.basename(right_pairs[x])+'_Trim_2.fastq.gz'),
+                    'in={}'.format(left_pairs[x] + '_1.fastq.gz'),
+                    'in2={}'.format(right_pairs[x] + '_2.fastq.gz'),
+                    'out={}'.format(out_trim_dir + "/" + path.basename(left_pairs[x]) + '_Trim_1.fastq.gz'),
+                    'out2={}'.format(out_trim_dir + "/" + path.basename(right_pairs[x]) + '_Trim_2.fastq.gz'),
                     'k=23',
                     'mink=11',
                     'hdist=1',
@@ -313,38 +289,32 @@ def trim(raw_read_tax_dirs,trim_read_dir,bbduk_adapter,trim_output,newData):
                     'ktrim=r',
                     'ow=t',
                     '&>',
-                    '{outDir}out_{fileName}_Trim'.format(outDir=trim_output,fileName=file_name)]
+                    '{outDir}out_{fileName}_Trim'.format(outDir=trim_output, fileName=file_name)]
                 check_call(pe_trim_command)
+
 
 def run2(datadir, outputdir, processors):
     bba = findAdapter()  # returns path to adapter file in bbduk
     tl = get_taxa(outputdir)  # get taxa from TaxonList.txt
-    out = setup(datadir, outputdir, tl)  # list of the folders
-    # raw_read_dir          --> 0
-    # trim_read_dir         --> 1
-    # trim_output           --> 2
-    # raw_fastqc_output     --> 3
-    # trim_fastqc_output    --> 4
-    # raw_read_tax_dirs     --> 5
+    raw_read_dir, trim_read_dir, trim_output, raw_fastqc_output, trim_fastqc_output, raw_read_tax_dirs = setup(datadir, outputdir, tl)  # list of the folders
 
     # fastqc raw data
-    fastqcCommand(processors, out[3], datadir, tl)  # raw_fastqc_output, raw_read_dir=datadir
+    fastqcCommand(processors, raw_fastqc_output, datadir, tl)  # raw_fastqc_output, raw_read_dir=datadir
 
-    print(out[5])
-    print(out[1])
-    print(out[2])
-    trim(out[5], out[1], bba, out[2], [])  # raw_read_tax_dirs, trim_read_dir, path to adapters, trim_output
+    print(raw_read_tax_dirs)
+    print(trim_read_dir)
+    print(trim_output)
+    trim(raw_read_tax_dirs, trim_read_dir, bba, trim_output, [])  # raw_read_tax_dirs, trim_read_dir, path to adapters, trim_output
 
     # fastqc trimmed data
-    fastqcCommand(processors, out[4], out[1], tl)  # trim_fastqc_output, trim_read_dir folders
+    fastqcCommand(processors, trim_fastqc_output, trim_read_dir, tl)  # trim_fastqc_output, trim_read_dir folders
 
 if __name__ == "__main__":
-
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--datadir',action='store',nargs="?")
-    my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
-    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    my_parser.add_argument('-d', '--datadir', action='store', nargs="?")
+    my_parser.add_argument('-dir', '--outputdir', action='store', nargs="?")
+    my_parser.add_argument('-p', '--processors', action='store', default=1, nargs="?")
     args = my_parser.parse_args()
 
     run2(args.datadir, args.outputdir, args.processors)

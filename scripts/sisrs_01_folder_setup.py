@@ -169,7 +169,4 @@ if __name__ == "__main__":
     my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
     args = my_parser.parse_args()
 
-    d = args.directory
-    outputdir = args.outputdir
-
-    run1(d, outputdir)
+    run1(args.directory, args.outputdir)
