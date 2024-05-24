@@ -4,6 +4,7 @@
 
 This script prepares the folder architecture for a SISRS run.
 
+
 Arguments:
 -d, --directory : Path to data folder
 -dir, --outputdir : Path to the output directory
@@ -11,10 +12,8 @@ Arguments:
 Output: Script will create necessary folders, including taxon folders in the RawReads, TrimReads, and SISRS_Run folders.
 '''
 
-import sys
-import cProfile
 import os
-from os import listdir,path
+from os import listdir
 from os.path import isdir, isfile, join
 import argparse
 
@@ -99,7 +98,7 @@ def makeLinks(data_path, sisrs_dir, taxa_list, trim):
         for i in l:
             # Creates the soft link to the files
             os.link(data_path + '/' + x + '/' + i,
-                sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
+                    sisrs_dir+"/Reads/%s/"%dest +x + '/' + i)
 
 
 def fileStructure(sisrs_dir):
@@ -114,7 +113,7 @@ def fileStructure(sisrs_dir):
 
 
 
-    if isdir(sisrs_dir) == False:
+    if not isdir(sisrs_dir):
         os.mkdir(sisrs_dir)
 
 #    try:
@@ -161,12 +160,10 @@ def run1(d, outputdir):
 
 if __name__ == "__main__":
 
-    #run as python3 sisrs_01_folder_setup.py -d $D -dir $DIR
-
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--directory',action='store',nargs="?")
-    my_parser.add_argument('-dir','--outputdir',action='store',nargs="?")
+    my_parser.add_argument('-d', '--directory', action='store', nargs="?")
+    my_parser.add_argument('-dir', '--outputdir', action='store', nargs="?")
     args = my_parser.parse_args()
 
     run1(args.directory, args.outputdir)

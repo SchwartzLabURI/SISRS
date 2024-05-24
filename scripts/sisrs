@@ -25,57 +25,57 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     setup_parser1 = subparsers.add_parser("setup", help="Setup folders")
-    setup_parser1.add_argument('-d','--directory',action='store',nargs="?", help="Input folder")
-    setup_parser1.add_argument('-dir','--outputdir',action='store',nargs="?", help="Output folder")
+    setup_parser1.add_argument('-d', '--directory', action='store', nargs="?", help="Input folder")
+    setup_parser1.add_argument('-dir', '--outputdir', action='store', nargs="?", help="Output folder")
 
     setup_parser2 = subparsers.add_parser("trimmer", help="Trim reads")
-    setup_parser2.add_argument('-d','--datadir',action='store',nargs="?", help="Input folder")
-    setup_parser2.add_argument('-dir','--outputdir',action='store',nargs="?", help="Output folder")
-    setup_parser2.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    setup_parser2.add_argument('-d', '--datadir', action='store', nargs="?", help="Input folder")
+    setup_parser2.add_argument('-dir', '--outputdir', action='store', nargs="?", help="Output folder")
+    setup_parser2.add_argument('-p', '--processors', action='store', default=1, nargs="?")
 
     setup_parser2b = subparsers.add_parser("chloroplasts", help="Filter chloroplasts")
 
     setup_parser3 = subparsers.add_parser("subset", help="Subset reads to 10x")
-    setup_parser3.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser3.add_argument('-gs','--genome_size',type=int, action='store',nargs="?")
+    setup_parser3.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser3.add_argument('-gs', '--genome_size', type=int, action='store', nargs="?")
 
     setup_parser4 = subparsers.add_parser("composite", help="Construct the composite genome")
-    setup_parser4.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser4.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    setup_parser4.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser4.add_argument('-p', '--processors', action='store', default=1, nargs="?")
 
     setup_parser5 = subparsers.add_parser("setup2", help="Step 5 setup folders")
     setup_parser5.add_argument('-d', '--directory', action='store', nargs="?")
     setup_parser5.add_argument('-p', '--processors', action='store', default=1, nargs="?")
 
     setup_parser6 = subparsers.add_parser("align", help="Align to composite")
-    setup_parser6.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser6.add_argument('-p','--processors',action='store',default=1,nargs="?")
-    setup_parser6.add_argument('-f', '--folder', action='store',nargs="?")
+    setup_parser6.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser6.add_argument('-f', '--folder', action='store', nargs="?")
 
     setup_parser6b = subparsers.add_parser("pileup", help="Pileup")
-    setup_parser6b.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser6b.add_argument('-s', '--species', action='store',nargs="?")
+    setup_parser6b.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6b.add_argument('-s', '--species', action='store', nargs="?")
 
     setup_parser6c = subparsers.add_parser("align2", help="Align2")
-    setup_parser6c.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser6c.add_argument('-p','--processors',action='store',default=1,nargs="?")
-    setup_parser6c.add_argument('-f', '--folder', action='store',nargs="?")
+    setup_parser6c.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6c.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser6c.add_argument('-f', '--folder', action='store', nargs="?")
 
     setup_parser6d = subparsers.add_parser("pileup2", help="Pileup2")
-    setup_parser6d.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser6d.add_argument('-m','--minread',action='store',default=3,nargs="?")
-    setup_parser6d.add_argument('-s', '--species', action='store',nargs="?")
-    setup_parser6d.add_argument('-t', '--threshold', action='store',default=1,nargs="?")
+    setup_parser6d.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6d.add_argument('-m', '--minread', action='store', default=3, nargs="?")
+    setup_parser6d.add_argument('-s', '--species', action='store', nargs="?")
+    setup_parser6d.add_argument('-t', '--threshold', action='store', default=1, nargs="?")
 
     setup_parser7 = subparsers.add_parser("output", help="Output concatenated alignment")
-    setup_parser7.add_argument('-d','--directory',action='store',nargs="?")
-    setup_parser7.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
+    setup_parser7.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser7.add_argument('-m', '--missing', type=int, action='store', default=[0], nargs="*")
 
     setup_parser7a = subparsers.add_parser("contig_processing", help="")
-    setup_parser7a.add_argument('-t','--threshold',action='store',nargs="?", type = int)
-    setup_parser7a.add_argument('-d', '--dir', action='store',nargs="?")
-    setup_parser7a.add_argument('-c', '--cov', action='store',default=3,nargs="?", type = int)
-    setup_parser7a.add_argument('-z', '--hz', action='store',default=0.01,nargs="?", type = float)
+    setup_parser7a.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
+    setup_parser7a.add_argument('-d', '--dir', action='store', nargs="?")
+    setup_parser7a.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
+    setup_parser7a.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
 
     setup_parser7b = subparsers.add_parser("contig_alignment", help="")
     setup_parser7b.add_argument('-d', '--dir', action='store', nargs="?")
@@ -84,7 +84,7 @@ def main():
     setup_parser8 = subparsers.add_parser("filter", help="Filter contigs")
     setup_parser8.add_argument('-d', '--outPath', action='store', nargs="?")
     setup_parser8.add_argument('-a', '--alignment', action='store', nargs="?")
-    setup_parser8.add_argument('-t', '--min_threshold', type=int, action='store',default=1,nargs="?")
+    setup_parser8.add_argument('-t', '--min_threshold', type=int, action='store', default=1, nargs="?")
     setup_parser8.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
     setup_parser8.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
     setup_parser8.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
@@ -166,7 +166,7 @@ def main():
 
     elif args.command == "contig_processing":
         if args.dir:
-            return run7a(args.dir +'/', args.threshold, args.cov, args.hz)
+            return run7a(args.dir + '/', args.threshold, args.cov, args.hz)
         else:
             raise NotImplementedError(
                 f"Analysis directory must be provided.",
