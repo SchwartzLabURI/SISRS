@@ -1,30 +1,87 @@
 #!/usr/bin/env python3
 
 import csv
+import argparse
 import sys
 from collections import Counter
 from Bio import SeqIO
 from os import path, mkdir, listdir, system
 from math import ceil
 
-#get file paths to alignment_pi_locs_m25.txt and contigs_SeqLength.tsv
-#path_to_seq_lengths: Path to .tsv where contig lengths are located.
-#                 Ex: "C://Users/caleb/OneDrive/Desktop/contigs_SeqLength.tsv"
-#path_to_sites: Path to .txt file where names of individual sites on contigs are located
-#                 Ex: "C://Users/caleb/OneDrive/Desktop/alignment_pi_locs_m25.txt"
-#min_threshold: Removes contigs whos percentage of informative sites falls below a certain value.
-#                 Ex: If you want to filter out contigs that are less than 25% informative, min_threshold
-#                     should be 0.25
-#path_to_output: Path to write filtered_data.tsv to. Must include the final backslash.
-#                 Ex: "C://Users/caleb/OneDrive/Desktop/"
 
+def alignContigs(new_contig_folder, newnew_contig_folder, processors):
+    '''
+    Align contigs and output to folder
+    Args:
+        new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
+        newnew_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/"
+        processors: num processors
 
+    Returns:
+        none
+    '''
+    contig_list = listdir(new_contig_folder)  # list of contigs
+    for con in contig_list:
+        con_p_in = path.join(new_contig_folder, con)
+        con_p_out = path.join(newnew_contig_folder, con)
+        mafft_command = f"mafft --auto --thread {processors} {con_p_in} > {con_p_out}"
+        system(mafft_command)
 
+def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composite, new_contig_folder):
+    """
+
+    Args:
+        high_count_contigs (list): contigs that have more than the min_threshold (number of variable sites) and are longer than length_of_locus
+        outPath (str): where we are outputting data e.g. '../../SISRS_Small_test'
+        num_sp (int): number of species required to be present given number of missing allowed (default is half)
+        composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
+        new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
+
+    Returns:
+        none
+
+    """
+
+    for k in high_count_contigs:
+        a_file = outPath + '/SISRS_Run/contigs_outputs/' + k + '.fasta'
+        if path.exists(a_file):
+            alignment = list(SeqIO.parse(a_file, "fasta"))
+            if len(alignment) == num_sp: #check we have all spp
+                composite_seq = composite[k] #get composite seq for this contig
+                alignment.append(composite_seq)
+                SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
+
+def print_probe_info(outPath, good_contigs, composite):
+    '''
+
+    Args:
+        outPath (str): where we are outputting data e.g. '../../SISRS_Small_test'
+        good_contigs (dict): contigs where all seqs are less than the max dist from the composite
+        composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
+
+    Returns:
+        none
+    '''
+
+    total_length_probes = 0
+    total_tiles_80 = 0
+    total_tiles_60 = 0
+    with open(outPath + "/SISRS_Run/contigs_for_probes.fa", 'w') as f:
+        for k, v in sorted(good_contigs.items(), key=lambda item: item[1]):  # line in good_contigs.items():
+            print(v)
+            f.write('>' + k + "\n")
+            f.write(str(composite[k].seq) + "\n")
+            total_length_probes += len(str(composite[k].seq))
+            total_tiles_80 += ceil(len(str(composite[k].seq)) / 80)
+            total_tiles_60 += ceil(len(str(composite[k].seq)) / 60)
+
+    print(total_length_probes)
+    print(total_tiles_60)
+    print(total_tiles_80)
 def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_locus, max_dist, num_miss):
 
     path_to_seq_lengths = outPath + '/SISRS_Run/Composite_Genome/contigs_SeqLength.tsv'
     path_to_sites = outPath + '/SISRS_Run/' + alignment_file #name of file eg alignment_pi_locs_m2.txt - use something minimally missing
-    #path_to_sites = outPath + '/SISRS_Run/alignment_pi_locs_m2.txt'
     path_to_output = outPath + '/SISRS_Run/'
 
     #read in informative site names
@@ -70,22 +127,9 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
     if not path.exists(newnew_contig_folder):
         mkdir(newnew_contig_folder)
 
-    for k in high_count_contigs:
-        a_file = outPath + '/SISRS_Run/contigs_outputs/' + k + '.fasta'
-        if path.exists(a_file):
-            alignment = list(SeqIO.parse(a_file, "fasta"))
-            if len(alignment) == num_sp: #check we have all spp
-                composite_seq = composite[k] #get composite seq for this contig
-                alignment.append(composite_seq)
-                SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
+    write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composite, new_contig_folder)
 
-    # list of contigs
-    contig_list = listdir(new_contig_folder)
-    for con in contig_list:
-        con_p_in = path.join(new_contig_folder, con)
-        con_p_out = path.join(newnew_contig_folder, con)
-        mafft_command = f"mafft --auto --thread {processors} {con_p_in} > {con_p_out}"
-        system(mafft_command)
+    alignContigs(new_contig_folder, newnew_contig_folder, processors)
 
     #good ideas here: http://www.mossmatters.com/blog/SequenceClusters.html
 
@@ -110,28 +154,14 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
                         if seq2[i] != '-':
                             if composite_seq[i] != seq2[i]:
                                 distances[sp]+=1
-                    distances[sp] = distances[sp] / len(seq2.replace('-',''))
+                    distances[sp] = distances[sp] / len(seq2.replace('-', ''))
                     #print(distances[sp])
             if max(distances.values()) < max_dist:
                 good_contigs[k] = contigcounts[k]
             else:
                 print(sorted(distances.values()))
 
-    total_length_probes = 0
-    total_tiles_80 = 0
-    total_tiles_60 = 0
-    with open(outPath + "/SISRS_Run/contigs_for_probes.fa", 'w') as f:
-        for k, v in sorted(good_contigs.items(), key=lambda item: item[1]):    #line in good_contigs.items():
-            print(v)
-            f.write('>' + k +"\n")
-            f.write(str(composite[k].seq) + "\n")
-            total_length_probes += len(str(composite[k].seq))
-            total_tiles_80 += ceil(len(str(composite[k].seq)) / 80)
-            total_tiles_60 += ceil(len(str(composite[k].seq)) / 60)
-
-    print(total_length_probes)
-    print(total_tiles_60)
-    print(total_tiles_80)
+    print_probe_info(outPath, good_contigs, composite)
 
     #This function works similar to grep in R or bash, but it searches for an input string through
     #a list rather than a file/directory. Strings in the list 'stringList' that contain the substring 'searchString'
@@ -157,16 +187,16 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-d', '--outPath', action='store', nargs="?")
     my_parser.add_argument('-a', '--alignment', action='store', nargs="?")
-    my_parser.add_argument('-t', '--min_threshold', type=int, action='store',default=1,nargs="?")
-    my_parser.add_argument('-p','--processors', type=int ,action='store',default=1,nargs="?")
+    my_parser.add_argument('-t', '--min_threshold', type=int, action='store', default=1, nargs="?")
+    my_parser.add_argument('-p','--processors', type=int, action='store', default=1,nargs="?")
     my_parser.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
     my_parser.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
-    my_parser.add_argument('-n', '--num_miss', type=int, action='store', default=-1, nargs="?") #will later convert this to 50% of samples
+    my_parser.add_argument('-n', '--num_miss', type=int, action='store', default=-1, nargs="?") #will later convert a default of -1 to 50% of samples
     args = my_parser.parse_args()
 
     outPath = args.outPath  #outPath = '../../SISRS_Small_test'
     alignment = args.alignment
-    min_threshold = args.min_threshold #number of variable sites (not as described above)
+    min_threshold = args.min_threshold #number of variable sites
     processors = args.processors
     length_of_locus = args.length_of_locus #160 = 2 probes
     max_dist = args.max_dist #probably 0.08 or less than 8% difference from composite

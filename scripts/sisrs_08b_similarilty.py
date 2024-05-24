@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import csv
+import argparse
 import sys
 from Bio import SeqIO
 from os import system
