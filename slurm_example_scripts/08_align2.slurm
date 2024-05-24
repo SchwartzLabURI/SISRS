@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="6c_step"
+#SBATCH --job-name="08_align"
 #SBATCH --time=120:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node

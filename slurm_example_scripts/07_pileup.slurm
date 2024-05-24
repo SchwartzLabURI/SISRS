@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="6b_step"
+#SBATCH --job-name="07_pileup"
 #SBATCH --time=12:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - only use 1 for this!

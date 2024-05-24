@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --job-name="7_b"
+#SBATCH --job-name="12_contig_align"
 #SBATCH --time=4:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node

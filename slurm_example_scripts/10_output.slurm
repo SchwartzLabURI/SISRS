@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="7_step"
+#SBATCH --job-name="10_output"
 #SBATCH --time=5:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel

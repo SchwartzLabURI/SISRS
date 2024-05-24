@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="filter_nexus"
+#SBATCH --job-name="07a_filter_nexus"
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - just use 1 - it doesn't parallel

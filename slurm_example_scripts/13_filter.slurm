@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --job-name="8"
+#SBATCH --job-name="13_filter"
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node

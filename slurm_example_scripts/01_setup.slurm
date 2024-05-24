@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="1_step"
+#SBATCH --job-name="01_setup"
 #SBATCH --time=1:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # processor core(s) per node

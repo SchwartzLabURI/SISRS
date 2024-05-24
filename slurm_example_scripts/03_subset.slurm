@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="3_step"
+#SBATCH --job-name="03_subset"
 #SBATCH --time=1:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=36   # CHANGE THIS to the number of processors
