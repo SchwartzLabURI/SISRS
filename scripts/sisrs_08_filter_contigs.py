@@ -53,6 +53,8 @@ def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composit
 
 def print_probe_info(outPath, good_contigs, composite):
     '''
+    write the composite sequences to contigs_for_probes.fa
+    print out probe info
 
     Args:
         outPath (str): where we are outputting data e.g. '../../SISRS_Small_test'
@@ -78,6 +80,51 @@ def print_probe_info(outPath, good_contigs, composite):
     print(total_length_probes)
     print(total_tiles_60)
     print(total_tiles_80)
+
+def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list, max_dist, contigcounts):
+    '''
+
+    Args:
+        high_count_contigs (list): contigs that have more than the min_threshold (number of variable sites) and are longer than length_of_locus:
+        newnew_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/":
+        taxon_list (list): list of taxa
+        max_dist (float): maximum % difference allowed for sample seqs from composite seq
+        contigcounts (dict): contig: number of variable sites - comes from the number of times a contig is seen in the specified alignment file
+
+    Returns:
+        dict: contigs where all sample sequences are within the max_dist of the composite seq
+    '''
+
+    good_contigs = {}
+    for k in high_count_contigs:
+        distances = {}
+        a_file = newnew_contig_folder + k + '.fasta'
+        if path.exists(a_file):
+            alignment = SeqIO.to_dict(SeqIO.parse(a_file, "fasta"))
+            composite_seq = str(alignment[k].seq).upper()
+
+            for sp, seq in alignment.items():
+                if sp in taxon_list: #not composite
+                    seq2 = str(seq.seq).upper()
+                    #print(seq2)
+                    #print(str(composite_seq.seq))
+                    distances[sp] = 0
+                    if len(seq2) != len(composite_seq):
+                        print(composite_seq)
+                        print(seq2)
+                        sys.exit("Seqs don't match")
+                    for i in range(len(seq2)): #go through seq site by site to get distance
+                        if seq2[i] != '-':
+                            if composite_seq[i] != seq2[i]:
+                                distances[sp]+=1
+                    distances[sp] = distances[sp] / len(seq2.replace('-', ''))
+                    #print(distances[sp])
+            if max(distances.values()) < max_dist:
+                good_contigs[k] = contigcounts[k]
+            else:
+                print(sorted(distances.values()))
+    return(good_contigs)
+
 def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_locus, max_dist, num_miss):
 
     path_to_seq_lengths = outPath + '/SISRS_Run/Composite_Genome/contigs_SeqLength.tsv'
@@ -116,9 +163,6 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
     #all sp in contig alignment
     #less than X% missing per site - info for each spp
 
-
-    good_contigs = {}
-
     new_contig_folder = outPath + "/SISRS_Run/contigs_outputs2/"
     if not path.exists(new_contig_folder):
         mkdir(new_contig_folder)
@@ -133,53 +177,9 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
 
     #good ideas here: http://www.mossmatters.com/blog/SequenceClusters.html
 
-    for k in high_count_contigs:
-        distances = {}
-        a_file = newnew_contig_folder + k + '.fasta'
-        if path.exists(a_file):
-            alignment = SeqIO.to_dict(SeqIO.parse(a_file, "fasta"))
-            composite_seq = str(alignment[k].seq).upper()
-
-            for sp, seq in alignment.items():
-                if sp in taxon_list: #not composite
-                    seq2 = str(seq.seq).upper()
-                    #print(seq2)
-                    #print(str(composite_seq.seq))
-                    distances[sp] = 0
-                    if len(seq2) != len(composite_seq):
-                        print(composite_seq)
-                        print(seq2)
-                        sys.exit("Seqs don't match")
-                    for i in range(len(seq2)): #go through seq site by site to get distance
-                        if seq2[i] != '-':
-                            if composite_seq[i] != seq2[i]:
-                                distances[sp]+=1
-                    distances[sp] = distances[sp] / len(seq2.replace('-', ''))
-                    #print(distances[sp])
-            if max(distances.values()) < max_dist:
-                good_contigs[k] = contigcounts[k]
-            else:
-                print(sorted(distances.values()))
+    good_contigs = filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list, max_dist, contigcounts)
 
     print_probe_info(outPath, good_contigs, composite)
-
-    #This function works similar to grep in R or bash, but it searches for an input string through
-    #a list rather than a file/directory. Strings in the list 'stringList' that contain the substring 'searchString'
-    #will be returned in list format.
-
-    #grep = lambda searchString, stringList: [j for j in stringList if j.__contains__(searchString)]
-
-    #contig_names = [i.split(",")[0] for i in contigs]
-    #info_sites = [len((grep(i, sites))) for i in contig_names][2:]
-    #possible_sites = [i.split(",")[1] for i in contigs]
-    #possible_sites = [int(i) for i in possible_sites[1:]]
-
-    #min_threshold = float(min_threshold)
-
-
-    #for i in range(len(info_sites)):
-    #    if(float(info_sites[i]) / float(possible_sites[i]) >= min_threshold):
-    #        print(contig_names[i] + "   " + str(float(info_sites[i]) / float(possible_sites[i])))
 
 if __name__ == '__main__':
 
