@@ -6,10 +6,8 @@ This script outputs a sorted bam by aligning reads to the contigs.fa for the spe
 
 import os
 from os import path
-import sys
 from glob import glob
 import argparse
-import re
 
 
 def bbuild(outPath, readfolder, proc):

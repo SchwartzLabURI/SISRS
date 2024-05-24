@@ -8,15 +8,9 @@ Index new genome
 
 import os
 from os import path
-import sys
-from glob import glob
 from specific_genome import *
 import argparse
-import re
 
-'''
-specific contigs
-'''
 def pileup(outPath,sp):
     '''
     This function runs samtools mpileup command.

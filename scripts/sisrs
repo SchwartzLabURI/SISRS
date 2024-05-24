@@ -184,7 +184,6 @@ def main():
         if args.outPath:
             if args.alignment:
                 if args.min_threshold:
-                    print(args)
                     return all_of_step8(args.outPath, args.alignment, args.min_threshold, args.processors, args.length_of_locus, args.max_dist, args.num_miss)
                 else:
                     print(args)

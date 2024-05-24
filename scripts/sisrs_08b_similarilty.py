@@ -28,6 +28,7 @@ def blast_and_filter(outpath):
 
     loci_to_drop = []
 
+    print('The following are blastn results for the locus pairs where one should be dropped')
     print('Query_ID Subject_ID Query_len Subject_len Overlap_length %ident #ident')
 
     with open(matrix_file, newline='') as file:  # qseqid sseqid qlen slen length pident nident
@@ -44,7 +45,7 @@ def blast_and_filter(outpath):
                             loci_to_drop.append(line[0])
 
     loci_to_drop = list(set(loci_to_drop))
-    print(loci_to_drop)
+    print('The following loci are dropped due to blast overlap', loci_to_drop)
 
     return(fasta, loci_to_drop)
 
@@ -86,7 +87,7 @@ def heterozyg_filter(outpath, loci_to_drop):
             loci_to_drop.append(k)
 
     loci_to_drop = list(set(loci_to_drop))
-    print(loci_to_drop)
+    print('The following loci are dropped due to blast overlap or excess heterozygosity (potential paralogy)', loci_to_drop)
 
     return(loci_to_drop)
 
@@ -115,9 +116,9 @@ def filter_probes(fasta, loci_to_drop, final_total):
                 total_tiles_80 += ceil(len(str(record.seq)) / 80)
                 total_tiles_60 += ceil(len(str(record.seq)) / 60)
 
-    print(total_length_probes)
-    print(total_tiles_60)
-    print(total_tiles_80)
+    print('The total length of probes is', total_length_probes)
+    print('The expected number of tiles of size 60 is', total_tiles_60)
+    print('The expected number of tiles of size 80 is', total_tiles_80)
 
     contig_seqs.sort(key=lambda r: -len(r))
 
@@ -134,8 +135,6 @@ def all_of_8b(outpath, final_total):
     loci_to_drop = heterozyg_filter(outpath, loci_to_drop)
 
     filter_probes(fasta, loci_to_drop, final_total)
-
-    print('done comparison')
 
 if __name__ == '__main__':
     # Get arguments

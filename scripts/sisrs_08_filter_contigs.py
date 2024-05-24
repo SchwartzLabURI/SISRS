@@ -31,7 +31,7 @@ def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composit
     """
 
     Args:
-        high_count_contigs (list): contigs that have more than the min_threshold (number of variable sites) and are longer than length_of_locus
+        high_count_contigs (list): contigs that have at least the min_threshold (number of variable sites) and are longer than length_of_locus
         outPath (str): where we are outputting data e.g. '../../SISRS_Small_test'
         num_sp (int): number of species required to be present given number of missing allowed (default is half)
         composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
@@ -42,14 +42,17 @@ def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composit
 
     """
 
+    i = 0 #counting how many contigs we are keeping
     for k in high_count_contigs:
         a_file = outPath + '/SISRS_Run/contigs_outputs/' + k + '.fasta'
         if path.exists(a_file):
             alignment = list(SeqIO.parse(a_file, "fasta"))
-            if len(alignment) == num_sp: #check we have all spp
+            if len(alignment) >= num_sp: #check we have all spp
+                i += 1
                 composite_seq = composite[k] #get composite seq for this contig
                 alignment.append(composite_seq)
                 SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
+    print('There are ', i, 'contigs remaining after filtering for at least', num_sp, 'species')
 
 def print_probe_info(outPath, good_contigs, composite):
     '''
@@ -70,22 +73,22 @@ def print_probe_info(outPath, good_contigs, composite):
     total_tiles_60 = 0
     with open(outPath + "/SISRS_Run/contigs_for_probes.fa", 'w') as f:
         for k, v in sorted(good_contigs.items(), key=lambda item: item[1]):  # line in good_contigs.items():
-            print(v)
+            print('Contig', k, 'has ', v, 'variable sites')
             f.write('>' + k + "\n")
             f.write(str(composite[k].seq) + "\n")
             total_length_probes += len(str(composite[k].seq))
             total_tiles_80 += ceil(len(str(composite[k].seq)) / 80)
             total_tiles_60 += ceil(len(str(composite[k].seq)) / 60)
 
-    print(total_length_probes)
-    print(total_tiles_60)
-    print(total_tiles_80)
+    print('The total length of probes is', total_length_probes)
+    print('The expected number of tiles of size 60 is', total_tiles_60)
+    print('The expected number of tiles of size 80 is', total_tiles_80)
 
 def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list, max_dist, contigcounts):
     '''
 
     Args:
-        high_count_contigs (list): contigs that have more than the min_threshold (number of variable sites) and are longer than length_of_locus:
+        high_count_contigs (list): contigs that have at least the min_threshold (number of variable sites) and are longer than length_of_locus:
         newnew_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/":
         taxon_list (list): list of taxa
         max_dist (float): maximum % difference allowed for sample seqs from composite seq
@@ -122,7 +125,8 @@ def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list
             if max(distances.values()) < max_dist:
                 good_contigs[k] = contigcounts[k]
             else:
-                print(sorted(distances.values()))
+                print('Contig', k, 'has a max distance from the composite genome of', max(distances.values()))
+    print('There are ', len(good_contigs), 'contigs remaining after filtering for the distance to the composite genome')
     return(good_contigs)
 
 def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_locus, max_dist, num_miss):
@@ -140,7 +144,9 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
         contigs = dict(csv.reader(file, delimiter='\t')) #SISRS_contig-2    351
 
     contigcounts = dict(Counter(sites.keys())) #number of variable sites
-    high_count_contigs = [k for k, v in contigcounts.items() if int(v) > min_threshold and int(contigs[k]) > length_of_locus]
+    #print(contigcounts)
+    high_count_contigs = [k for k, v in contigcounts.items() if int(v) >= min_threshold and int(contigs[k]) > length_of_locus]
+    print('There are ', len(high_count_contigs), 'contigs that have at least ', min_threshold, 'sites and are longer than ', length_of_locus)
 
     composite = SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))     #>SISRS_contig-2000001 186 nucleotides
 
