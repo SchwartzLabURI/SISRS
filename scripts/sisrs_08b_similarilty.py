@@ -4,7 +4,7 @@ import csv
 import argparse
 import sys
 from Bio import SeqIO
-from os import system
+from os import system, listdir
 from math import ceil
 
 def blast_and_filter(outpath):
@@ -31,9 +31,12 @@ def blast_and_filter(outpath):
     print('The following are blastn results for the locus pairs where one should be dropped')
     print('Query_ID Subject_ID Query_len Subject_len Overlap_length %ident #ident')
 
+    fasta_contigs = []
     with open(matrix_file, newline='') as file:  # qseqid sseqid qlen slen length pident nident
         contigs = csv.reader(file, delimiter='\t')  # iterator
         for line in contigs:
+            if line[0] not in fasta_contigs:
+                fasta_contigs.append(line[0])
             if line[0] != line[1]:  # not the same contig
                 if float(line[5]) > 90:  # 90% identity for region that overlaps
                     if float(line[4]) > 0.9 * min(float(line[2]), float(
@@ -47,16 +50,17 @@ def blast_and_filter(outpath):
     loci_to_drop = list(set(loci_to_drop))
     print('The following loci are dropped due to blast overlap', loci_to_drop)
 
-    return(fasta, loci_to_drop)
+    return(fasta, loci_to_drop, fasta_contigs)
 
 
-def heterozyg_filter(outpath, loci_to_drop):
+def heterozyg_filter(outpath, loci_to_drop, fasta_contigs):
     '''
     finds loci with high heterozygosity based on prior output file (_hztable.csv) and adds them to the list - these might be paralogs
 
     Args:
         outpath (string): output folder for work
         loci_to_drop (list): loci to drop from dataset
+        fasta_contigs (list): the contig list passing the prior filter
 
     Returns:
     list: updated loci to drop from dataset
@@ -74,22 +78,27 @@ def heterozyg_filter(outpath, loci_to_drop):
         with open(f, newline = '') as fi:
             hz_table = csv.reader(fi, delimiter=',') #iterator: SISRS_contig-5000011,0.09424083769633508
             for line in hz_table:
-                #print(line)
-                if line[1] != 'NA': #seq not found in sp
-                    if float(line[1]) > 0.01: #high het
-                        if line[0] in hz_dict:
-                            hz_dict[line[0]].append(taxon)
-                        else:
-                            hz_dict[line[0]] = [taxon]
+                if line[0] in fasta_contigs:  #only use contigs that passed prior filters
+                    #print(line)
+                    if line[1] != 'NA': #seq not found in sp
+                        if float(line[1]) > 0.05: #high het Zhou et al Sys Bio 2022: Sequence filtering: Filter the sequences with more than 5% (default) heterozygosity according to the percentage information of heterozygous sites in every sequence because a sequence with a high percentage of heterozygous sites may indicate sequencing or assembly errors of the particular locus.
+                            #add the high het species to the list for the contig
+                            if line[0] in hz_dict:
+                                hz_dict[line[0]].append(taxon)
+                            else:
+                                hz_dict[line[0]] = [taxon]
 
+    loci_to_drop_hz = []
     for k, v in hz_dict.items():
-        if len(v) > 0.5 * len(taxonlist): #half taxon list may have paralogs - this is arbitrary
-            loci_to_drop.append(k)
+        if k not in loci_to_drop:
+            if len(v) > 0.5 * len(taxonlist): #half taxon list may have paralogs - this is arbitrary
+                loci_to_drop_hz.append(k)
 
-    loci_to_drop = list(set(loci_to_drop))
-    print('The following loci are dropped due to blast overlap or excess heterozygosity (potential paralogy)', loci_to_drop)
+    loci_to_drop_hz = list(set(loci_to_drop_hz))
+    print('The following ', len(loci_to_drop_hz), ' loci of the original', len(fasta_contigs), ' are dropped due to excess heterozygosity (potential paralogy)', loci_to_drop_hz)
 
-    return(loci_to_drop)
+    loci_to_drop.extend(loci_to_drop_hz)
+    return(loci_to_drop) #return combined lists of all loci to drop
 
 def filter_probes(fasta, loci_to_drop, final_total):
     '''
@@ -108,6 +117,7 @@ def filter_probes(fasta, loci_to_drop, final_total):
     total_length_probes = 0
     total_tiles_80 = 0
     total_tiles_60 = 0
+
     with open(fasta) as handle: #contigs_for_probes
         for record in SeqIO.parse(handle, "fasta"):
             if record.id not in loci_to_drop:   #keep contig if not in list to drop
@@ -130,11 +140,12 @@ def filter_probes(fasta, loci_to_drop, final_total):
 
 def all_of_8b(outpath, final_total):
 
-    fasta, loci_to_drop = blast_and_filter(outpath)
+    if len(listdir(outpath + "/SISRS_Run/aligned_contigs2/")) > 1:  #check that there are contigs remaining to bother running any more filtering
+        fasta, loci_to_drop, fasta_contigs = blast_and_filter(outpath)
 
-    loci_to_drop = heterozyg_filter(outpath, loci_to_drop)
+        loci_to_drop = heterozyg_filter(outpath, loci_to_drop, fasta_contigs)
 
-    filter_probes(fasta, loci_to_drop, final_total)
+        filter_probes(fasta, loci_to_drop, final_total)
 
 if __name__ == '__main__':
     # Get arguments

@@ -146,7 +146,7 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
     contigcounts = dict(Counter(sites.keys())) #number of variable sites
     #print(contigcounts)
     high_count_contigs = [k for k, v in contigcounts.items() if int(v) >= min_threshold and int(contigs[k]) > length_of_locus]
-    print('There are ', len(high_count_contigs), 'contigs that have at least ', min_threshold, 'sites and are longer than ', length_of_locus)
+    print('There are ', len(high_count_contigs), 'contigs that have at least ', min_threshold, 'variable sites and are longer than ', length_of_locus)
 
     composite = SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))     #>SISRS_contig-2000001 186 nucleotides
 
