@@ -27,12 +27,12 @@ def alignContigs(new_contig_folder, newnew_contig_folder, processors):
         mafft_command = f"mafft --auto --thread {processors} {con_p_in} > {con_p_out}"
         system(mafft_command)
 
-def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composite, new_contig_folder):
+def write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, composite, new_contig_folder):
     """
 
     Args:
         high_count_contigs (list): contigs that have at least the min_threshold (number of variable sites) and are longer than length_of_locus
-        outPath (str): where we are outputting data e.g. '../../SISRS_Small_test'
+        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/contigs_outputs/'
         num_sp (int): number of species required to be present given number of missing allowed (default is half)
         composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
         new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
@@ -44,7 +44,7 @@ def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composit
 
     i = 0 #counting how many contigs we are keeping
     for k in high_count_contigs:
-        a_file = outPath + '/SISRS_Run/contigs_outputs/' + k + '.fasta'
+        a_file = contigPath + k + '.fasta'
         if path.exists(a_file):
             alignment = list(SeqIO.parse(a_file, "fasta"))
             if len(alignment) >= num_sp: #check we have all spp
@@ -53,6 +53,7 @@ def write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composit
                 alignment.append(composite_seq)
                 SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
     print('There are ', i, 'contigs remaining after filtering for at least', num_sp, 'species')
+    return(i)
 
 def print_probe_info(outPath, good_contigs, composite):
     '''
@@ -195,7 +196,7 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
     if not path.exists(newnew_contig_folder):
         mkdir(newnew_contig_folder)
 
-    write_alignment_plus_composite(high_count_contigs, outPath, num_sp, composite, new_contig_folder)
+    write_alignment_plus_composite(high_count_contigs, outPath + '/SISRS_Run/contigs_outputs/', num_sp, composite, new_contig_folder)
 
     alignContigs(new_contig_folder, newnew_contig_folder, processors)
 
