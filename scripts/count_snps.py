@@ -4,15 +4,15 @@ import argparse
 from collections import Counter
 from Bio import SeqIO, AlignIO
 
-def count_snps(folder):
+def count_snps(fa, aligned_contigs2, outf):
     numsnps = 0
     num_pi_sites = 0
     num_pi_sites_dict = {}
-    fa = folder + '/SISRS_Run/contigs_for_probes.fa.fasta'
+
     with open(fa) as contigs:
         for record in SeqIO.parse(contigs, "fasta"):
             contig_num_pi_sites = 0
-            alignment = AlignIO.read(folder+'/SISRS_Run/aligned_contigs2/'+record.id+'.fasta', "fasta")
+            alignment = AlignIO.read(aligned_contigs2+record.id+'.fasta', "fasta")
             for i in range(alignment.get_alignment_length()):
                 site = list(alignment[:, i]) #get site for all spp
                 site = [s for s in site if s in ['a', 'c', 'g', 't']] #remove gaps
@@ -25,9 +25,15 @@ def count_snps(folder):
                             #print("".join(site))
             num_pi_sites_dict[record.id] = contig_num_pi_sites
     print(num_pi_sites)
-    with open(folder + '/SISRS_Run/variation_in_contigs.txt') as outfile:
+    with open(outf) as outfile:
         outfile.write(sorted(num_pi_sites_dict.items(), key=lambda item: item[1])) #sort dict by number of sites and write to a file
     return(num_pi_sites)
+
+def main_count(folder):
+    fa = folder + '/SISRS_Run/contigs_for_probes.fa.fasta'
+    aligned_contigs2 = folder+'/SISRS_Run/aligned_contigs2/'
+    outf = folder + '/SISRS_Run/variation_in_contigs.txt'
+    count_snps(fa, aligned_contigs2, outf)
 
 if __name__ == '__main__':
 
@@ -36,4 +42,4 @@ if __name__ == '__main__':
     my_parser.add_argument('-f', '--folder', action='store', nargs="?")
     args = my_parser.parse_args()
 
-    count_snps(args.folder)
+    main_count(args.folder)
