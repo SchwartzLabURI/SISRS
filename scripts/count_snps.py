@@ -25,8 +25,12 @@ def count_snps(fa, aligned_contigs2, outf):
                             #print("".join(site))
             num_pi_sites_dict[record.id] = contig_num_pi_sites
     print(num_pi_sites)
-    with open(outf) as outfile:
-        outfile.write(sorted(num_pi_sites_dict.items(), key=lambda item: item[1])) #sort dict by number of sites and write to a file
+
+    outfile = open(outf, 'w')
+    for item in sorted(num_pi_sites_dict.items(), key=lambda item: item[1]):
+        outfile.write(item[0] + ' ' + str(item[1]) + '\n') #sort dict by number of sites and write to a file
+    outfile.close()
+
     return(num_pi_sites)
 
 def main_count(folder):
