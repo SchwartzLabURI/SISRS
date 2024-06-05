@@ -38,3 +38,5 @@ def test_write_alignment_plus_composite_basic(setup_data):
 
     contigs_remaining = write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, composite, new_contig_folder)
     assert contigs_remaining == 2
+
+    shutil.rmtree(new_contig_folder)
