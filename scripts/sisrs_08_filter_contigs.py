@@ -130,22 +130,18 @@ def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list
     print('There are ', len(good_contigs), 'contigs remaining after filtering for the distance to the composite genome')
     return(good_contigs)
 
-def get_high_count_contigs(outPath, alignment_file, min_threshold, length_of_locus):
+def get_high_count_contigs(path_to_seq_lengths, path_to_sites, min_threshold, length_of_locus):
     """
-
     Args:
-        outPath (string): folder for output
-        alignment_file (string): name of file eg alignment_pi_locs_m2.txt - use something minimally missing
+        path_to_seq_lengths (string):
+        path_to_sites (string): full path to file listing sites eg alignment_pi_locs_m2.txt - use something minimally missing
         min_threshold (int): min num variable sites for locus to be included
         length_of_locus (int): min length of locus to be included
 
     Returns:
         list: contigs that have min_threshold variable sites and are at least length_of_locus long
         dict: contig name and corresponding number of variable sites across samples
-
     """
-    path_to_seq_lengths = outPath + '/SISRS_Run/Composite_Genome/contigs_SeqLength.tsv'
-    path_to_sites = outPath + '/SISRS_Run/' + alignment_file #name of file eg alignment_pi_locs_m2.txt - use something minimally missing
 
     #read in informative site names and count them
     contigcounts = {}
@@ -165,14 +161,18 @@ def get_high_count_contigs(outPath, alignment_file, min_threshold, length_of_loc
     print('There are ', len(high_count_contigs), 'contigs that have at least ', min_threshold, 'variable sites and are longer than ', length_of_locus)
     return(high_count_contigs, contigcounts)
 
+def get_taxon_list(tpath):
+    with open(tpath) as f:
+        taxon_list = f.readlines()
+        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    return(taxon_list)
+
 def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_locus, max_dist, num_miss):
-    high_count_contigs, contigcounts = get_high_count_contigs(outPath, alignment_file, min_threshold, length_of_locus)
+    high_count_contigs, contigcounts = get_high_count_contigs(outPath+'/SISRS_Run/Composite_Genome/contigs_SeqLength.tsv', outPath+'/SISRS_Run/'+alignment_file, min_threshold, length_of_locus)
 
     composite = SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))     #>SISRS_contig-2000001 186 nucleotides
 
-    with open(outPath+'/TaxonList.txt') as f:
-        taxon_list = f.readlines()
-        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(outPath+'/TaxonList.txt')
 
     num_sp = len(taxon_list)
     if num_miss == -1:
