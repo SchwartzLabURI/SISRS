@@ -10,9 +10,9 @@ import argparse
 
 def align_contigs(output_path, thr):
     '''
-    This function is designed to alighn contigs with MAFFT.
+    This function is designed to align contigs with MAFFT.
 
-    Arguments: path to the output directory, numper of processors to use.
+    Arguments: path to the output directory, number of processors to use.
 
     Returns: none.
     '''

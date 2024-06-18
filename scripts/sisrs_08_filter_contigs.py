@@ -162,6 +162,15 @@ def get_high_count_contigs(path_to_seq_lengths, path_to_sites, min_threshold, le
     return(high_count_contigs, contigcounts)
 
 def get_taxon_list(tpath):
+    '''
+
+    Args:
+        tpath (string): path to the file that contains the liast of species
+
+    Returns:
+        list: list of species (folders)
+
+    '''
     with open(tpath) as f:
         taxon_list = f.readlines()
         taxon_list = sorted([x.rstrip() for x in taxon_list])

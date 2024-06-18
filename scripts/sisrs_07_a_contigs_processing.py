@@ -11,6 +11,7 @@ from Bio import SeqIO
 from os import listdir
 from os.path import isfile, join
 import statistics
+from sisrs_08_filter_contigs import get_taxon_list
 
 def format_consensus_output(output_path, taxa_threshold):
     '''
@@ -27,9 +28,7 @@ def format_consensus_output(output_path, taxa_threshold):
         os.makedirs(p)
 
     # list of taxa
-    with open(output_path+'/TaxonList.txt') as f:
-    	taxon_list = f.readlines()
-    	taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(output_path+'/TaxonList.txt')
 
     # open all taxa handles at once
     consensus_handles = {}
@@ -106,9 +105,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
     '''
 
     # list of taxa
-    with open(output_path+'/TaxonList.txt') as f:
-        taxon_list = f.readlines()
-        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(output_path + '/TaxonList.txt')
 
     # open all taxa handles at once
     consensus_handles = {}
@@ -117,7 +114,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
             '/' + directory + '.vcf.gz'
         taxon_consensus_file = output_path + 'SISRS_Run/' + directory + \
             '/' + directory + '_single_line_format_consensus.fa'
-        infile =  gzip.open(taxon_vcf_file, 'rt')
+        infile = gzip.open(taxon_vcf_file, 'rt')
         outfile = open(taxon_consensus_file, "w")
         outputseq = ""
         locname = ""
@@ -182,9 +179,9 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
                     loclen += 1
         #produce the output for the final locus
         while sisrs_contig_list[sisrs_contig_counter] != locname:
-            print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
-            print ("N", file=outfile)
-            print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+            print(">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
+            print("N", file=outfile)
+            print(sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
             sisrs_contig_counter += 1
         if loclen > 0:
             hzval = hznum/loclen
@@ -192,17 +189,17 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
             if hzval > hz_threshold:
                 outputseq = "N"
         else:
-            print (locname+",NA", file=hzhandle)
+            print(locname+",NA", file=hzhandle)
             outputseq = "N"
-        print (">"+locname, file=outfile)
-        print (outputseq, file=outfile)
+        print(">"+locname, file=outfile)
+        print(outputseq, file=outfile)
         sisrs_contig_counter += 1
         #given the contig list in the header, fill in the remaining missing loci
         #in the VCF body
         while sisrs_contig_counter < len(sisrs_contig_list):
-            print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
-            print ("N", file=outfile)
-            print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+            print(">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
+            print("N", file=outfile)
+            print(sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
             sisrs_contig_counter += 1
         #close handles
         infile.close()
@@ -220,9 +217,7 @@ def contig_driver(output_path):
     '''
 
     # list of taxa
-    with open(output_path+'/TaxonList.txt') as f:
-        taxon_list = f.readlines()
-        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(output_path + '/TaxonList.txt')
 
     for tax in taxon_list:
         bam_file = output_path+'SISRS_Run/'+tax+'/'+tax+'.bam'
@@ -248,9 +243,9 @@ if __name__ == '__main__':
     # Get arguments
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-t','--threshold',action='store',nargs="?", type = int)
-    my_parser.add_argument('-d', '--dir', action='store',nargs="?")
-    my_parser.add_argument('-c', '--cov', action='store',default=3,nargs="?", type = int)
-    my_parser.add_argument('-z', '--hz', action='store',default=0.01,nargs="?", type = float)
+    my_parser.add_argument('-d', '--dir', action='store', nargs="?")
+    my_parser.add_argument('-c', '--cov', action='store', default=3,nargs="?", type=int)
+    my_parser.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
 
     args = my_parser.parse_args()
 

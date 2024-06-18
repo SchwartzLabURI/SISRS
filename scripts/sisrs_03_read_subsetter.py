@@ -25,6 +25,7 @@ import argparse
 import os
 import subprocess
 from subprocess import check_call
+from sisrs_08_filter_contigs import get_taxon_list
 
 def setupDir(sisrs_dir,genomeSize):
     '''
@@ -50,10 +51,7 @@ def setupDir(sisrs_dir,genomeSize):
         trim_read_dir = sisrs_dir + "/Reads/TrimReads"
 
     #taxa come from taxonlist file
-    with open(sisrs_dir+'/TaxonList.txt') as f:
-        taxa = f.readlines()
-    taxa = [x.rstrip() for x in taxa]
-    taxa = sorted(taxa)
+    taxa = get_taxon_list(sisrs_dir+'/TaxonList.txt')
 
     #Find taxa folders within TrimRead folder
     trim_read_tax_dirs = [trim_read_dir+"/"+x for x in taxa]

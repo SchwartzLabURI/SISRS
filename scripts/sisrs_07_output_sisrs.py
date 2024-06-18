@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-"""
-
-Input: -d/--directory, -m/--missing
-"""
-
 import argparse
 import os
 from os import path

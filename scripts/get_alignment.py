@@ -74,15 +74,15 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
     '''
 
     #Fetch contig data
-    contigList=glob.glob(composite_dir +'/contigs_LocList')
+    contigList = glob.glob(composite_dir +'/contigs_LocList')
 
     assert len(contigList) > 0, 'Total site list not found in assembly folder'
 
     #Fetch sorted species data
     dataLists = sorted(glob.glob(sisrs_dir + '/*/*_LocList'))
     dataLists = [x for x in dataLists if 'contigs_LocList' not in x]
-    splist=[os.path.basename(os.path.dirname(path)) for path in dataLists]
-    speciesCount=len(dataLists)
+    splist = [os.path.basename(os.path.dirname(path)) for path in dataLists]
+    speciesCount = len(dataLists)
     assert speciesCount > 0, 'No species had data from the pileup'
 
     allLists = contigList+dataLists
@@ -96,7 +96,7 @@ def get_phy_sites(sisrs_dir,composite_dir,num_missing):
         rowList = list(map(lambda foo: foo.replace('\n', ''), list(rows)))
         speciesData = rowList[1:(speciesCount+1)]
         newrow = filter_sites(speciesData, rowList[0],num_missing)
-        if len(newrow)==2:  #we have data that is useful
+        if len(newrow) == 2:  #we have data that is useful
             outfile.write(" ".join(newrow))
             outfile.write('\n')
 

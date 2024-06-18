@@ -17,7 +17,7 @@ import pandas as pd
 from Bio import SeqIO
 import argparse
 import re
-
+from sisrs_08_filter_contigs import get_taxon_list
 
 def obtainDir(outPath):
     '''
@@ -43,9 +43,7 @@ def obtainDir(outPath):
         trim_read_dir = outPath + "/Reads/TrimReads"
 
     #taxa come from taxonlist file
-    with open(outPath+'/TaxonList.txt') as f:
-        taxa = f.readlines()
-    taxa = sorted([x.rstrip() for x in taxa])
+    taxa = get_taxon_list(outPath+'/TaxonList.txt')
 
     trim_read_tax_dirs = [trim_read_dir+'/'+x for x in taxa]
     ray_dir = outPath+"/Ray_Composite_Genome"

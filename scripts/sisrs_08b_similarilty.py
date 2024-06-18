@@ -6,6 +6,7 @@ import sys
 from Bio import SeqIO
 from os import system, listdir
 from math import ceil
+from sisrs_08_filter_contigs import get_taxon_list
 
 def blast_and_filter(outpath):
     '''
@@ -39,8 +40,7 @@ def blast_and_filter(outpath):
                 fasta_contigs.append(line[0])
             if line[0] != line[1]:  # not the same contig
                 if float(line[5]) > 90:  # 90% identity for region that overlaps
-                    if float(line[4]) > 0.9 * min(float(line[2]), float(
-                            line[3])):  # length of overlap is greater than 90% of the smaller contig
+                    if float(line[4]) > 0.9 * min(float(line[2]), float(line[3])):  # length of overlap is greater than 90% of the smaller contig
                         print(line)
                         if int(line[2]) > int(line[3]):
                             loci_to_drop.append(line[1])
@@ -67,10 +67,7 @@ def heterozyg_filter(outpath, loci_to_drop, fasta_contigs):
 
     '''
 
-    # list of taxa
-    with open(outpath+'/TaxonList.txt') as f:
-        taxonlist = f.readlines()
-        taxonlist = sorted([x.rstrip() for x in taxonlist])
+    taxonlist = get_taxon_list(outpath+'/TaxonList.txt') # list of taxa
 
     hz_dict = {} #keep track of which contigs have heterozygosity (= paralogs?)
     for taxon in taxonlist:
