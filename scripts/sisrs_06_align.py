@@ -75,22 +75,30 @@ def runBowtie(outPath,threads,sp):
     os.remove(outbam)  #rm SISRS_DIR/TAXA/TAXA_Temp.bam
     os.remove(outbam+'_Header.sam') #rm SISRS_DIR/TAXA/TAXA_Header.sam
 
-def run6(sis, proc, folder):
+def makelinks(output_folder, sp, old_folder):
+    for f in os.listdir(old_folder + '/SISRS_Run/' + sp):
+        os.link(old_folder + '/SISRS_Run/' + sp + '/' + f, output_folder + '/SISRS_Run/' + sp + '/' + f)
+
+def run6(sis, proc, folder, link):
     print(sis, folder)
 
-    runBowtie(sis, proc, folder)
+    if link:
+        makelinks(sis, folder, link)
+    else:
+        runBowtie(sis, proc, folder)
 
 if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--directory',action='store',nargs="?")
-    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
-    my_parser.add_argument('-f', '--folder', action='store',nargs="?")
+    my_parser.add_argument('-d', '--directory', action='store', nargs="?")
+    my_parser.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    my_parser.add_argument('-f', '--folder', action='store', nargs="?")
+    my_parser.add_argument('--link', action='store', nargs="?", default=None)
     args = my_parser.parse_args()
 
     sis = args.directory
     proc = args.processors
     folder = args.folder
 
-    run6(sis, proc, folder)
+    run6(sis, proc, folder, args.link)

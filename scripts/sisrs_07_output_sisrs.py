@@ -53,33 +53,45 @@ def count_sites_by_contig(sisrs, ms):
             print(alignment_count_command)
             os.system(alignment_count_command)   
 
-def run7(sis, ms):
-    composite_dir, sisrs_tax_dirs, sisrs = getData(sis)
-    site_dict_labels, species_data = get_phy_sites(sisrs, composite_dir, len(sisrs_tax_dirs) - 2)
-    numsnps(site_dict_labels)  # prints numbers of snps, biallelic snps, and singletons
-    write_alignment(sisrs + '/alignment.nex', site_dict_labels, species_data)
+def makelinks(newdir, olddir):
+    filestocopy = [f for f in os.listdir(olddir + "/SISRS_Run/") if f.startswith('alignment')]
+    for f in filestocopy:
+        # Creates the soft link to the files
+        os.link(olddir + "/SISRS_Run/" + f,
+                newdir + "/SISRS_Run/" + f)
 
-    del site_dict_labels
-    del species_data
-    gc.collect()
+def run7(sis, ms, link):
 
-    for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
-        filter_nexus(sisrs + f, ms)
-        filter_nexus(sisrs + f, ms)
+    if link:
+        makelinks(sis, link)
+    else:
+        composite_dir, sisrs_tax_dirs, sisrs = getData(sis)
+        site_dict_labels, species_data = get_phy_sites(sisrs, composite_dir, len(sisrs_tax_dirs) - 2)
+        numsnps(site_dict_labels)  # prints numbers of snps, biallelic snps, and singletons
+        write_alignment(sisrs + '/alignment.nex', site_dict_labels, species_data)
 
-    # get counts of sites per contig (sorted most to least)
-    for i in ms:
-        count_sites_by_contig(sisrs, i)
+        del site_dict_labels
+        del species_data
+        gc.collect()
+
+        for f in ["/alignment.nex", "/alignment_bi.nex", "/alignment_pi.nex"]:
+            filter_nexus(sisrs + f, ms)
+            filter_nexus(sisrs + f, ms)
+
+        # get counts of sites per contig (sorted most to least)
+        for i in ms:
+            count_sites_by_contig(sisrs, i)
 
 if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--directory',action='store',nargs="?")
-    my_parser.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
+    my_parser.add_argument('-d','--directory', action='store', nargs="?")
+    my_parser.add_argument('-m', '--missing', type=int, action='store', default=[0],nargs="*")
+    my_parser.add_argument('--link', action='store', nargs="?", default=None)
     args = my_parser.parse_args()
 
     sis = args.directory
     ms = args.missing #contains a list of missing
 
-    run7(sis, ms)
+    run7(sis, ms, args.link)

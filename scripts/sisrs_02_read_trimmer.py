@@ -291,15 +291,16 @@ def makeLinks(data_path, sisrs_dir, taxa_list):
 
     for x in taxa_list:
         # Only the files that do not start with '.'
-        l = [f for f in listdir(data_path + '/' + x) if not f.startswith('.')]
-        for i in l:
+        data_path2 = data_path + "/Reads/TrimReads/" + x
+        filestocopy = [f for f in listdir(data_path2) if f.endswith('.fastq.gz')]
+        for f in filestocopy:
             # Creates the soft link to the files
-            os.link(data_path + '/' + x + '/' + i,
-                    sisrs_dir+"/Reads/TrimReads/" + x + '/' + i)
+            os.link(data_path2 + '/' + f,
+                    sisrs_dir+"/Reads/TrimReads/" + x + '/' + f)
 
 def run2(datadir, outputdir, processors, link):
 
-    tl = get_taxon_list(outputdir)  # get taxa from TaxonList.txt
+    tl = get_taxon_list(outputdir + '/TaxonList.txt')  # get taxa from TaxonList.txt
 
     if link:
         makeLinks(datadir, outputdir, tl)
@@ -324,7 +325,7 @@ if __name__ == "__main__":
     my_parser.add_argument('-d', '--datadir', action='store', nargs="?")
     my_parser.add_argument('-dir', '--outputdir', action='store', nargs="?")
     my_parser.add_argument('-p', '--processors', action='store', default=1, nargs="?")
-    my_parser.add_argument('-l', '--link', action=argparse.BooleanOptionalAction, default=False)
+    my_parser.add_argument('--link', action=argparse.BooleanOptionalAction, default=False)
     args = my_parser.parse_args()
 
     run2(args.datadir, args.outputdir, args.processors, args.link)

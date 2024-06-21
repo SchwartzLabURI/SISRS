@@ -23,6 +23,15 @@ On an HPC using slurm, run the scripts in the slurm_example_scripts folder
 in numerical order.
 When using your own data ensure that the path to sisrs is correct in your scripts.
 
+Note: to pick up an analysis from the middle but moving to a new folder 
+(i.e. leaving the original analysis intact):
+* run slurm script 01
+* run 02 adding *--link* to the sisrs command to copy over prior results
+* run 04 adding *--link [prior run folder]* 
+* run 05 adding *--link [prior run folder]* 
+* run 06 (array or not) adding *--link [prior run folder]* 
+* run 10 adding *--link [prior run folder]* 
+
 
 ## Support and Communication
 
