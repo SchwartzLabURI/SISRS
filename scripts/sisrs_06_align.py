@@ -76,14 +76,14 @@ def runBowtie(outPath,threads,sp):
     os.remove(outbam+'_Header.sam') #rm SISRS_DIR/TAXA/TAXA_Header.sam
 
 def makelinks(output_folder, sp, old_folder):
-    for f in os.listdir(old_folder + '/SISRS_Run/' + sp):
+    for f in os.listdir(old_folder + '/SISRS_Run/' + sp): #hard links
         os.link(old_folder + '/SISRS_Run/' + sp + '/' + f, output_folder + '/SISRS_Run/' + sp + '/' + f)
 
 def run6(sis, proc, folder, link):
     print(sis, folder)
 
     if link:
-        makelinks(sis, folder, link)
+        makelinks(sis, folder, link) #hard links
     else:
         runBowtie(sis, proc, folder)
 
