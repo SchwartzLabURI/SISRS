@@ -20,7 +20,7 @@ module load BBMap/39.01-GCC-11.3.0
 
 P=36 #CHANGE THIS to the number of processors
 
-D=../SISRS_Small #CHANGE THIS to the directory with input data
+D=../SISRS_Small #CHANGE THIS to the directory with input data OR the output directory for a prior run when combined with --link
 DIR=../../SISRS_Small_test #CHANGE THIS to the analysis (output) directory
 
 #Note - the only taxa used will be in TaxonList.txt so edit that for fewer taxa

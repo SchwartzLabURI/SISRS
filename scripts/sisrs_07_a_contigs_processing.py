@@ -128,10 +128,13 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
         loclen = 0
         hznum = 0
         #data on heterozygosity - for debugging purposes
-        hzhandle = open(output_path + 'SISRS_Run/' + directory + \
-            '/' + directory +'_hztable.csv', 'w')
+        hzfile = output_path + 'SISRS_Run/' + directory + '/' + directory +'_hztable.csv'
+        if os.path.exists(hzfile): # in cases where the analysis ran previously and we are linking, this file would already exist but permissions may be wrong to overwrite
+            os.remove(hzfile)
+        hzhandle = open(hzfile, 'w')
         sisrs_contig_list = []
         sisrs_contig_counter = 0
+
         #iterate over VCF
         for line in infile:
             if line[0] == "#":

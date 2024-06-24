@@ -12,9 +12,9 @@ cd $SLURM_SUBMIT_DIR
 
 module purge
 
-module load BLAST+/2.8.1-foss-2018b
-module load Biopython/1.78-foss-2020b
+module load Biopython/1.81-foss-2022b
 module load MAFFT/7.475-gompi-2020b-with-extensions
+module load BLAST+/2.14.0-gompi-2022b
 
 P=10 #CHANGE THIS to the number of processors
 OUTFOLDER=../../../Centropogon_markers/ #CHANGE THIS to the analysis directory

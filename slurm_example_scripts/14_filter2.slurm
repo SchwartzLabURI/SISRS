@@ -12,7 +12,7 @@ cd $SLURM_SUBMIT_DIR
 
 module purge
 
-module load Biopython/1.75-foss-2019b-Python-3.7.4
+module load Biopython/1.83-foss-2023b
 module load BLAST+/2.8.1-foss-2018b
 
 OUTFOLDER=../../SISRS_Small_test/ #CHANGE THIS to the analysis directory
