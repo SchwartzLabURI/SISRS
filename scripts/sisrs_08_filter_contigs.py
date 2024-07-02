@@ -7,7 +7,7 @@ from collections import Counter
 from Bio import SeqIO
 from os import path, mkdir, listdir, system
 from math import ceil
-
+import multiprocessing as mp
 
 def alignContigs(new_contig_folder, newnew_contig_folder, processors):
     '''
@@ -27,6 +27,33 @@ def alignContigs(new_contig_folder, newnew_contig_folder, processors):
         mafft_command = f"mafft --auto --thread {processors} {con_p_in} > {con_p_out}"
         system(mafft_command)
 
+def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig_folder):
+    """
+
+    Args:
+        k (string): contig name
+        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/contigs_outputs/'
+        num_sp (int): number of species required to be present given number of missing allowed (default is half)
+        composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
+        new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
+
+    Returns:
+        int: 1 if keeping contig
+
+    """
+
+    i = 0
+    a_file = contigPath + k + '.fasta'
+    if path.exists(a_file):
+        alignment = list(SeqIO.parse(a_file, "fasta"))
+        if len(alignment) >= num_sp:  # check we have all spp
+            i = 1
+            composite_seq = composite[k]  # get composite seq for this contig
+            alignment.append(composite_seq)
+            SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
+
+    return i
+
 def write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, composite, new_contig_folder):
     """
 
@@ -38,22 +65,18 @@ def write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, compo
         new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
 
     Returns:
-        none
+        int: num_contigs_kept
 
     """
 
-    i = 0 #counting how many contigs we are keeping
-    for k in high_count_contigs:
-        a_file = contigPath + k + '.fasta'
-        if path.exists(a_file):
-            alignment = list(SeqIO.parse(a_file, "fasta"))
-            if len(alignment) >= num_sp: #check we have all spp
-                i += 1
-                composite_seq = composite[k] #get composite seq for this contig
-                alignment.append(composite_seq)
-                SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
-    print('There are ', i, 'contigs remaining after filtering for at least', num_sp, 'species')
-    return(i)
+    i = [] #counting how many contigs we are keeping
+    pool = mp.Pool()
+    i = [pool.apply(write_alignment_plus_composite2, args=(k, contigPath, num_sp, composite, new_contig_folder)) for k in high_count_contigs]
+    #for k in high_count_contigs:
+    #    i += write_alignment_plus_composite2(k)
+    num_contigs_kept = sum(i)
+    print('There are ', num_contigs_kept, 'contigs remaining after filtering for at least', num_sp, 'species')
+    return(num_contigs_kept)
 
 def print_probe_info(outPath, good_contigs, composite):
     '''
