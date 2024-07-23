@@ -59,6 +59,7 @@ def fileStructure(sisrs_dir):
     Returns: none.
     '''
 
+    os.mkdir(sisrs_dir)
     os.mkdir(sisrs_dir+"/Reads")
     os.mkdir(sisrs_dir+"/Reads/RawReads")
     os.mkdir(sisrs_dir+"/Reads/TrimReads")
