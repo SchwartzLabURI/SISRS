@@ -52,7 +52,7 @@ def main():
 
     setup_parser6 = subparsers.add_parser("align", help="Align to composite")
     setup_parser6.add_argument('-d', '--directory', action='store', nargs="?")
-    setup_parser6.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser6.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
     setup_parser6.add_argument('-f', '--folder', action='store', nargs="?")
     setup_parser6.add_argument('--link', action='store', nargs="?", default=None)
 
@@ -62,7 +62,7 @@ def main():
 
     setup_parser6c = subparsers.add_parser("align2", help="Align2")
     setup_parser6c.add_argument('-d', '--directory', action='store', nargs="?")
-    setup_parser6c.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser6c.add_argument('-p', '--processors', action='store', default=1, nargs="?", type=int)
     setup_parser6c.add_argument('-f', '--folder', action='store', nargs="?")
 
     setup_parser6d = subparsers.add_parser("pileup2", help="Pileup2")
@@ -79,6 +79,7 @@ def main():
     setup_parser7a = subparsers.add_parser("contig_processing", help="")
     setup_parser7a.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
     setup_parser7a.add_argument('-d', '--dir', action='store', nargs="?")
+    setup_parser7a.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
     setup_parser7a.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
     setup_parser7a.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
 
@@ -176,7 +177,7 @@ def main():
 
     elif args.command == "contig_processing":
         if args.dir:
-            return run7a(args.dir + '/', args.threshold, args.cov, args.hz)
+            return run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)
         else:
             raise NotImplementedError(
                 f"Analysis directory must be provided.",
