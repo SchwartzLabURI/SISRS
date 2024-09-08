@@ -5,7 +5,6 @@ This script outputs a sorted bam by aligning reads to the contigs.fa for the spe
 '''
 
 import os
-from os import path
 from glob import glob
 import argparse
 import psutil
@@ -41,11 +40,9 @@ def runBowtie(outPath,threads,sp, ref):
     Returns: none.
     '''
 
-    outbam = f"{outPath}/SISRS_Run/{sp}/{sp}_Temp.bam"
     outbamb = f"{outPath}/SISRS_Run/{sp}/{sp}.bam"
-    print(outbam)
 
-    if path.isdir(outPath + "/Reads/TrimReads_nocl"):
+    if os.path.isdir(outPath + "/Reads/TrimReads_nocl"):
         trim_read_dir = outPath + "/Reads/TrimReads_nocl/"
     else:
         trim_read_dir = outPath + "/Reads/TrimReads/"
@@ -53,21 +50,9 @@ def runBowtie(outPath,threads,sp, ref):
     mem = psutil.virtual_memory()[1]/threads
 
     fastqs = ",".join(glob(os.path.expanduser("".join([trim_read_dir, sp, '/*.fastq.gz']))))
-    bowtie_command = f"bowtie2 -p {threads} -N 1 --local -x {ref} -U {fastqs} | samtools view -Su -@ {threads} -F 4 - | samtools sort -@ {threads} -m {mem} - -o {outbam}"
+    bowtie_command = f'bowtie2 -p {threads} -N 1 --local -x {ref} -U {fastqs} | samtools view -@ {threads} -F 4 -e "mapq >= 13" -u - | samtools sort -@ {threads} -m {mem} -O bam - -o {outbamb}'
     print(bowtie_command)
     os.system(bowtie_command)
-
-    samtools1 = f"samtools view -@ {threads} -H {outbam} > {outbam}_Header.sam"
-    samtools2 = f'samtools view -@ {threads} {outbam} | grep -v "XS:" | cat {outbam}_Header.sam - | samtools view -@ {threads} -b - > {outbamb}'
-
-    print(samtools1)
-    print(samtools2)
-
-    os.system(samtools1)
-    os.system(samtools2)
-
-    os.remove(outbam)  #rm SISRS_DIR/TAXA/TAXA_Temp.bam
-    os.remove(outbam+'_Header.sam') #rm SISRS_DIR/TAXA/TAXA_Header.sam
 
 def run6c(sis, proc, f2):
     bbuild(sis, f2, proc)
