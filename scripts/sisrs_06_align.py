@@ -6,12 +6,9 @@ This script aligns data from one taxon to the composite genome
 '''
 
 import os
-from os import path
-import sys
 from glob import glob
 import argparse
 from sisrs_06c_align2 import runBowtie
-import re
 
 def makelinks(output_folder, sp, old_folder):
     for f in os.listdir(old_folder + '/SISRS_Run/' + sp): #hard links
