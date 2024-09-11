@@ -20,12 +20,8 @@ def sindex(outPath,sp):
     Returns: none.
     '''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp,
-        '/',
-        sp,
-        '.bam'])
-    sin = ['samtools index ', outbam]
-    os.system("".join(sin))
+    sin = f'samtools index {outPath}/SISRS_Run/{sp}/{sp}.bam'
+    os.system(sin)
 
 
 def prune(outPath, sp, minread, threshold):
