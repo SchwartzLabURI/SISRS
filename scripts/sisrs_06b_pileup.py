@@ -22,21 +22,12 @@ def pileup(outPath,sp):
     Returns: none.
     '''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp, #eg AotNan
-        '/',
-        sp,
-        '.bam'])
+    outbam = f'{outPath}/SISRS_Run/{sp}/{sp}.bam'
+    outpile = f'{outPath}/SISRS_Run/{sp}/{sp}.pileups'
 
-    outpile = "".join([outPath, '/SISRS_Run/', sp, #eg AotNan
-        '/',
-        sp,
-        '.pileups'])
+    pileup = f'samtools mpileup -f {outPath}/SISRS_Run/Composite_Genome/contigs.fa {outbam} > {outpile}'
 
-    pileup = ['samtools mpileup -f ', #equivalent to: samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
-        outPath,'/SISRS_Run/Composite_Genome/contigs.fa ',
-        outbam, ' > ', outpile ]
-
-    os.system("".join(pileup))
+    os.system(pileup)
 
 def specific_genome(outPath, sp):
     '''
@@ -65,10 +56,8 @@ def faidx(outPath, sp):
     Returns: none.
     '''
 
-    f = "".join([outPath, '/SISRS_Run/', sp ])
-    print(f)
-    faid = ['samtools faidx ', f, '/contigs.fa' ] #samtools faidx SISRS_DIR/TAXA/contigs.fa
-    os.system("".join(faid))
+    faid = f'samtools faidx {outPath}/SISRS_Run/{sp}/contigs.fa'
+    os.system(faid)
 
 def run6b(sis, sp):
     #    sp = sp.rstrip("/")
