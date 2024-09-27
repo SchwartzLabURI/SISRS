@@ -216,7 +216,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
         outfile.close()
         hzhandle.close()
 
-def contig_driver(output_path):
+def contig_driver(output_path, proc):
     '''
     This function is designed to call mpileup command and perform pileups on each of the bam files.
 
@@ -238,11 +238,11 @@ def contig_driver(output_path):
 
         #do pileup using no reference and report allelic depth
         #then call variants using all sites (M) and zip the output
-        bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz -mM -o {vcf_zipped}"
+        bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz --threads {proc} -mM -o {vcf_zipped}"
         os.system(bcf_command)
 
-def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh):
-    contig_driver(output_path)
+def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh, proc):
+    contig_driver(output_path, proc)
 
     #call consensus and filter by allelic coverage and ratio of heterozygous sites
     vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
@@ -255,11 +255,12 @@ if __name__ == '__main__':
     # python3 sisrs_07_a_contigs_processing.py -t $T -dir $OUTFOLDER
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-t','--threshold', action='store', nargs="?", type=int)
+    my_parser.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
     my_parser.add_argument('-d', '--dir', action='store', nargs="?")
+    my_parser.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
     my_parser.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
     my_parser.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
 
     args = my_parser.parse_args()
 
-    run7a(args.dir + '/', args.threshold, args.cov, args.hz)
+    run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)

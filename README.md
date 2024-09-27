@@ -23,6 +23,21 @@ On an HPC using slurm, run the scripts in the slurm_example_scripts folder
 in numerical order.
 When using your own data ensure that the path to sisrs is correct in your scripts.
 
+* 01 - set up folders
+* 02 - trim reads
+* 03 - subset the reads down to a total of 10x to do the composite genome assembly
+* 04 - do the composite genome assembly (with Ray)
+* 05 - set up folders to output data for each species and index composite genome
+* 06 - align individual species to composite genome
+* 07 - get pileup for each species (ie info for each site)
+* 08 - realign for more data per species
+* 09 - get pileup for each species (ie info for each site)
+* 10 - get nexus alignment of variable sites
+* 11 - get consensus for each site and filter by allelic coverage and ratio of heterozygous sites
+* 12 - align these contigs
+* 13 - filter contigs based on distance from composite, length, number of variable sites
+* 14 - use blast to remove similar contigs and any with many spp with high heterozygosity 
+
 Note: to pick up an analysis from the middle but moving to a new folder 
 (i.e. leaving the original analysis intact):
 * run slurm script 01

@@ -245,7 +245,7 @@ if __name__ == '__main__':
     my_parser.add_argument('-d', '--outPath', action='store', nargs="?")
     my_parser.add_argument('-a', '--alignment', action='store', nargs="?")
     my_parser.add_argument('-t', '--min_threshold', type=int, action='store', default=1, nargs="?")
-    my_parser.add_argument('-p','--processors', type=int, action='store', default=1,nargs="?")
+    my_parser.add_argument('-p','--processors', type=int, action='store', default=1, nargs="?")
     my_parser.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
     my_parser.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
     my_parser.add_argument('-n', '--num_miss', type=int, action='store', default=-1, nargs="?") #will later convert a default of -1 to 50% of samples

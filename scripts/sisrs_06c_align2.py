@@ -40,19 +40,28 @@ def runBowtie(outPath,threads,sp, ref):
     Returns: none.
     '''
 
-    outbamb = f"{outPath}/SISRS_Run/{sp}/{sp}.bam"
+    outsam = f"{outPath}/SISRS_Run/{sp}/{sp}.sam"
+    outbamt = f"{outPath}/SISRS_Run/{sp}/{sp}_temp.bam"
+    outbam = f"{outPath}/SISRS_Run/{sp}/{sp}.bam"
 
     if os.path.isdir(outPath + "/Reads/TrimReads_nocl"):
         trim_read_dir = outPath + "/Reads/TrimReads_nocl/"
     else:
         trim_read_dir = outPath + "/Reads/TrimReads/"
 
-    mem = psutil.virtual_memory()[1]/threads
+    mem = 0.8*psutil.virtual_memory()[1]/threads
 
     fastqs = ",".join(glob(os.path.expanduser("".join([trim_read_dir, sp, '/*.fastq.gz']))))
-    bowtie_command = f'bowtie2 -p {threads} -N 1 --local -x {ref} -U {fastqs} | samtools view -@ {threads} -F 4 -e "mapq >= 13" -u - | samtools sort -@ {threads} -m {mem} -O bam - -o {outbamb}'
+    bowtie_command = f'bowtie2 -p {threads} -N 1 --local -x {ref} -U {fastqs} -S {outsam}'
+    samview_command = f'samtools view -@ {threads} -F 4 -e "mapq >= 13" -b -o {outbamt} {outsam}'
+    samsort_command = f'samtools sort -@ {threads} -m {mem} -O bam -o {outbam} {outbamt}'
     print(bowtie_command)
     os.system(bowtie_command)
+    os.system(samview_command)
+    os.system(samsort_command)
+
+    os.remove(outsam)
+    os.remove(outbamt)
 
 def run6c(sis, proc, f2):
     bbuild(sis, f2, proc)
