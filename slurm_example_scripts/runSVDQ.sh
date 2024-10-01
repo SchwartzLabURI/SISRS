@@ -1,22 +1,26 @@
 #!/bin/bash
 #SBATCH --job-name="svdq"
-#SBATCH --time=150:00:00  # walltime limit (HH:MM:SS)
+#SBATCH --time=10:00:00  # CHANGE - walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=36   # CHANGE processor core(s) per node
-#SBATCH --mail-user="user@example.edu" #CHANGE to your email
+#SBATCH --ntasks-per-node=20   # CHANGE processor core(s) per node
+#SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE to your email
 #SBATCH --mail-type=ALL
 #SBATCH --output=slurm_%x_%j.out
 #SBATCH --error=slurm_%x_%j.err
+#SBATCH -p uri-cpu
 
 cd $SLURM_SUBMIT_DIR
-module load PAUP/4.0a168-centos64
+
+#CHANGE IF NOT ON UNITY
+module load uri/main PAUP/4.0a168-centos64
+
 
 alignmentFile="../../SISRS_Small_test/SISRS_Run/alignment_pi_m3_nogap.phylip-relaxed" #Change to the path to your phylip file - don't make the path too long
 logFile="${alignmentFile}.svdq.log"
 treeFile="${alignmentFile}.svdq.tre"
 
 nBoot=1000
-nCpus=36 #CHANGE to match ntasks line if needed
+nCpus=$SLURM_JOB_CPUS_PER_NODE
 
 date
 
