@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH --job-name="11_contig_processing"
 #SBATCH --time=4:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes

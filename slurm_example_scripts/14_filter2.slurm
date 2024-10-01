@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH --job-name="14_filter2"
 #SBATCH --time=45:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes

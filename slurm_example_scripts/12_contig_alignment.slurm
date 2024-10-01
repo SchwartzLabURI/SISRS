@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH --job-name="12_contig_align"
 #SBATCH --time=4:00:00  # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
