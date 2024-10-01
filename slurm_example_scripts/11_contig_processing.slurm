@@ -7,14 +7,15 @@
 #SBATCH --mail-type=ALL
 #SBATCH --output=slurm_%x_%j.out
 #SBATCH --error=slurm_%x_%j.err
-#SBATCH --exclusive
+#SBATCH -p uri-cpu
 
 cd $SLURM_SUBMIT_DIR
 
 module purge
 
-module load BCFtools/1.15.1-GCC-11.3.0
-module load Biopython/1.83-foss-2023b
+#CHANGE IF NOT ON UNITY
+module load uri/main bio/Biopython/1.79-intel-2022a
+module load BCFtools/1.17-GCC-12.2.0
 
 #Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
 

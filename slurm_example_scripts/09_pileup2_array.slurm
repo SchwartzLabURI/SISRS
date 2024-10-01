@@ -5,18 +5,20 @@
 #SBATCH --ntasks-per-node=1   # processor core(s) per node - only use 1 for this!
 #SBATCH --mail-user="rsschwartz@uri.edu" #user email address
 #SBATCH --mail-type=ALL
-#SBATCH --array=[0-11]%12 #CHANGE as 6c - note each job only takes 1 core so you can run them all simultaneously
+#SBATCH --array=[0-11]%12 #CHANGE to match the number of taxa - note each job only takes 1 core so you can run them all simultaneously
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
+#SBATCH -p uri-cpu
+
 cd $SLURM_SUBMIT_DIR
 
 #for advice on array jobs see https://github.com/nreid/using_array_jobs
 
 module purge
 
-#CHANGE if not on a URI system
-module load Biopython/1.83-foss-2023b
-module load SAMtools/1.16.1-GCC-11.3.0
+#CHANGE IF NOT ON UNITY
+module load uri/main bio/Biopython/1.79-intel-2022a
+module load samtools/1.14
 
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 MINREAD=3 #CHANGE to set the threshold for the number of reads to call a site
