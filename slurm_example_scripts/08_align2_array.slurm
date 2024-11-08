@@ -18,7 +18,7 @@ module purge
 
 #CHANGE THIS IF NOT ON UNITY
 module load uri/main bio/Biopython/1.79-intel-2022a
-module load samtools/1.14
+module load bio/SAMtools/1.14-GCC-11.2.0
 module load bio/Bowtie2/2.4.5-GCC-11.3.0
 
 PROCESSORS=$SLURM_JOB_CPUS_PER_NODE
