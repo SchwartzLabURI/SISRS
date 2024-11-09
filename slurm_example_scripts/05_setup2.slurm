@@ -15,7 +15,7 @@ module purge
 
 #CHANGE THIS IF NOT ON UNITY
 module load uri/main bio/Biopython/1.79-intel-2022a
-module load bbmap/38.63
+module load bbmap/39.01
 module load bio/SAMtools/1.14-GCC-11.2.0
 module load bio/Bowtie2/2.4.5-GCC-11.3.0
 

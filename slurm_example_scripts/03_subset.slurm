@@ -16,7 +16,7 @@ module purge
 #CHANGE THIS IF NOT ON UNITY
 module load uri/main bio/Biopython/1.79-intel-2022a
 module load FastQC/0.11.9-Java-11
-module load bbmap/38.63
+module load bbmap/39.01
 
 GENOME=1000000000 #CHANGE THIS to the approximate size of your genome
 DIR=../../SISRS_Small_test #CHANGE this to your analysis folder
