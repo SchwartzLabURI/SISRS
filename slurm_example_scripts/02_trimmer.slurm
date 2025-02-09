@@ -16,7 +16,7 @@ module purge
 #CHANGE THIS IF NOT ON UNITY
 module load uri/main bio/Biopython/1.79-intel-2022a
 module load FastQC/0.11.9-Java-11
-module load bbmap/38.63
+module load bbmap/39.01
 
 P=$SLURM_JOB_CPUS_PER_NODE
 
