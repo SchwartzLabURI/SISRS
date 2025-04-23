@@ -13,13 +13,15 @@
 cd $SLURM_SUBMIT_DIR
 
 #CHANGE IF NOT ON UNITY
-module load iq-tree/2.1.3-noMPI
+module load mpich/4.2.1
+module load uri/main
+module load iq-tree/2.3.1
 
 TREE=RAxML_bestTree.alignment_pi_m1_nogap #CHANGE to your filename (include the path as needed)
 ALIGNMENT=../../SISRS_Small_test/SISRS_Run/alignment_pi_m1_nogap.phylip-relaxed #CHANGE to the file used to generate the tree
 OUTPUT=alignment_pi_m1_nogap #CHANGE to a name that will indicate the output information relevant to this tree
 T=$SLURM_JOB_CPUS_PER_NODE
 
-iqtree2 -te $TREE -s $ALIGNMENT --scf 100 --prefix $OUTPUT
+iqtree2-mpi -te $TREE -s $ALIGNMENT --scf 100 --prefix $OUTPUT
 
 
