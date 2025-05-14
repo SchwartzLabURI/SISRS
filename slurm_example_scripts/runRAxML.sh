@@ -14,7 +14,7 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE IF NOT ON UNITY
-module load intel-oneapi-mpi/2021.6.0 apptainer/latest shpc/0.1.26 raxml/8.2.12
+module load shpc/0.1.26 raxml/8.2.12
 
 ALIGNMENT=../../SISRS_Small_test/SISRS_Run/alignment_pi_m1_nogap.phylip-relaxed  #CHANGE - Put the path to your alignment file here
 
