@@ -12,7 +12,7 @@
 cd $SLURM_SUBMIT_DIR
 
 #CHANGE IF NOT ON UNITY
-module r-rocker-ml-verse/4.4.0+apptainer
+module load uri/main R/4.3.2-gfbf-2023a
 
 #local space for R packages and it won't ask about install location
 mkdir -p ~/R-packages
