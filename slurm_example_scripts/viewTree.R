@@ -1,8 +1,8 @@
 if (!("ape" %in% rownames(installed.packages()))) {
-  install.packages("ape")
+  install.packages("ape", repos = "https://cloud.r-project.org")
 }
 if (!("tidyverse" %in% rownames(installed.packages()))) {
-  install.packages("tidyverse")
+  install.packages("tidyverse", repos = "https://cloud.r-project.org")
 }
 
 library(tidyverse)
