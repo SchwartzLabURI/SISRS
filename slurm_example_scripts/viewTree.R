@@ -1,8 +1,9 @@
-#define packages to install
-packages <- c('ape')
-
-#install all packages that are not already installed
-install.packages(setdiff(packages, rownames(installed.packages())), repos = "https://cloud.r-project.org")
+if (!("ape" %in% rownames(installed.packages()))) {
+  install.packages("ape")
+}
+if (!("tidyverse" %in% rownames(installed.packages()))) {
+  install.packages("tidyverse")
+}
 
 library(tidyverse)
 library(ape)
