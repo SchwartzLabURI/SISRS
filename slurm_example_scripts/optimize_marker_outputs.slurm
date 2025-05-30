@@ -14,7 +14,7 @@ module purge
 
 module load uri/main bio/Biopython/1.79-intel-2022a
 module load MAFFT/7.505-GCC-11.3.0-with-extensions
-module load BLAST+/2.14.0-gompi-2022b
+module load BLAST+/2.15.0-gompi-2023a
 
 P=10 #CHANGE THIS to the number of processors
 OUTFOLDER=../../../Centropogon_markers/ #CHANGE THIS to the analysis directory
