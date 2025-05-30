@@ -12,7 +12,7 @@ cd $SLURM_SUBMIT_DIR
 
 module purge
 
-module load Biopython/1.81-foss-2022b
+module load uri/main bio/Biopython/1.79-intel-2022a
 module load MAFFT/7.475-gompi-2020b-with-extensions
 module load BLAST+/2.14.0-gompi-2022b
 
