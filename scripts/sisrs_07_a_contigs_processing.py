@@ -11,6 +11,7 @@ from Bio import SeqIO
 from os import listdir
 from os.path import isfile, join
 import statistics
+from sisrs_08_filter_contigs import get_taxon_list
 
 def format_consensus_output(output_path, taxa_threshold):
     '''
@@ -27,9 +28,7 @@ def format_consensus_output(output_path, taxa_threshold):
         os.makedirs(p)
 
     # list of taxa
-    with open(output_path+'/TaxonList.txt') as f:
-    	taxon_list = f.readlines()
-    	taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(output_path+'/TaxonList.txt')
 
     # open all taxa handles at once
     consensus_handles = {}
@@ -100,15 +99,16 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
     positions marked with '.', as well as filter out (replace with N)
     sequences with high heterozygosity.
 
-    Arguments: path to the output directory, coverage threshold, heterozygosity threshold.
+    Arguments:
+        output_path (string): path to the output directory
+        coverage_threshold (int): coverage threshold
+        heterozygosity threshold (float)
 
-    Returns: none.
+    Returns: none
     '''
 
     # list of taxa
-    with open(output_path+'/TaxonList.txt') as f:
-        taxon_list = f.readlines()
-        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(output_path + '/TaxonList.txt')
 
     # open all taxa handles at once
     consensus_handles = {}
@@ -117,17 +117,24 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
             '/' + directory + '.vcf.gz'
         taxon_consensus_file = output_path + 'SISRS_Run/' + directory + \
             '/' + directory + '_single_line_format_consensus.fa'
-        infile =  gzip.open(taxon_vcf_file, 'rt')
+        infile = gzip.open(taxon_vcf_file, 'rt')
+
+        if os.path.exists(taxon_consensus_file): # in cases where the analysis ran previously and we are linking, this file would already exist but permissions may be wrong to overwrite
+            os.remove(taxon_consensus_file)
+
         outfile = open(taxon_consensus_file, "w")
         outputseq = ""
         locname = ""
         loclen = 0
         hznum = 0
         #data on heterozygosity - for debugging purposes
-        hzhandle = open(output_path + 'SISRS_Run/' + directory + \
-            '/' + directory +'_hztable.csv', 'w')
+        hzfile = output_path + 'SISRS_Run/' + directory + '/' + directory +'_hztable.csv'
+        if os.path.exists(hzfile): # in cases where the analysis ran previously and we are linking, this file would already exist but permissions may be wrong to overwrite
+            os.remove(hzfile)
+        hzhandle = open(hzfile, 'w')
         sisrs_contig_list = []
         sisrs_contig_counter = 0
+
         #iterate over VCF
         for line in infile:
             if line[0] == "#":
@@ -143,25 +150,25 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
                 if locname != splitline[0] and locname != "":
                     #next locus in VCF - output the previous
                     while sisrs_contig_list[sisrs_contig_counter] != locname:
-                        #if current locus in the header is diffent,
+                        #if current locus in the header is different,
                         #produce empty (N) output for loci that were up to this
                         #point missing in the VCF body
-                        print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
-                        print ("N", file=outfile)
-                        print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+                        print(">" + sisrs_contig_list[sisrs_contig_counter], file=outfile)
+                        print("N", file=outfile)
+                        print(sisrs_contig_list[sisrs_contig_counter] + ",NA", file=hzhandle)
                         sisrs_contig_counter += 1
                     # filter by heterozygosity
                     if loclen > 0:
                         hzval = hznum/loclen
-                        print (locname+","+str(hznum/loclen), file=hzhandle)
+                        print(locname + "," + str(hznum/loclen), file=hzhandle)
                         if hzval > hz_threshold:
                             outputseq = "N"
                     else:
-                        print (locname+",NA", file=hzhandle)
+                        print(locname+",NA", file=hzhandle)
                         outputseq = "N"
                     # write output and reset vars
-                    print (">"+locname, file=outfile)
-                    print (outputseq, file=outfile)
+                    print(">"+locname, file=outfile)
+                    print(outputseq, file=outfile)
                     sisrs_contig_counter += 1
                     outputseq = ""
                     hznum = 0
@@ -182,36 +189,36 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
                     loclen += 1
         #produce the output for the final locus
         while sisrs_contig_list[sisrs_contig_counter] != locname:
-            print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
-            print ("N", file=outfile)
-            print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+            print(">" + sisrs_contig_list[sisrs_contig_counter], file=outfile)
+            print("N", file=outfile)
+            print(sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
             sisrs_contig_counter += 1
         if loclen > 0:
             hzval = hznum/loclen
-            print (locname+","+str(hznum/loclen), file=hzhandle)
+            print(locname+","+str(hznum/loclen), file=hzhandle)
             if hzval > hz_threshold:
                 outputseq = "N"
         else:
-            print (locname+",NA", file=hzhandle)
+            print(locname+",NA", file=hzhandle)
             outputseq = "N"
-        print (">"+locname, file=outfile)
-        print (outputseq, file=outfile)
+        print(">" + locname, file=outfile)
+        print(outputseq, file=outfile)
         sisrs_contig_counter += 1
         #given the contig list in the header, fill in the remaining missing loci
         #in the VCF body
         while sisrs_contig_counter < len(sisrs_contig_list):
-            print (">"+sisrs_contig_list[sisrs_contig_counter], file=outfile)
-            print ("N", file=outfile)
-            print (sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
+            print(">" + sisrs_contig_list[sisrs_contig_counter], file=outfile)
+            print("N", file=outfile)
+            print(sisrs_contig_list[sisrs_contig_counter]+",NA", file=hzhandle)
             sisrs_contig_counter += 1
         #close handles
         infile.close()
         outfile.close()
         hzhandle.close()
 
-def contig_driver(output_path):
+def contig_driver(output_path, proc):
     '''
-    This funcction is designed to call mpileup command and perform pileups on each of the bam files.
+    This function is designed to call mpileup command and perform pileups on each of the bam files.
 
     Arguments: path to the output directory.
 
@@ -220,40 +227,40 @@ def contig_driver(output_path):
     '''
 
     # list of taxa
-    with open(output_path+'/TaxonList.txt') as f:
-        taxon_list = f.readlines()
-        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    taxon_list = get_taxon_list(output_path + '/TaxonList.txt')
 
     for tax in taxon_list:
         bam_file = output_path+'SISRS_Run/'+tax+'/'+tax+'.bam'
         vcf_zipped = output_path+'SISRS_Run/'+tax+'/'+tax+'.vcf.gz'
 
+        if os.path.exists(vcf_zipped): # in cases where the analysis ran previously and we are linking, this file would already exist but permissions may be wrong to overwrite
+            os.remove(vcf_zipped)
+
         #do pileup using no reference and report allelic depth
         #then call variants using all sites (M) and zip the output
-        bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz -mM -o {vcf_zipped}"
+        bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz --threads {proc} -mM -o {vcf_zipped}"
         os.system(bcf_command)
 
-if __name__ == '__main__':
-
-    # python3 sisrs_07_a_contigs_processing.py -t $T -dir $OUTFOLDER
-    # Get arguments
-    my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-t','--threshold',action='store',nargs="?", type = int)
-    my_parser.add_argument('-d', '--dir', action='store',nargs="?")
-    my_parser.add_argument('-c', '--cov', action='store',default=3,nargs="?", type = int)
-    my_parser.add_argument('-z', '--hz', action='store',default=0.01,nargs="?", type = float)
-
-    args = my_parser.parse_args()
-
-    output_path = args.dir +'/'
-    taxa_threshold = args.threshold
-    cov_thresh = args.cov
-    hz_thresh = args.hz
-
-    contig_driver(output_path)
+def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh, proc):
+    contig_driver(output_path, proc)
 
     #call consensus and filter by allelic coverage and ratio of heterozygous sites
     vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
 
     #recompile sequence of each taxon by locus
     format_consensus_output(output_path, taxa_threshold)
+
+if __name__ == '__main__':
+
+    # python3 sisrs_07_a_contigs_processing.py -t $T -dir $OUTFOLDER
+    # Get arguments
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
+    my_parser.add_argument('-d', '--dir', action='store', nargs="?")
+    my_parser.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
+    my_parser.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
+    my_parser.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
+
+    args = my_parser.parse_args()
+
+    run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)

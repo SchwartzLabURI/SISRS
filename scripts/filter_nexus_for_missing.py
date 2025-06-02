@@ -103,11 +103,8 @@ if __name__ == '__main__':
     # Get arguments
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-f','--filename',action='store',nargs="?")
-    my_parser.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*")
+    my_parser.add_argument('-m', '--missing',type=int, action='store',default=[0],nargs="*") #contains a list of missing
     args = my_parser.parse_args()
 
-    alignment_filename = args.filename
-    missinglist = args.missing #contains a list of missing
-
-    filter_nexus(alignment_filename, missinglist)
+    filter_nexus(args.filename, args.missing)
 

@@ -17,17 +17,17 @@ def getallbases(path):
     dict: for each location in the composite genome we get one final base call
     '''
 
-    assert len(glob.glob1(path,"*.pileups"))==1,'More than one pileup file in'+path
+    assert len(glob.glob1(path,"*.pileups")) == 1, 'More than one pileup file in'+path
     allbases=dict()
-    with open (path+'/'+os.path.basename(path)+'.pileups',"r") as filein:
+    with open(path+'/'+os.path.basename(path)+'.pileups',"r") as filein:
         for line in filein:
-            splitline=line.split()
-            if len(splitline)>4 and int(splitline[3])>0:
-                node,pos,ref,num,bases,qual=line.split()
-                loc=node+'/'+pos
-                cleanBases=getCleanList(ref,bases)
+            splitline = line.split()
+            if len(splitline) > 4 and int(splitline[3]) > 0:
+                node, pos, ref, num, bases, qual = line.split()
+                loc = node+'/'+pos
+                cleanBases = getCleanList(ref,bases)
                 assert len(cleanBases) == int(num), 'bases are being counted incorrectly: '+ str(bases) + ' should have '+str(num)+' bases, but it is being converted to '+"".join(cleanBases)
-                finalBase=getFinalBase_Specific(cleanBases)
+                finalBase = getFinalBase_Specific(cleanBases)
                 allbases[loc]=finalBase
     return allbases
 
@@ -137,7 +137,7 @@ def getbases_main(path, contig_file):
     '''
     allbases=getallbases(path)      #dictionary of combined pileups - locus/pos:bases(as list)
     if len(allbases)==0:
-        print('No data for '+path,flush=True)
+        print('No data for '+path, flush=True)
         sys.exit(1)
 
     # Read contig fasta file into dictionary with sequence ID as the key

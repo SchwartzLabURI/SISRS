@@ -11,13 +11,9 @@ SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA fold
 
 import os
 from os import path
-import sys
-from glob import glob
 import pandas as pd
-from Bio import SeqIO
 import argparse
-import re
-
+from sisrs_08_filter_contigs import get_taxon_list
 
 def obtainDir(outPath):
     '''
@@ -43,9 +39,7 @@ def obtainDir(outPath):
         trim_read_dir = outPath + "/Reads/TrimReads"
 
     #taxa come from taxonlist file
-    with open(outPath+'/TaxonList.txt') as f:
-        taxa = f.readlines()
-    taxa = sorted([x.rstrip() for x in taxa])
+    taxa = get_taxon_list(outPath+'/TaxonList.txt')
 
     trim_read_tax_dirs = [trim_read_dir+'/'+x for x in taxa]
     ray_dir = outPath+"/Ray_Composite_Genome"
@@ -54,7 +48,7 @@ def obtainDir(outPath):
     #Create composite genome folder
     if(not path.isdir(sisrs_dir+"/Composite_Genome")):
         os.mkdir(sisrs_dir+"/Composite_Genome")
-    composite_dir =sisrs_dir+"/Composite_Genome"
+    composite_dir = sisrs_dir+"/Composite_Genome"
 
     return trim_read_tax_dirs,ray_dir,sisrs_dir,composite_dir
 
@@ -129,25 +123,38 @@ def beginSetUp(composite_dir):
     with open(composite_dir +"/contigs_SeqLength.tsv","r") as filein:
         for line in iter(filein):
             splitline=line.split()
-            for x in range(1,(int(splitline[1])+1)):
-                locListFile.write((splitline[0] +'/'+str(x)+'\n'))
-                siteCount+=1
+            for x in range(1, (int(splitline[1])+1)):
+                locListFile.write((splitline[0] + '/' + str(x) + '\n'))
+                siteCount += 1
     locListFile.close()
 
     print("==== Site list created: " + str(siteCount) + " total sites ==== \n",flush=True)
+
+def makelinks(link, composite_dir):
+    old_composite_dir = link + "/SISRS_Run/Composite_Genome"
+    for f in os.listdir(old_composite_dir):
+        os.link(old_composite_dir + '/' + f, composite_dir + '/' + f)
+
+def run5(sis, proc, link):
+    trim_read_tax_dirs, ray_dir, sisrs, composite_dir = obtainDir(sis)
+
+    if link:
+        makelinks(link, composite_dir)
+    else:
+        fileChanges(ray_dir, composite_dir)
+        indexCompGenome(composite_dir, proc)
+        beginSetUp(composite_dir)
 
 if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--directory',action='store',nargs="?")
-    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    my_parser.add_argument('-d', '--directory', action='store', nargs="?")
+    my_parser.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    my_parser.add_argument('--link', action='store', nargs="?", default=None)
     args = my_parser.parse_args()
 
     sis = args.directory
     proc = args.processors
 
-    trim_read_tax_dirs,ray_dir,sisrs,composite_dir = obtainDir(sis)
-    fileChanges(ray_dir,composite_dir)
-    indexCompGenome(composite_dir,proc)
-    beginSetUp(composite_dir)
+    run5(sis, proc, args.link)

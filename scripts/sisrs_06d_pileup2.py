@@ -5,12 +5,9 @@ This script does a pileup for the specific species genome contigs then calls a b
 '''
 
 import os
-from os import path
-import sys
-from glob import glob
 from get_pruned_dict import *
 import argparse
-import re
+from sisrs_06b_pileup import pileup
 
 def sindex(outPath,sp):
     '''
@@ -23,38 +20,9 @@ def sindex(outPath,sp):
     Returns: none.
     '''
 
-    outbam = "".join([outPath, '/SISRS_Run/', sp,
-        '/',
-        sp,
-        '.bam'])
-    sin = ['samtools index ', outbam]
-    os.system("".join(sin))
+    sin = f'samtools index {outPath}/SISRS_Run/{sp}/{sp}.bam'
+    os.system(sin)
 
-
-def pileup(outPath,sp):
-    '''
-
-    This function performs samtools mpileup on composite genome (specific contigs).
-
-    Arguments: path to the output directory, taxon name directory.
-
-    Returns: none.
-    '''
-
-    outbam = "".join([outPath, '/SISRS_Run/', sp, #AotNan
-        '/',
-        sp,
-        '.bam'])
-
-    outpile = "".join([outPath, '/SISRS_Run/', sp, #AotNan
-        '/',
-        sp,
-        '.pileups'])
-
-    #samtools mpileup -f COMPOSITE_GENOME SISRS_DIR/TAXA/TAXA.bam > SISRS_DIR/TAXA/TAXA.pileups
-    pileup = ['samtools mpileup -f ', outPath, '/SISRS_Run/Composite_Genome/contigs.fa ', outbam, ' > ', outpile ]
-
-    os.system("".join(pileup))
 
 def prune(outPath, sp, minread, threshold):
     '''
@@ -72,6 +40,12 @@ def prune(outPath, sp, minread, threshold):
     print(f)
     getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', minread, threshold)
 
+def run6d(sis, minread, folder, threshold):
+    print(sis, folder)
+
+    sindex(sis, folder)
+    pileup(sis,folder)
+    prune(sis, folder, minread, threshold)
 
 if __name__ == '__main__':
 
@@ -89,8 +63,4 @@ if __name__ == '__main__':
     folder = args.species#.rstrip('/')
     threshold = args.threshold
 
-    print(sis, folder)
 
-    sindex(sis, folder)
-    pileup(sis,folder)
-    prune(sis, folder, minread, threshold)

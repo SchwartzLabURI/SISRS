@@ -25,6 +25,7 @@ import argparse
 import os
 import subprocess
 from subprocess import check_call
+from sisrs_08_filter_contigs import get_taxon_list
 
 def setupDir(sisrs_dir,genomeSize):
     '''
@@ -50,10 +51,7 @@ def setupDir(sisrs_dir,genomeSize):
         trim_read_dir = sisrs_dir + "/Reads/TrimReads"
 
     #taxa come from taxonlist file
-    with open(sisrs_dir+'/TaxonList.txt') as f:
-        taxa = f.readlines()
-    taxa = [x.rstrip() for x in taxa]
-    taxa = sorted(taxa)
+    taxa = get_taxon_list(sisrs_dir+'/TaxonList.txt')
 
     #Find taxa folders within TrimRead folder
     trim_read_tax_dirs = [trim_read_dir+"/"+x for x in taxa]
@@ -291,6 +289,19 @@ def subset(df,trim_read_dir,subset_output_dir,subset_log_dir):
             cp_command = ['cp', '{}'.format(trim_read_dir+"/"+Taxon+"/"+Dataset+"_Trim*"), '{}'.format(subset_output_dir)]
             os.system(" ".join(cp_command)) 
 
+def run3(sis, gs):
+    trim_read_dir, subset_output_dir, subset_log_dir, trim_read_tax_dirs, subsetDepth = setupDir(sis, gs)
+
+    data_info_df = countBasePair(trim_read_tax_dirs)
+
+    print("Based on a genome size estimate of " + str(gs) + " bp, and with " + str(
+        len(trim_read_tax_dirs)) + " species, the requested subset depth is " + str(subsetDepth) + " bp per species")
+
+    data_info_df = checkCoverage(trim_read_dir, data_info_df, subsetDepth, subset_output_dir)
+
+    print(data_info_df)
+
+    subset(data_info_df, trim_read_dir, subset_output_dir, subset_log_dir)
 
 if __name__ == '__main__':
 
@@ -303,14 +314,4 @@ if __name__ == '__main__':
     sis = args.directory
     gs = args.genome_size
 
-    trim_read_dir, subset_output_dir, subset_log_dir, trim_read_tax_dirs, subsetDepth = setupDir(sis,gs) 
-
-    data_info_df = countBasePair(trim_read_tax_dirs) 
-
-    print("Based on a genome size estimate of " + str(gs) + " bp, and with " + str(len(trim_read_tax_dirs)) + " species, the requested subset depth is " + str(subsetDepth) + " bp per species")
-
-    data_info_df = checkCoverage(trim_read_dir,data_info_df,subsetDepth,subset_output_dir)
-    
-    print(data_info_df)
-
-    subset(data_info_df,trim_read_dir,subset_output_dir,subset_log_dir)
+    run3(sis, gs)

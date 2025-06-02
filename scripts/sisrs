@@ -1,0 +1,253 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+
+from sisrs_01_folder_setup import *
+from sisrs_02_read_trimmer import *
+from sisrs_03_read_subsetter import *
+from sisrs_02b_filter_chloroplasts import *
+from sisrs_04_ray_composite import *
+from sisrs_05_setup_sisrs import *
+from sisrs_06_align import *
+from sisrs_06b_pileup import *
+from sisrs_06c_align2 import *
+from sisrs_06d_pileup2 import *
+from sisrs_07_output_sisrs import *
+from sisrs_07_a_contigs_processing import *
+from sisrs_07_b_contigs_alignment import *
+from sisrs_08_filter_contigs import *
+from sisrs_08b_similarilty import *
+from filter_nexus_for_missing import *
+
+def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    setup_parser1 = subparsers.add_parser("setup", help="Setup folders")
+    setup_parser1.add_argument('-d', '--directory', action='store', nargs="?", help="Input folder")
+    setup_parser1.add_argument('-dir', '--outputdir', action='store', nargs="?", help="Output folder")
+
+    setup_parser2 = subparsers.add_parser("trimmer", help="Trim reads")
+    setup_parser2.add_argument('-d', '--datadir', action='store', nargs="?", help="Input folder")
+    setup_parser2.add_argument('-dir', '--outputdir', action='store', nargs="?", help="Output folder")
+    setup_parser2.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser2.add_argument('--link', action=argparse.BooleanOptionalAction, default=False)
+
+    setup_parser2b = subparsers.add_parser("chloroplasts", help="Filter chloroplasts")
+
+    setup_parser3 = subparsers.add_parser("subset", help="Subset reads to 10x")
+    setup_parser3.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser3.add_argument('-gs', '--genome_size', type=int, action='store', nargs="?")
+
+    setup_parser4 = subparsers.add_parser("composite", help="Construct the composite genome")
+    setup_parser4.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser4.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser4.add_argument('--link', action='store', nargs="?", default=None)
+
+    setup_parser5 = subparsers.add_parser("setup2", help="Step 5 setup folders")
+    setup_parser5.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser5.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    setup_parser5.add_argument('--link', action='store', nargs="?", default=None)
+
+    setup_parser6 = subparsers.add_parser("align", help="Align to composite")
+    setup_parser6.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
+    setup_parser6.add_argument('-f', '--folder', action='store', nargs="?")
+    setup_parser6.add_argument('--link', action='store', nargs="?", default=None)
+
+    setup_parser6b = subparsers.add_parser("pileup", help="Pileup")
+    setup_parser6b.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6b.add_argument('-s', '--species', action='store', nargs="?")
+
+    setup_parser6c = subparsers.add_parser("align2", help="Align2")
+    setup_parser6c.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6c.add_argument('-p', '--processors', action='store', default=1, nargs="?", type=int)
+    setup_parser6c.add_argument('-f', '--folder', action='store', nargs="?")
+
+    setup_parser6d = subparsers.add_parser("pileup2", help="Pileup2")
+    setup_parser6d.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser6d.add_argument('-m', '--minread', action='store', default=3, nargs="?")
+    setup_parser6d.add_argument('-s', '--species', action='store', nargs="?")
+    setup_parser6d.add_argument('-t', '--threshold', action='store', default=1, nargs="?")
+
+    setup_parser7 = subparsers.add_parser("output", help="Output concatenated alignment")
+    setup_parser7.add_argument('-d', '--directory', action='store', nargs="?")
+    setup_parser7.add_argument('-m', '--missing', type=int, action='store', default=[0], nargs="*")
+    setup_parser7.add_argument('--link', action='store', nargs="?", default=None)
+
+    setup_parser7a = subparsers.add_parser("contig_processing", help="")
+    setup_parser7a.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
+    setup_parser7a.add_argument('-d', '--dir', action='store', nargs="?")
+    setup_parser7a.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
+    setup_parser7a.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
+    setup_parser7a.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
+
+    setup_parser7b = subparsers.add_parser("contig_alignment", help="")
+    setup_parser7b.add_argument('-d', '--dir', action='store', nargs="?")
+    setup_parser7b.add_argument('-p', '--proc', action='store', default=1, nargs="?", type=int)
+
+    setup_parser8 = subparsers.add_parser("filter", help="Filter contigs")
+    setup_parser8.add_argument('-d', '--outPath', action='store', nargs="?")
+    setup_parser8.add_argument('-a', '--alignment', action='store', nargs="?")
+    setup_parser8.add_argument('-t', '--min_threshold', type=int, action='store', default=1, nargs="?")
+    setup_parser8.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
+    setup_parser8.add_argument('-l', '--length_of_locus', type=int, action='store', default=160, nargs="?")
+    setup_parser8.add_argument('-m', '--max_dist', type=float, action='store', default=0.08, nargs="?")
+    setup_parser8.add_argument('-n', '--num_miss', type=int, action='store', default=-1, nargs="?")
+
+    setup_parser8b = subparsers.add_parser("filter2", help="Filter contigs based on similarity")
+    setup_parser8b.add_argument('-d', '--outpath', action='store', nargs="?")
+    setup_parser8b.add_argument('-m', '--final_total', action='store', default='ALL')
+
+    setup_parser_filternexus = subparsers.add_parser("filter_nexus", help="Filter nexus alignment for missing")
+    setup_parser_filternexus.add_argument('-f', '--filename', action='store', nargs="?")
+    setup_parser_filternexus.add_argument('-m', '--missing', type=int, action='store', default=[0], nargs="*")
+
+    args = parser.parse_args()
+
+    if args.command == "subset":
+        if args.directory and args.genome_size:
+            return run3(args.directory, args.genome_size)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory and estimated genome size must be provided.",
+            )
+
+    elif args.command == "composite":
+        if args.directory:
+            return run4(args.directory, args.processors, args.link)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "setup2":
+        if args.directory:
+            return run5(args.directory, args.processors, args.link)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "align":
+        if args.directory:
+            if args.folder:
+                return run6(args.directory, args.processors, args.folder, args.link)
+            else:
+                raise NotImplementedError(
+                    f"Taxon (folder) must be provided.",
+                )
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "pileup":
+        if args.directory and args.species:
+            return run6b(args.directory, args.species)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory and a species must be provided.",
+            )
+
+    elif args.command == "align2":
+        if args.directory and args.folder:
+            return run6c(args.directory, args.processors, args.folder)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "pileup2":
+        if args.directory and args.species:
+            return run6d(args.directory, args.minread, args.species, args.threshold)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory and a species must be provided.",
+            )
+
+    elif args.command == "output":
+        if args.directory:
+            return run7(args.directory, args.missing, args.link)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "contig_processing":
+        if args.dir:
+            return run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "contig_alignment":
+        if args.dir:
+            return align_contigs(args.dir, args.proc)
+        else:
+            raise NotImplementedError(
+                f"Analysis directory must be provided.",
+            )
+
+    elif args.command == "filter":
+        if args.outPath:
+            if args.alignment:
+                if args.min_threshold:
+                    return all_of_step8(args.outPath, args.alignment, args.min_threshold, args.processors, args.length_of_locus, args.max_dist, args.num_miss)
+                else:
+                    print(args)
+                    raise NotImplementedError(
+                        f"a threshold must be provided.",
+                    )
+            else:
+                print(args)
+                raise NotImplementedError(
+                    f"an alignment must be provided.",
+                )
+        else:
+            print(args)
+            raise NotImplementedError(
+                f"a path must be provided.",
+            )
+
+    elif args.command == "filter2":
+        if args.outpath:
+            return all_of_8b(args.outpath, args.final_total)
+        else:
+            raise NotImplementedError(
+                f"Path and alignment file and a threshold must be provided.",
+            )
+
+    elif args.command == "filter_nexus":
+        if args.filename:
+            return filter_nexus(args.filename, args.missing)
+        else:
+            raise NotImplementedError(
+                f"Alignment file must be provided.",
+            )
+
+    elif args.command == "trimmer":
+        if args.datadir and args.outputdir:
+            return run2(args.datadir, args.outputdir, args.processors, args.link)
+        else:
+            raise NotImplementedError(
+                f"Input and output directories must be provided.",
+            )
+
+    elif args.command == "setup":
+        if args.directory and args.outputdir:
+            return run1(args.directory, args.outputdir)
+        else:
+            raise NotImplementedError(
+                f"Input and output directories must be provided.",
+            )
+
+    else:
+        raise NotImplementedError(
+            f"Command {args.command} does not exist.",
+        )
+
+if __name__ == "__main__":
+    raise SystemExit(main())

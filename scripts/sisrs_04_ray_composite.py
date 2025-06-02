@@ -68,22 +68,37 @@ def runRay(ray_genome_dir,subset_reads,threads):
         '{}'.format(ray_genome_dir)]
     os.system(" ".join(ray_command))
 
+def makeLinks(olddir, ray_genome_dir):
+    os.mkdir(ray_genome_dir)
+    os.link(olddir + "/Ray_Composite_Genome/Contigs.fasta",
+            ray_genome_dir+"/Contigs.fasta")
+    os.link(olddir + "/Ray_Composite_Genome/ContigLengths.txt",
+            ray_genome_dir+"/ContigLengths.txt")
+
+def run4(sis, proc, link):
+    # obtain the directories and files needed for Ray
+    ray_genome_dir, subset_reads = getDirs(sis)
+
+    if os.path.exists(ray_genome_dir):
+        os.rmdir(ray_genome_dir)
+
+    if link is not None:
+        makeLinks(link, ray_genome_dir)
+    else:
+        # Run the ray command
+        runRay(ray_genome_dir, subset_reads, proc)
+
 if __name__ == '__main__':
 
     # Get arguments
     my_parser = argparse.ArgumentParser()
-    my_parser.add_argument('-d','--directory',action='store',nargs="?")
-    my_parser.add_argument('-p','--processors',action='store',default=1,nargs="?")
+    my_parser.add_argument('-d', '--directory', action='store', nargs="?")
+    my_parser.add_argument('-p', '--processors', action='store', default=1, nargs="?")
+    my_parser.add_argument('--link', action='store', nargs="?", default=None)
     args = my_parser.parse_args()
 
     sis = args.directory
     proc = args.processors
 
-    # obtain the directories and files needed for Ray
-    ray_genome_dir, subset_reads = getDirs(sis)
-    
-    if os.path.exists(ray_genome_dir):
-        os.rmdir(ray_genome_dir)
+    run4(sis, proc, args.link)
 
-    # Run the ray command
-    runRay(ray_genome_dir,subset_reads,proc)
