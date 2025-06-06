@@ -14,7 +14,7 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE THIS IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main bio/Biopython/1.83-foss-2023a
 module load FastQC/0.11.9-Java-11
 module load bbmap/38.63
 
