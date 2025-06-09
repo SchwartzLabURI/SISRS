@@ -7,6 +7,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --output=slurm_%x_%j.out
 #SBATCH --error=slurm_%x_%j.err
+#SBATCH -p uri-cpu
 
 cd $SLURM_SUBMIT_DIR
 
