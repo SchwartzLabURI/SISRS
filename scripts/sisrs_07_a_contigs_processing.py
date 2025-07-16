@@ -74,7 +74,9 @@ def read_vcf_gz(file_path):
     for record in vcf_reader:
         # note we are assuming ref = N
         # Store alternate bases as a list and exclude records where ALT is '.'
+        print(record.CHROM,record.POS)
         alt = [str(a) for a in record.ALT if str(a) != '.']
+        print(alt)
         if alt:  # Skip records where ALT is empty after filtering out '.'
             chrom = record.CHROM  # Chromosome
             pos = record.POS      # Position
@@ -120,7 +122,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
     '''
 
     # list of taxa
-    taxon_list = get_taxon_list(output_path + '/TaxonList.txt')  #/work/pi_rsschwartz_uri_edu/jmartins/solanum
+    taxon_list = get_taxon_list(output_path + 'TaxonList.txt')
 
     full_seqs = {}
     for directory in taxon_list:
