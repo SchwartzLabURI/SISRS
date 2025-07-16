@@ -14,13 +14,15 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main
 module load BCFtools/1.17-GCC-12.2.0
-module load conda/latest
-#conda config --add channels bioconda
-#conda create -n sisrs pyvcf3
-conda activate sisrs
 
+module load conda/latest
+conda config --add channels bioconda
+if ! conda env list | grep -q sisrs; then
+  conda create -n sisrs pyvcf3 Biopython numpy pandas psutil -y
+fi
+conda activate sisrs
 
 #Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
 
