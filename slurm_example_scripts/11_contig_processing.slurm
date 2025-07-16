@@ -16,6 +16,11 @@ module purge
 #CHANGE IF NOT ON UNITY
 module load uri/main bio/Biopython/1.79-intel-2022a
 module load BCFtools/1.17-GCC-12.2.0
+module load conda/latest
+#conda config --add channels bioconda
+#conda create -n sisrs pyvcf3
+conda activate sisrs
+
 
 #Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
 
