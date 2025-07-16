@@ -24,7 +24,7 @@ conda activate sisrs
 
 #Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
 
-T=1 #CHANGE THIS to the threshold number
+T=4 #CHANGE THIS to the threshold number
 
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 
