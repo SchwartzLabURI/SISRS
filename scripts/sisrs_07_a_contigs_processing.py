@@ -3,7 +3,21 @@
 import os
 import argparse
 import vcf
-from sisrs_08_filter_contigs import get_taxon_list
+
+def get_taxon_list(tpath):
+    '''
+
+    Args:
+        tpath (string): path to the file that contains the liast of species
+
+    Returns:
+        list: list of species (folders)
+
+    '''
+    with open(tpath) as f:
+        taxon_list = f.readlines()
+        taxon_list = sorted([x.rstrip() for x in taxon_list])
+    return (taxon_list)
 
 def format_consensus_output(output_path, taxa_threshold, full_seqs):
     '''
