@@ -83,6 +83,7 @@ def read_vcf_gz(file_path):
 
             # Accessing all samples within the current record (only 1 for this case)
             sample = record.samples[0] #only need the first as there's only 1
+            print(sample)
             genotype = sample['GT'] #hopefully 1/1 or 1/2 for homo v het given ref is N
             allelic_depth = sample['AD']  # number of ref reads, number of alt1 reads, number of alt2 reads etc
 
