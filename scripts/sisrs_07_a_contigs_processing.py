@@ -63,8 +63,7 @@ def read_vcf_gz(file_path):
     Returns:
     Dict: This function returns a dict where keys are contigs and values are dicts where keys are pos and values are
         - Alleles (list)
-        - Genotype (GT) (list)
-        - Allelic depth (AD) (list) - provides counts for reference and alternative alleles' supporting reads
+        - Allelic depth (D) (list) - provides counts for reference and alternative alleles' supporting reads
     """
 
     # Nested dictionary to store VCF data by chromosome and position
@@ -137,12 +136,12 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
             outputseq = ""
 
             for pos, details in contig_info.items(): #each contig has a dict where the pos is a key and details dict: {'A': ['T'], 'D': [7, 4]}
-                if len(details['ALT']) > 1:
+                if len(details['A']) > 1:
                     hznum += 1
-                max_value = max(details['AD']) #allelic depth of most common allele
+                max_value = max(details['D']) #allelic depth of most common allele
                 if max_value >= coverage_threshold: #sufficient coverage for that allele
-                    alt_index = details['AD'].index(max_value)
-                    outputseq += details['ALT'][alt_index]
+                    alt_index = details['D'].index(max_value)
+                    outputseq += details['A'][alt_index]
 
             hzval = hznum / loclen #check for too many heterozygotes in the locus which could mean paralogy
             print(contig + "," + str(hzval), file=hzhandle)
