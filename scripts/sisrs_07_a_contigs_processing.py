@@ -36,7 +36,7 @@ def format_consensus_output(output_path, taxa_threshold, full_seqs):
     for contig, seq_dict in full_seqs.items():  #full_seqs[contig][taxon] = seq string
         if len(seq_dict) >= taxa_threshold:  # check how many taxa passed
             # if passing the threshold, create a file
-            contigs_file = output_path + 'SISRS_Run/contigs_outputs/'SISRS_contig-' + contig + '.fasta'
+            contigs_file = output_path + 'SISRS_Run/contigs_outputs/SISRS_contig-' + contig + '.fasta'
             out_file = open(contigs_file,'w')
 
             # populate the file
