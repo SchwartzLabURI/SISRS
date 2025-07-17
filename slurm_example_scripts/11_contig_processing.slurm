@@ -21,6 +21,7 @@ module load conda/latest
 conda config --add channels bioconda
 if ! conda env list | grep -q sisrs; then
   conda create -n sisrs pyvcf3 Biopython numpy pandas psutil -y
+  pip install cyvcf2
 fi
 conda activate sisrs
 
