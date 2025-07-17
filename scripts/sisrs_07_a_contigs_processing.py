@@ -2,7 +2,7 @@
 
 import os
 import argparse
-import VCF
+from cyvcf2 import VCF
 
 def get_taxon_list(tpath):
     '''
