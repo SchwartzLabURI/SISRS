@@ -36,7 +36,7 @@ def format_consensus_output(output_path, taxa_threshold, full_seqs):
     for contig, seq_dict in full_seqs.items():  #full_seqs[contig][taxon] = seq string
         if len(seq_dict) >= taxa_threshold:  # check how many taxa passed
             # if passing the threshold, create a file
-            contigs_file = output_path + 'SISRS_Run/contigs_outputs/' + contig + '.fasta'
+            contigs_file = output_path + 'SISRS_Run/contigs_outputs/'SISRS_contig-' + contig + '.fasta'
             out_file = open(contigs_file,'w')
 
             # populate the file
@@ -144,9 +144,9 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
                     outputseq += details['A'][alt_index]
 
             hzval = hznum / loclen #check for too many heterozygotes in the locus which could mean paralogy
-            print(contig + "," + str(hzval), file=hzhandle)
+            print('SISRS_contig-'+contig + "," + str(hzval), file=hzhandle)
             if hzval <= hz_threshold:  #include locus seq in the output if it's reasonable
-                print(">" + contig, file=outfile)
+                print(">SISRS_contig-" + contig, file=outfile)
                 print(outputseq, file=outfile)
                 if contig not in full_seqs:
                     full_seqs[contig] = {}
