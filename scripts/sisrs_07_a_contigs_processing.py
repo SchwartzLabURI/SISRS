@@ -136,7 +136,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
             hznum = 0 #track hets per locus
             outputseq = ""
 
-            for pos, details in contig_info.items(): #each contig has a dict where the pos is a key and details dict: {'ALT': ['T'], 'GT': '1/1', 'AD': [0, 4]}
+            for pos, details in contig_info.items(): #each contig has a dict where the pos is a key and details dict: {'A': ['T'], 'D': [7, 4]}
                 if len(details['ALT']) > 1:
                     hznum += 1
                 max_value = max(details['AD']) #allelic depth of most common allele
