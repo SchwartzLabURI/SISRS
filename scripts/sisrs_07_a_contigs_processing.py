@@ -2,7 +2,7 @@
 
 import os
 import argparse
-import vcf
+import VCF
 
 def get_taxon_list(tpath):
     '''
@@ -70,34 +70,21 @@ def read_vcf_gz(file_path):
     # Nested dictionary to store VCF data by chromosome and position
     vcf_data = {}
 
-    vcf_reader = vcf.Reader(filename=file_path)
+    vcf_reader = VCF(file_path)
     for record in vcf_reader:
-        # note we are assuming ref = N
-        # Store alternate bases as a list and exclude records where ALT is '.'
-        print(record.CHROM,record.POS)
         alt = [str(a) for a in record.ALT if str(a) != '.']
-        print(alt)
         if alt:  # Skip records where ALT is empty after filtering out '.'
-            chrom = record.CHROM  # Chromosome
-            pos = record.POS      # Position
-
-            # Accessing all samples within the current record (only 1 for this case)
-            sample = record.samples[0] #only need the first as there's only 1
-            print(sample)
-            genotype = sample['GT'] #hopefully 1/1 or 1/2 for homo v het given ref is N
-            allelic_depth = sample['AD']  # number of ref reads, number of alt1 reads, number of alt2 reads etc
-
+            chrom = record.CHROM[13:]  # contig number
+            pos = record.POS  # Position
+            allelic_depth = str(record).strip().split(':')[-1].split(',')[1:] #get the line as a string and manually split out AD
             # Initialize chromosome key if not already present
             if chrom not in vcf_data:
                 vcf_data[chrom] = {}
-
             # Store information in the nested dictionary structure
             vcf_data[chrom][pos] = {
-                'ALT': alt,
-                'GT': genotype,
-                'AD': allelic_depth
+                'A': alt,
+                'D': allelic_depth
             }
-            #{'ALT': ['T'], 'GT': '1/1', 'AD': [0, 4]}
     return vcf_data
 
 def vcf_consensus(output_path, coverage_threshold, hz_threshold):
@@ -154,7 +141,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
                     hznum += 1
                 max_value = max(details['AD']) #allelic depth of most common allele
                 if max_value >= coverage_threshold: #sufficient coverage for that allele
-                    alt_index = details['AD'].index(max_value) - 1 #subtract 1 because alt doesn't have counts of ref (N) but AD does
+                    alt_index = details['AD'].index(max_value)
                     outputseq += details['ALT'][alt_index]
 
             hzval = hznum / loclen #check for too many heterozygotes in the locus which could mean paralogy
