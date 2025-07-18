@@ -75,7 +75,8 @@ def read_vcf_gz(file_path):
         if alt:  # Skip records where ALT is empty after filtering out '.'
             chrom = record.CHROM[13:]  # contig number
             pos = record.POS  # Position
-            allelic_depth = str(record).strip().split(':')[-1].split(',')[1:] #get the line as a string and manually split out AD
+            allelic_depth = str(record).strip().split(':')[-1].split(',')[1:] #get the line as a string and manually split out AD, removing the ref AD
+            allelic_depth = [int(i) for i in allelic_depth] #make int
             # Initialize chromosome key if not already present
             if chrom not in vcf_data:
                 vcf_data[chrom] = {}
