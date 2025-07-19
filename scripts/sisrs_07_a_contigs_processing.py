@@ -4,6 +4,25 @@ import os
 import argparse
 from cyvcf2 import VCF
 
+def align_mafft(output_path, contig, contig_alignment, proc):
+    path_out = output_path + "/SISRS_Run/aligned_contigs/"
+    # create if not created
+    if not os.path.exists(path_out):
+        os.mkdir(path_out)
+
+    #write contig to temp_file
+    con_p_in = path_out + 'temp_data.fa'
+    outfile = open(con_p_in, 'w')
+    for sp, seq in contig_alignment.items():
+        print(">" + sp, file=outfile)
+        print(seq, file=outfile)
+    outfile.close()
+
+    con_p_out = path_out + 'SISRS_contig-' + contig + '.fasta'
+    mafft_command = f"mafft --auto --thread {proc} {con_p_in} > {con_p_out}"
+    os.system(mafft_command)
+    os.remove(con_p_in)
+
 def get_taxon_list(tpath):
     '''
 
@@ -19,7 +38,7 @@ def get_taxon_list(tpath):
         taxon_list = sorted([x.rstrip() for x in taxon_list])
     return (taxon_list)
 
-def format_consensus_output(output_path, taxa_threshold, full_seqs):
+def format_consensus_output(output_path, taxa_threshold, full_seqs, proc):
     '''
     This function outputs each contig to a file (note N's have been removed so needs aligning).
 
@@ -28,24 +47,9 @@ def format_consensus_output(output_path, taxa_threshold, full_seqs):
     Returns: none.
     '''
 
-    #where to put contigs
-    p = output_path + 'SISRS_Run/contigs_outputs/'
-    if not os.path.exists(p):
-        os.makedirs(p)
-
     for contig, seq_dict in full_seqs.items():  #full_seqs[contig][taxon] = seq string
         if len(seq_dict) >= taxa_threshold:  # check how many taxa passed
-            # if passing the threshold, create a file
-            contigs_file = output_path + 'SISRS_Run/contigs_outputs/SISRS_contig-' + contig + '.fasta'
-            out_file = open(contigs_file,'w')
-
-            # populate the file
-            for dir in sorted(seq_dict):
-                out_file.write(">" + dir + '\n')
-                out_file.write(seq_dict[dir] + '\n')
-
-            # close the output handle
-            out_file.close()
+            align_mafft(output_path, contig, seq_dict, proc)
 
 def read_vcf_gz(file_path):
     """
@@ -191,7 +195,7 @@ def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh, proc):
     full_seqs = vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
 
     #recompile sequence of each taxon by locus
-    format_consensus_output(output_path, taxa_threshold, full_seqs)
+    format_consensus_output(output_path, taxa_threshold, full_seqs, proc)
 
 if __name__ == '__main__':
 
