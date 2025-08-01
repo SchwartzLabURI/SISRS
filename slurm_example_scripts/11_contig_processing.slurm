@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name="11_contig_processing"
-#SBATCH --time=4:00:00  # walltime limit (HH:MM:SS)
+#SBATCH --time=4:00:00  # CHANGE walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
-#SBATCH --ntasks-per-node=10   # processor core(s) per node
-#SBATCH --mail-user="rsschwartz@uri.edu" #user email address
+#SBATCH --ntasks-per-node=10   # CHANGE for processor core(s) per node
+#SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE user email address
 #SBATCH --mail-type=ALL
 #SBATCH --output=slurm_%x_%j.out
 #SBATCH --error=slurm_%x_%j.err
@@ -29,7 +29,8 @@ conda activate sisrs
 #Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
 
 T=4 #CHANGE THIS to the threshold number
+P=$SLURM_JOB_CPUS_PER_NODE
 
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 
-../scripts/sisrs contig_processing -t $T -d $OUTFOLDER
+../scripts/sisrs contig_processing -t $T -p $P -d $OUTFOLDER
