@@ -16,6 +16,7 @@ module purge
 #CHANGE IF NOT ON UNITY
 module load uri/main
 module load BCFtools/1.17-GCC-12.2.0
+module load MAFFT/7.505-GCC-11.3.0-with-extensions
 
 module load conda/latest
 conda config --add channels bioconda
