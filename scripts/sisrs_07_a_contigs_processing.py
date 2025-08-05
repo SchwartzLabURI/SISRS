@@ -192,12 +192,18 @@ def contig_driver(output_path, proc):
         bcf_command = f"bcftools mpileup -Ou --no-reference -a FORMAT/AD {bam_file} | bcftools call -Oz --threads {proc} -mM -o {vcf_zipped}"
         os.system(bcf_command)
 
-def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh, proc):
-    contig_driver(output_path, proc)
+def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh, proc, resume):
 
-    #call consensus and filter by allelic coverage and ratio of heterozygous sites
-    full_seqs = vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
+    if resume is False:
+        contig_driver(output_path, proc)
+    
+        #call consensus and filter by allelic coverage and ratio of heterozygous sites
+        full_seqs = vcf_consensus(output_path, coverage_threshold=cov_thresh, hz_threshold=hz_thresh)
 
+    else:
+        with open("all_contigs.pickle", "rb") as f:
+            full_seqs = pickle.load(f)
+    
     #recompile sequence of each taxon by locus
     format_consensus_output(output_path, taxa_threshold, full_seqs, proc)
 
@@ -208,10 +214,11 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
     my_parser.add_argument('-d', '--dir', action='store', nargs="?")
+    my_parser.add_argument('-r', '--resume', action=argparse.BooleanOptionalAction, default=False)
     my_parser.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
     my_parser.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
     my_parser.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
 
     args = my_parser.parse_args()
 
-    run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)
+    run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors, ars.resume)
