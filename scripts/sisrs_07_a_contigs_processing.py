@@ -194,7 +194,7 @@ def contig_driver(output_path, proc):
 
 def run7a(output_path, taxa_threshold, cov_thresh, hz_thresh, proc, resume):
 
-    if resume is False:
+    if not resume:
         contig_driver(output_path, proc)
     
         #call consensus and filter by allelic coverage and ratio of heterozygous sites
