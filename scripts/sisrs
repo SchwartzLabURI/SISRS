@@ -80,6 +80,7 @@ def main():
     setup_parser7a.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
     setup_parser7a.add_argument('-d', '--dir', action='store', nargs="?")
     setup_parser7a.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
+    setup_parser7a.add_argument('-r', '--resume', action=argparse.BooleanOptionalAction, default=False, nargs="?")
     setup_parser7a.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
     setup_parser7a.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
 
