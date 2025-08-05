@@ -3,6 +3,7 @@
 import os
 import argparse
 from cyvcf2 import VCF
+import pickle
 
 def align_mafft(output_path, contig, contig_alignment, proc):
     path_out = output_path + "/SISRS_Run/aligned_contigs/"
@@ -110,7 +111,7 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
         coverage_threshold (int): coverage threshold
         heterozygosity threshold (float)
 
-    Returns: none
+    Returns: dict
     '''
 
     # list of taxa
@@ -161,6 +162,9 @@ def vcf_consensus(output_path, coverage_threshold, hz_threshold):
         outfile.close()
         hzhandle.close()
 
+    with open("all_contigs.pickle", "wb") as f:
+        pickle.dump(full_seqs, f)
+    
     return full_seqs
 
 def contig_driver(output_path, proc):
