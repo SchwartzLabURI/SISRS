@@ -13,9 +13,11 @@ cd $SLURM_SUBMIT_DIR
 
 module purge
 
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main 
 module load MAFFT/7.505-GCC-11.3.0-with-extensions
 module load BLAST+/2.15.0-gompi-2023a
+module load conda/latest
+conda activate sisrs
 
 P=10 #CHANGE THIS to the number of processors
 OUTFOLDER=../../../Centropogon_markers/ #CHANGE THIS to the analysis directory
