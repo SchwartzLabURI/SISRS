@@ -40,23 +40,24 @@ for THRESHOLD in {1..3}; do #min num variable sites in contig
 
       SISRS_sites=$(head -1 ${OUTFOLDER}/SISRS_Run/alignment_pi_m${N}.phylip-relaxed | cut -d ' ' -f 3)
 
-      num_contigs=$(grep -c '^>' ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa)
-
-      num_contigs2=$(grep -c '^>' ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa.fasta)
-
-      contig_length=$(grep -v '^>' ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa.fasta | wc -c)
-
-      num_snps=$(python3 ../scripts/count_snps.py -f ${OUTFOLDER}) # number of variable pi sites across all locus alignments
-
-      # information about splits for each site
-
-      echo $NUM_MISS $ALIGNMENT_INFO ${THRESHOLD} ${SISRS_sites} $num_contigs $num_contigs2 $contig_length $num_snps >> ${OUTFOLDER}/optimize_markers2.tsv #collect results
-
-      mv ${OUTFOLDER}/SISRS_Run/aligned_contigs2 ${OUTFOLDER}/SISRS_Run/aligned_contigs2_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}
-      mv ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa.fasta ${OUTFOLDER}/SISRS_Run/contigs_for_probes_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}.fa.fasta
-      mv ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa ${OUTFOLDER}/SISRS_Run/contigs_for_probes_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}.fa
-      mv ${OUTFOLDER}/SISRS_Run/variation_in_contigs.txt ${OUTFOLDER}/SISRS_Run/variation_in_contigs_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}.txt
-
+      if [ -f "${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa" ]; then  #no file if it would be empty
+        num_contigs=$(grep -c '^>' ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa)
+  
+        num_contigs2=$(grep -c '^>' ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa.fasta)
+  
+        contig_length=$(grep -v '^>' ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa.fasta | wc -c)
+  
+        num_snps=$(python3 ../scripts/count_snps.py -f ${OUTFOLDER}) # number of variable pi sites across all locus alignments
+  
+        # information about splits for each site
+  
+        echo $NUM_MISS $ALIGNMENT_INFO ${THRESHOLD} ${SISRS_sites} $num_contigs $num_contigs2 $contig_length $num_snps >> ${OUTFOLDER}/optimize_markers2.tsv #collect results
+  
+        mv ${OUTFOLDER}/SISRS_Run/aligned_contigs2 ${OUTFOLDER}/SISRS_Run/aligned_contigs2_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}
+        mv ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa.fasta ${OUTFOLDER}/SISRS_Run/contigs_for_probes_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}.fa.fasta
+        mv ${OUTFOLDER}/SISRS_Run/contigs_for_probes.fa ${OUTFOLDER}/SISRS_Run/contigs_for_probes_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}.fa
+        mv ${OUTFOLDER}/SISRS_Run/variation_in_contigs.txt ${OUTFOLDER}/SISRS_Run/variation_in_contigs_${NUM_MISS}_${ALIGNMENT_INFO}_${THRESHOLD}.txt
+      fi
     done
   done
 done
