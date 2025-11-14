@@ -27,21 +27,15 @@ def alignContigs(new_contig_folder, newnew_contig_folder, processors):
         mafft_command = f"mafft --auto --thread {processors} {con_p_in} > {con_p_out}"
         system(mafft_command)
 
-def alignContig(alignment):
-    '''
-    realign a single alignment
-    '''
-    
-
 def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig_folder):
     """
 
     Args:
         k (string): contig name
-        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/contigs_outputs/'
+        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/aligned_contigs/'
         num_sp (int): number of species required to be present given number of missing allowed (default is half)
         composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
-        new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
+        new_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/"
 
     Returns:
         int: 1 if keeping contig
@@ -50,14 +44,26 @@ def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig
 
     i = 0
     a_file = contigPath + k + '.fasta'
+    alignment = []
     if path.exists(a_file):
-        alignment = list(SeqIO.parse(a_file, "fasta"))
-        if len(alignment) >= num_sp:  # check we have all spp
+        for record in SeqIO.parse(a_file, "fasta"):
+        record.seq = record.seq.ungap("-")
+        alignment.append(record)
+        
+        #alignment = list(SeqIO.parse(a_file, "fasta"))
+        if len(alignment) >= num_sp:  # check we have enough spp
             i = 1
             composite_seq = composite[k]  # get composite seq for this contig
             alignment.append(composite_seq)
-            alignment = alignContig(alignment)
-            SeqIO.write(alignment, new_contig_folder + k + '.fasta', "fasta")
+
+            #write contig to temp_file   
+            tempfile = new_contig_folder + k + '_temp.fasta'
+            SeqIO.write(alignment, tempfile, "fasta")
+        
+            con_p_out = new_contig_folder + 'SISRS_contig-' + contig + '.fasta'
+            mafft_command = f"mafft --auto --thread 1 {tempfile} > {con_p_out}"
+            os.system(mafft_command)
+            os.remove(tempfile)
 
     return i
 
@@ -264,3 +270,4 @@ if __name__ == '__main__':
 
 
     all_of_step8(outPath, alignment, min_threshold, processors, length_of_locus, max_dist, num_miss)
+
