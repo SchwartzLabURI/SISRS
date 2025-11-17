@@ -60,7 +60,7 @@ def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig
             tempfile = new_contig_folder + k + '_temp.fasta'
             SeqIO.write(alignment, tempfile, "fasta")
         
-            con_p_out = new_contig_folder + 'SISRS_contig-' + contig + '.fasta'
+            con_p_out = new_contig_folder + 'SISRS_contig-' + k + '.fasta'
             mafft_command = f"mafft --auto --thread 1 {tempfile} > {con_p_out}"
             os.system(mafft_command)
             os.remove(tempfile)
@@ -270,6 +270,7 @@ if __name__ == '__main__':
 
 
     all_of_step8(outPath, alignment, min_threshold, processors, length_of_locus, max_dist, num_miss)
+
 
 
 
