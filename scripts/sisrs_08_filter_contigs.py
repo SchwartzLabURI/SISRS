@@ -5,7 +5,7 @@ import argparse
 import sys
 from collections import Counter
 from Bio import SeqIO
-from os import path, mkdir, listdir, system
+from os import path, mkdir, listdir, system, remove
 from math import ceil
 import multiprocessing as mp
 
@@ -62,8 +62,8 @@ def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig
         
             con_p_out = new_contig_folder + 'SISRS_contig-' + k + '.fasta'
             mafft_command = f"mafft --auto --thread 1 {tempfile} > {con_p_out}"
-            os.system(mafft_command)
-            os.remove(tempfile)
+            system(mafft_command)
+            remove(tempfile)
 
     return i
 
@@ -270,6 +270,7 @@ if __name__ == '__main__':
 
 
     all_of_step8(outPath, alignment, min_threshold, processors, length_of_locus, max_dist, num_miss)
+
 
 
 
