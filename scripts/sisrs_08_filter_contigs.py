@@ -47,8 +47,8 @@ def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig
     alignment = []
     if path.exists(a_file):
         for record in SeqIO.parse(a_file, "fasta"):
-        record.seq = record.seq.ungap("-")
-        alignment.append(record)
+            record.seq = record.seq.ungap("-")
+            alignment.append(record)
         
         #alignment = list(SeqIO.parse(a_file, "fasta"))
         if len(alignment) >= num_sp:  # check we have enough spp
@@ -270,4 +270,5 @@ if __name__ == '__main__':
 
 
     all_of_step8(outPath, alignment, min_threshold, processors, length_of_locus, max_dist, num_miss)
+
 
