@@ -178,7 +178,7 @@ def main():
 
     elif args.command == "contig_processing":
         if args.dir:
-            return run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)
+            return run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors, args.resume)
         else:
             raise NotImplementedError(
                 f"Analysis directory must be provided.",
