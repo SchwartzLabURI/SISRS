@@ -21,10 +21,11 @@ from os import path
 from glob import glob
 import pandas as pd
 import re
+from pathlib import Path
+import shutil
 import argparse
 import os
 import subprocess
-from subprocess import check_call
 from sisrs_08_filter_contigs import get_taxon_list
 
 def setupDir(sisrs_dir,genomeSize):
@@ -86,15 +87,16 @@ def countBases(f, paired):
 
     '''
     
-    if paired == False:
-        count_command = ['reformat.sh', 'in={}'.format(f+'_Trim.fastq.gz')]
+    if not paired:
+        count_command = ['reformat.sh', f'in={f}_Trim.fastq.gz']
     else:
-        count_command = ['reformat.sh', 'in={}'.format(f +'_Trim_1.fastq.gz'), 'in2={}'.format(f+'_Trim_2.fastq.gz')]
+        count_command = ['reformat.sh', f'in={f}_Trim_1.fastq.gz', f'in2={f}_Trim_2.fastq.gz']
 
-    proc = subprocess.Popen(count_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) #similar to os.system
-    o, e = proc.communicate()
-  
-    count = re.search('HERE (.*) HERE_2', str(e).replace('(100.00%) \\t','HERE ').replace(' bases (100.00%)\\n\\nTime:',' HERE_2'))
+    result = subprocess.run(count_command, capture_output=True, text=True, check=True)
+
+    count = re.search(r'HERE (.*) HERE_2', 
+                  result.stderr.replace('(100.00%) \t', 'HERE ')
+                                     .replace(' bases (100.00%)\n\nTime:', ' HERE_2'))
     baseCount = count.group(1)
 
     return baseCount
@@ -263,31 +265,29 @@ def subset(df,trim_read_dir,subset_output_dir,subset_log_dir):
         Taxon = str(df.loc[i, "Taxon"])
         Dataset = str(df.loc[i, "Dataset"])
         if ToSample < Basecount:
-          
             if df.loc[i, "Paired"] == 'True':
                 subset_command = [
                     'reformat.sh',
-                    'in={}'.format(trim_read_dir+"/"+Taxon+"/"+Dataset+"_Trim_1.fastq.gz"),
-                    'in2={}'.format(trim_read_dir+"/"+Taxon+"/"+Dataset+"_Trim_2.fastq.gz"),
-                    'out={}'.format(subset_output_dir+Dataset+'_GenomeReads_1.fastq.gz'),
-                    'out2={}'.format(subset_output_dir+Dataset+'_GenomeReads_2.fastq.gz'),
-                    'samplebasestarget={}'.format(ToSample),
-                    'ow=t',
-                    '&>',
-                    '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=Dataset)]
+                    f'in={trim_read_dir}/{Taxon}/{Dataset}_Trim_1.fastq.gz',
+                    f'in2={trim_read_dir}/{Taxon}/{Dataset}_Trim_2.fastq.gz',
+                    f'out={subset_output_dir}{Dataset}_GenomeReads_1.fastq.gz',
+                    f'out={subset_output_dir}{Dataset}_GenomeReads_1.fastq.gz',
+                    f'samplebasestarget={ToSample}',
+                    'ow=t']
             else:
                 subset_command = [
                     'reformat.sh',
-                    'in={}'.format(trim_read_dir+"/"+Taxon+"/"+Dataset+"_Trim.fastq.gz"),
-                    'out={}'.format(subset_output_dir+Dataset+'_GenomeReads.fastq.gz'),
-                    'samplebasestarget={}'.format(ToSample),
-                    'ow=t',
-                    '&>',
-                    '{outDir}out_{fileName}'.format(outDir=subset_log_dir,fileName=Dataset)]
-            check_call(subset_command)
+                    f'in={trim_read_dir}/{Taxon}/{Dataset}_Trim.fastq.gz',
+                    f'out={subset_output_dir}{Dataset}_GenomeReads.fastq.gz',
+                    f'samplebasestarget={ToSample}',
+                    'ow=t']
+            output_file = f'{subset_log_dir}out_{Dataset}'
+            with open(output_file, 'w') as f:
+                subprocess.run(subset_command, stdout=f, stderr=subprocess.STDOUT, check=True)
         else:
-            cp_command = ['cp', '{}'.format(trim_read_dir+"/"+Taxon+"/"+Dataset+"_Trim*"), '{}'.format(subset_output_dir)]
-            os.system(" ".join(cp_command)) 
+            trim_dir = Path(trim_read_dir) / Taxon
+            for file in trim_dir.glob(f'{Dataset}_Trim*'):
+                shutil.copy2(file, subset_output_dir)
 
 def run3(sis, gs):
     trim_read_dir, subset_output_dir, subset_log_dir, trim_read_tax_dirs, subsetDepth = setupDir(sis, gs)
