@@ -266,8 +266,7 @@ def trim(raw_read_tax_dirs, trim_read_dir, bbduk_adapter, trim_output, newData):
                     'hdist=1',
                     'hdist2=0',
                     'ktrim=r',
-                    'ow=t',
-                    '&>']
+                    'ow=t']
 
                 output_file = f'{trim_output}out_{file_name}_Trim'
                 with open(output_file, 'w') as f:
