@@ -17,7 +17,7 @@ module purge
 module load uri/main 
 #module load bio/Biopython/1.83-foss-2023a
 module load FastQC/0.11.9-Java-11
-module load bbmap/38.63
+module load bbmap/39.01
 module load conda/latest
 conda activate sisrs
 
