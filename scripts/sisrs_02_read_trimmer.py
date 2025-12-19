@@ -16,7 +16,6 @@ from os import path, listdir
 import sys
 from glob import glob
 import subprocess
-from subprocess import check_call
 import argparse
 from sisrs_08_filter_contigs import get_taxon_list
 
@@ -30,13 +29,11 @@ def findAdapter():
     string: the path to the location of the adapter file.
     '''
 
-    cmd = ['which', 'bbduk.sh']
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    o, e = proc.communicate()
-    bbduk_adapter = path.dirname(o.decode('ascii')) + "/resources/adapters.fa"
+    bbduk_cmd = ['which', 'bbduk.sh']
+    result = subprocess.run(bbduk_cmd, capture_output=True, text=True, check=True)
+    bbduk_adapter = path.dirname(result.stdout.strip()) + "/resources/adapters.fa"
 
     return bbduk_adapter
-
 
 def setup(datadir, sisrs_dir, taxa):
     '''
@@ -87,12 +84,10 @@ def newdFastqc(processors, fastqc_output, data_dir, newFiles):
     '''
 
     #Run FastQC on all trimmed files, using all available processors
-    fastqc_command = [
+    fastqc_command = [  #leave as list for subprocess.run, which treats list items as args
         'fastqc',
-        '-t',
-        '{}'.format(processors),
-        '-o',
-        '{}'.format(fastqc_output)]
+        '-t', f'{processors}',
+        '-o', f'{fastqc_output}']
 
     for item in data_dir:
         for x in glob(item + "/*.fastq.gz"):
@@ -101,7 +96,7 @@ def newdFastqc(processors, fastqc_output, data_dir, newFiles):
             if f[-1] in newFiles:
                 fastqc_command.append(x)
 
-    check_call(fastqc_command)
+    subprocess.run(fastqc_command, check = True)
 
 def fastqcCommand(processors, fastqc_output, read_dir, taxa):
     '''
@@ -116,12 +111,11 @@ def fastqcCommand(processors, fastqc_output, read_dir, taxa):
     Returns: none.
     '''
 
-    fastqc_command = [
+    fastqc_command = [ #leave as list for subprocess.run, which treats list items as args
         'fastqc',
-        '-t',
-        '{}'.format(processors),
-        '-o',
-        '{}'.format(fastqc_output)]
+        '-t', f'{processors}',
+        '-o', f'{fastqc_output}'
+    ]
 
     for t in taxa:
         print(read_dir + "/" + t + "/*.fastq.gz")
@@ -133,7 +127,7 @@ def fastqcCommand(processors, fastqc_output, read_dir, taxa):
             print(x)
             fastqc_command.append(x)
 
-    check_call(fastqc_command)
+    subprocess.run(fastqc_command, check=True)
 
 def trimHelper(tax_dir, trim_read_dir, newData):
     '''
@@ -230,25 +224,26 @@ def trim(raw_read_tax_dirs, trim_read_dir, bbduk_adapter, trim_output, newData):
         #Trim single-end files if present...
         if len(single_end) > 0:
             for x in single_end:
-                se_trim_command = [
+                se_trim_command = [ #use list for subprocess.run
                     'bbduk.sh',
                     'maxns=0',
-                    'ref={}'.format(bbduk_adapter),
+                    f'ref={bbduk_adapter}',
                     'qtrim=w',
                     'trimq=15',
                     'minlength=35',
                     'maq=25',
-                    'in={}'.format(x + '.fastq.gz'),
-                    'out={}'.format(out_trim_dir + "/" + path.basename(x) + '_Trim.fastq.gz'),
+                    f'in={x}.fastq.gz',
+                    f'out={out_trim_dir}/{path.basename(x)}_Trim.fastq.gz',
                     'k=23',
                     'mink=11',
                     'hdist=1',
                     'hdist2=0',
                     'ktrim=r',
-                    'ow=t',
-                    '&>',
-                    '{outDir}out_{fileName}_Trim'.format(outDir=trim_output, fileName=path.basename(x))]
-                check_call(se_trim_command)
+                    'ow=t']
+
+                output_file = f'{trim_output}out_{path.basename(x)}_Trim'
+                with open(output_file, 'w') as f:
+                    subprocess.run(se_trim_command, stdout=f, stderr=subprocess.STDOUT, check=True)
 
         #Trim paired-end files if present...
         if (len(left_pairs) == len(right_pairs) & len(left_pairs) > 0):
@@ -257,24 +252,26 @@ def trim(raw_read_tax_dirs, trim_read_dir, bbduk_adapter, trim_output, newData):
                 pe_trim_command = [
                     'bbduk.sh',
                     'maxns=0',
-                    'ref={}'.format(bbduk_adapter),
+                    f'ref={bbduk_adapter}',
                     'qtrim=w',
                     'trimq=15',
                     'minlength=35',
                     'maq=25',
-                    'in={}'.format(left_pairs[x] + '_1.fastq.gz'),
-                    'in2={}'.format(right_pairs[x] + '_2.fastq.gz'),
-                    'out={}'.format(out_trim_dir + "/" + path.basename(left_pairs[x]) + '_Trim_1.fastq.gz'),
-                    'out2={}'.format(out_trim_dir + "/" + path.basename(right_pairs[x]) + '_Trim_2.fastq.gz'),
+                    f'in={left_pairs[x]}_1.fastq.gz',
+                    f'in2={right_pairs[x]}_2.fastq.gz',
+                    f'out={out_trim_dir}/{path.basename(left_pairs[x])}_Trim_1.fastq.gz',
+                    f'out2={out_trim_dir}/{path.basename(right_pairs[x])}_Trim_2.fastq.gz',
                     'k=23',
                     'mink=11',
                     'hdist=1',
                     'hdist2=0',
                     'ktrim=r',
                     'ow=t',
-                    '&>',
-                    '{outDir}out_{fileName}_Trim'.format(outDir=trim_output, fileName=file_name)]
-                check_call(pe_trim_command)
+                    '&>']
+
+                output_file = f'{trim_output}out_{file_name}_Trim'
+                with open(output_file, 'w') as f:
+                    subprocess.run(pe_trim_command, stdout=f, stderr=subprocess.STDOUT, check=True)
 
 def makeLinks(data_path, sisrs_dir, taxa_list):
 
