@@ -14,11 +14,14 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE THIS IF NOT ON UNITY
-module load uri/main bio/Biopython/1.83-foss-2023a
+module load uri/main 
+#module load bio/Biopython/1.83-foss-2023a
 module load FastQC/0.11.9-Java-11
 module load bbmap/38.63
+module load conda/latest
+conda activate sisrs
 
 GENOME=1000000000 #CHANGE THIS to the approximate size of your genome
-DIR=../../SISRS_Small_test #CHANGE this to your analysis folder
+DIR=../../SISRS_Small_test2 #CHANGE this to your analysis folder
 
 ../scripts/sisrs subset -gs $GENOME -d $DIR
