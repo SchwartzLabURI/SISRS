@@ -13,13 +13,10 @@ Output: Ray assembly will be built in <basedir>/Ray_Composite_Genome (Contigs.fa
 '''
 
 import os
-from os import path
-import sys
 from glob import glob
 import subprocess
-from subprocess import check_call
 import argparse
-
+import shutil
 
 def getDirs(sisrs_dir):
     '''
@@ -58,15 +55,17 @@ def runRay(ray_genome_dir,subset_reads,threads):
     '''
 
     ray_command = [
-        'mpirun',
-        '-n','{}'.format(str(threads)),
-        'Ray',
-        '-k',
-        '31',
-        '{}'.format("-s " + " -s ".join(subset_reads)),
-        '-o',
-        '{}'.format(ray_genome_dir)]
-    os.system(" ".join(ray_command))
+    'mpirun',
+    '-n', f'{threads}',
+    'Ray',
+    '-k', '31']
+
+    # Add -s flags for each subset read
+    for read in subset_reads:
+        ray_command.extend(['-s', read])
+    ray_command.extend(['-o', f'{ray_genome_dir}']) #add output
+
+    subprocess.run(ray_command, check=True)
 
 def makeLinks(olddir, ray_genome_dir):
     os.mkdir(ray_genome_dir)
@@ -80,7 +79,7 @@ def run4(sis, proc, link):
     ray_genome_dir, subset_reads = getDirs(sis)
 
     if os.path.exists(ray_genome_dir):
-        os.rmdir(ray_genome_dir)
+        shutil.rmtree(ray_genome_dir)
 
     if link is not None:
         makeLinks(link, ray_genome_dir)
