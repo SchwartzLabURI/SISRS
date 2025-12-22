@@ -10,6 +10,7 @@ SISRS scripts are generated from a template and saved to the SISRS_Run/TAXA fold
 '''
 
 import os
+import subprocess
 from os import path
 import pandas as pd
 import argparse
@@ -67,12 +68,13 @@ def fileChanges(ray_dir,composite_dir):
     #Create renamed contig file in SISRS_Run/Composite_Genome
     rename_command = [
         'rename.sh',
-        'in={}'.format(ray_dir+"/Contigs.fasta"),
-        'out={}'.format(composite_dir+'/contigs.fa'),
+        f'in={ray_dir}/Contigs.fasta',
+        f'out={composite_dir}/contigs.fa',
         'prefix=SISRS',
         'addprefix=t',
         'ow=t']
-    os.system(" ".join(rename_command))
+
+    subprocess.run(rename_command, check=True)
 
     #Copy sequence length file from Ray
     contig_length = pd.read_csv(ray_dir+'/ContigLengths.txt',sep="\t",header=None)
@@ -95,18 +97,19 @@ def indexCompGenome(composite_dir,threads):
     #Index composite genome using Bowtie2 and Samtools
     bowtie_command = [
         'bowtie2-build',
-        '{}'.format(composite_dir+'/contigs.fa'),
-        '{}'.format(composite_dir+'/contigs'),
+        f'{composite_dir}/contigs.fa',
+        f'{composite_dir}/contigs',
         '-p',
-        '{}'.format(str(threads))]
-    os.system(" ".join(bowtie_command))
+        f'{threads}']
+
+    subprocess.run(bowtie_command, check=True)
 
     samtools_command = [
         'samtools',
         'faidx',
-        '{}'.format(composite_dir+'/contigs.fa')]
-    os.system(" ".join(bowtie_command))
+        f'{composite_dir}/contigs.fa']
 
+    subprocess.run(samtools_command, check=True)
 
 def beginSetUp(composite_dir):
     '''
