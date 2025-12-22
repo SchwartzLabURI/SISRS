@@ -14,8 +14,10 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main #bio/Biopython/1.79-intel-2022a
 module load bio/SAMtools/1.14-GCC-11.2.0
+module load conda/latest
+conda activate sisrs
 
 OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
 MINREAD=3 #CHANGE to set the threshold for the number of reads to call a site
