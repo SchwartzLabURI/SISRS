@@ -85,7 +85,7 @@ def runBowtie(outPath,threads,sp, ref):
         'samtools',
         'sort',
         '-@', f'{threads}',
-        '-m', mem,
+        '-m', str(mem),
         '-O', 'bam',
         '-o', outbam,
         outbamt]
