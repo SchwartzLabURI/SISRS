@@ -4,10 +4,10 @@
 This script does a pileup for the specific species genome contigs then calls a base for each site
 '''
 
-import os
 from get_pruned_dict import *
 import argparse
 from sisrs_06b_pileup import pileup
+import subprocess
 
 def sindex(outPath,sp):
     '''
@@ -20,9 +20,12 @@ def sindex(outPath,sp):
     Returns: none.
     '''
 
-    sin = f'samtools index {outPath}/SISRS_Run/{sp}/{sp}.bam'
-    os.system(sin)
+    samtools_command = [
+        'samtools',
+        'index',
+        f'{outPath}/SISRS_Run/{sp}/{sp}.bam']
 
+    subprocess.run(samtools_command, check=True)
 
 def prune(outPath, sp, minread, threshold):
     '''
@@ -34,9 +37,7 @@ def prune(outPath, sp, minread, threshold):
 
     Returns: none.
     '''
-    #script_dir = os.path.dirname(os.path.abspath(__file__))
-    #print(script_dir)
-    f = "".join([outPath, '/SISRS_Run/', sp])
+    f = f'{outPath}/SISRS_Run/{sp}'
     print(f)
     getallbases_main(f, outPath+'/SISRS_Run/Composite_Genome', minread, threshold)
 
