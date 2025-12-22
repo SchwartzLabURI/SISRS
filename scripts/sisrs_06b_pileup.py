@@ -6,7 +6,7 @@ Make a genome specific to the species by replacing sites
 Index new genome
 '''
 
-import os
+import subprocess
 from os import path
 from specific_genome import *
 import argparse
@@ -24,10 +24,17 @@ def pileup(outPath,sp):
 
     outbam = f'{outPath}/SISRS_Run/{sp}/{sp}.bam'
     outpile = f'{outPath}/SISRS_Run/{sp}/{sp}.pileups'
+    contigs_fa = f'{outPath}/SISRS_Run/Composite_Genome/contigs.fa'
 
-    pileup = f'samtools mpileup -f {outPath}/SISRS_Run/Composite_Genome/contigs.fa {outbam} > {outpile}'
+    pileup_command = [
+        'samtools',
+        'mpileup',
+        '-f',
+        contigs_fa,
+        outbam]
 
-    os.system(pileup)
+    with open(outpile, 'w') as f:
+        subprocess.run(pileup_command, stdout=f, check=True)
 
 def specific_genome(outPath, sp):
     '''
@@ -39,9 +46,8 @@ def specific_genome(outPath, sp):
 
     Returns: none.
     '''
-    #script_dir = os.path.dirname(os.path.abspath(__file__))
-    #print(script_dir)
-    f = "".join([outPath, '/SISRS_Run/', sp ])
+    
+    f = f'{outPath}/SISRS_Run/{sp}'
     print(f)
     getbases_main(f, outPath+'/SISRS_Run/Composite_Genome/contigs.fa')
 
@@ -56,8 +62,12 @@ def faidx(outPath, sp):
     Returns: none.
     '''
 
-    faid = f'samtools faidx {outPath}/SISRS_Run/{sp}/contigs.fa'
-    os.system(faid)
+    faid_command = [
+        'samtools',
+        'faidx',
+        f'{outPath}/SISRS_Run/{sp}/contigs.fa']
+
+    subprocess.run(faid_command, check=True)
 
 def run6b(sis, sp):
     #    sp = sp.rstrip("/")
