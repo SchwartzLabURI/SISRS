@@ -5,7 +5,9 @@ This script outputs a sorted bam by aligning reads to the contigs.fa for the spe
 '''
 
 import os
+from pathlib import Path
 from glob import glob
+import subprocess
 import argparse
 import psutil
 
@@ -21,10 +23,14 @@ def bbuild(outPath, readfolder, proc):
     Returns: none.
     '''
 
-    b = f"bowtie2-build {outPath}/SISRS_Run/{readfolder}/contigs.fa {outPath}/SISRS_Run/{readfolder}/contigs -p {proc}"
-    # bowtie2-build SISRS_DIR/TAXA/contigs.fa SISRS_DIR/TAXA/contigs -p PROCESSORS
+    bowtie_command = [
+        'bowtie2-build',
+        f'{outPath}/SISRS_Run/{readfolder}/contigs.fa',
+        f'{outPath}/SISRS_Run/{readfolder}/contigs',
+        '-p',
+        f'{proc}']
 
-    os.system(b)
+    subprocess.run(bowtie_command, check=True)
 
 def runBowtie(outPath,threads,sp, ref):
     '''
@@ -51,17 +57,46 @@ def runBowtie(outPath,threads,sp, ref):
 
     mem = 0.8*psutil.virtual_memory()[1]/threads
 
-    fastqs = ",".join(glob(os.path.expanduser("".join([trim_read_dir, sp, '/*.fastq.gz']))))
-    bowtie_command = f'bowtie2 -p {threads} -N 1 --local -x {ref} -U {fastqs} -S {outsam}'
-    samview_command = f'samtools view -@ {threads} -F 4 -e "mapq >= 13" -b -o {outbamt} {outsam}'
-    samsort_command = f'samtools sort -@ {threads} -m {mem} -O bam -o {outbam} {outbamt}'
-    print(bowtie_command)
-    os.system(bowtie_command)
-    os.system(samview_command)
-    os.system(samsort_command)
+    # Get fastq files using pathlib
+    fastq_dir = Path(trim_read_dir).expanduser() / sp
+    fastqs = ",".join([str(f) for f in fastq_dir.glob('*.fastq.gz')])
 
-    os.remove(outsam)
-    os.remove(outbamt)
+    # Convert commands to lists
+    bowtie_command = [
+        'bowtie2',
+        '-p', f'{threads}',
+        '-N', '1',
+        '--local',
+        '-x', ref,
+        '-U', fastqs,
+        '-S', outsam]
+
+    samview_command = [
+        'samtools',
+        'view',
+        '-@', f'{threads}',
+        '-F', '4',
+        '-e', 'mapq >= 13',
+        '-b',
+        '-o', outbamt,
+        outsam]
+
+    samsort_command = [
+        'samtools',
+        'sort',
+        '-@', f'{threads}',
+        '-m', mem,
+        '-O', 'bam',
+        '-o', outbam,
+        outbamt]
+
+    print(bowtie_command)
+    subprocess.run(bowtie_command, check=True)
+    subprocess.run(samview_command, check=True)
+    subprocess.run(samsort_command, check=True)
+
+    Path(outsam).unlink()
+    Path(outbamt).unlink()
 
 def run6c(sis, proc, f2):
     bbuild(sis, f2, proc)
