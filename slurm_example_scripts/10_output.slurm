@@ -14,8 +14,10 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main #bio/Biopython/1.79-intel-2022a
+module load conda/latest
+conda activate sisrs
 
-OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
+OUTFOLDER=../../SISRS_Small_test2 #CHANGE to analysis directory
 
 ../scripts/sisrs output -m 1 2 3 -d $OUTFOLDER #CHANGE the numbers as needed
