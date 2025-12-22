@@ -17,13 +17,15 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE THIS IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main #bio/Biopython/1.79-intel-2022a
 module load bio/SAMtools/1.14-GCC-11.2.0
 module load bio/Bowtie2/2.4.5-GCC-11.3.0
+module load conda/latest
+conda activate sisrs
 
 PROCESSORS=$SLURM_JOB_CPUS_PER_NODE
 
-OUTFOLDER=../../SISRS_Small_test #CHANGE to the analysis directory
+OUTFOLDER=../../SISRS_Small_test2 #CHANGE to the analysis directory
 
 SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
 echo ${SPP[@]}
