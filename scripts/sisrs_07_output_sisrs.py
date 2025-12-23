@@ -2,12 +2,10 @@
 
 import argparse
 import os
-from os import path
-import sys
-import glob
+from pathlib import Path
+from collections import Counter
+import re
 import subprocess
-from subprocess import Popen
-from itertools import islice
 from get_alignment import *
 from filter_nexus_for_missing import *
 import gc
@@ -46,12 +44,26 @@ def count_sites_by_contig(sisrs, ms):
 
     files = ["alignment_pi_locs_m", "alignment_bi_locs_m", "alignment_locs_m"]
     gaps = ["", "_nogap"]
+
     for f in files:
         for g in gaps:
-            alignment_count_command = f"grep -oe \"SISRS_[^/]*\" {sisrs}/{f}{ms}{g}.txt | uniq -c | sort -k1 -nr | awk \"{{print $2}}\" > {sisrs}/{f}{ms}{g}_Clean.txt"
-
-            print(alignment_count_command)
-            os.system(alignment_count_command)   
+            input_file = Path(sisrs) / f'{f}{ms}{g}.txt'
+            output_file = Path(sisrs) / f'{f}{ms}{g}_Clean.txt'
+        
+            # Process line by line (memory efficient)
+            matches = []
+            with open(input_file, 'r') as inf:
+                for line in inf:
+                    matches.extend(re.findall(r'SISRS_[^/]*', line))
+        
+            # Count and sort
+            counts = Counter(matches)
+            sorted_items = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+        
+            # Write output
+            with open(output_file, 'w') as outf:
+                for item, _ in sorted_items:
+                    outf.write(f'{item}\n')
 
 def makelinks(newdir, olddir):
     filestocopy = [f for f in os.listdir(olddir + "/SISRS_Run/") if f.startswith('alignment')]
