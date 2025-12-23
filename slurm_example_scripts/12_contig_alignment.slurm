@@ -15,11 +15,13 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main #bio/Biopython/1.79-intel-2022a
 module load MAFFT/7.505-GCC-11.3.0-with-extensions
+module load conda/latest
+conda activate sisrs
 
 P=$SLURM_JOB_CPUS_PER_NODE
 
-OUTFOLDER=../../SISRS_Small_test/ #CHANGE THIS to the analysis directory
+OUTFOLDER=../../SISRS_Small_test2/ #CHANGE THIS to the analysis directory
 
 ../scripts/sisrs contig_alignment -p $P -d $OUTFOLDER
