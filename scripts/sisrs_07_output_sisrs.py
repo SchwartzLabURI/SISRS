@@ -62,8 +62,8 @@ def count_sites_by_contig(sisrs, ms):
         
             # Write output
             with open(output_file, 'w') as outf:
-                for item, _ in sorted_items:
-                    outf.write(f'{item}\n')
+                for item, count in sorted_items:
+                    outf.write(f'{count:6d} {item}\n')  # Format like uniq -c
 
 def makelinks(newdir, olddir):
     filestocopy = [f for f in os.listdir(olddir + "/SISRS_Run/") if f.startswith('alignment')]
