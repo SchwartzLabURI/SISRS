@@ -17,6 +17,11 @@ module purge
 #module load uri/main bio/Biopython/1.79-intel-2022a
 module load uri/main 
 module load conda/latest
+if ! conda env list | grep -q sisrs; then
+  conda config --add channels bioconda
+  conda create -n sisrs pyvcf3 Biopython numpy pandas psutil -y
+  pip install cyvcf2
+fi
 conda activate sisrs
 
 D=../../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz

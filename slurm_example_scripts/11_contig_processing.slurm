@@ -19,11 +19,6 @@ module load BCFtools/1.17-GCC-12.2.0
 module load MAFFT/7.505-GCC-11.3.0-with-extensions
 
 module load conda/latest
-conda config --add channels bioconda
-if ! conda env list | grep -q sisrs; then
-  conda create -n sisrs pyvcf3 Biopython numpy pandas psutil -y
-  pip install cyvcf2
-fi
 conda activate sisrs
 
 #Optionally specify coverage threshold: '-c', '--cov' (default set to 3) and heterozygosity threshold: '-z', '--hz'(default set to 0.01)
@@ -31,6 +26,6 @@ conda activate sisrs
 T=4 #CHANGE THIS to the threshold number
 P=$SLURM_JOB_CPUS_PER_NODE
 
-OUTFOLDER=../../SISRS_Small_test #CHANGE to analysis directory
+OUTFOLDER=../../SISRS_Small_test2 #CHANGE to analysis directory
 
 ../scripts/sisrs contig_processing -t $T -p $P -d $OUTFOLDER
