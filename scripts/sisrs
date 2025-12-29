@@ -15,7 +15,6 @@ from sisrs_06c_align2 import *
 from sisrs_06d_pileup2 import *
 from sisrs_07_output_sisrs import *
 from sisrs_07_a_contigs_processing import *
-from sisrs_07_b_contigs_alignment import *
 from sisrs_08_filter_contigs import *
 from sisrs_08b_similarilty import *
 from filter_nexus_for_missing import *
@@ -80,13 +79,9 @@ def main():
     setup_parser7a.add_argument('-t', '--threshold', action='store', nargs="?", type=int)
     setup_parser7a.add_argument('-d', '--dir', action='store', nargs="?")
     setup_parser7a.add_argument('-p', '--processors', type=int, action='store', default=1, nargs="?")
-    setup_parser7a.add_argument('-r', '--resume', action=argparse.BooleanOptionalAction, default=False, nargs="?")
+    setup_parser7a.add_argument('-r', '--resume', action=argparse.BooleanOptionalAction, default=False)
     setup_parser7a.add_argument('-c', '--cov', action='store', default=3, nargs="?", type=int)
     setup_parser7a.add_argument('-z', '--hz', action='store', default=0.01, nargs="?", type=float)
-
-    setup_parser7b = subparsers.add_parser("contig_alignment", help="")
-    setup_parser7b.add_argument('-d', '--dir', action='store', nargs="?")
-    setup_parser7b.add_argument('-p', '--proc', action='store', default=1, nargs="?", type=int)
 
     setup_parser8 = subparsers.add_parser("filter", help="Filter contigs")
     setup_parser8.add_argument('-d', '--outPath', action='store', nargs="?")
@@ -178,7 +173,7 @@ def main():
 
     elif args.command == "contig_processing":
         if args.dir:
-            return run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors)
+            return run7a(args.dir + '/', args.threshold, args.cov, args.hz, args.processors, args.resume)
         else:
             raise NotImplementedError(
                 f"Analysis directory must be provided.",
