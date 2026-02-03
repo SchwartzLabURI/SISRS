@@ -3,76 +3,66 @@
 import csv
 import argparse
 import sys
+import subprocess
 from collections import Counter
 from Bio import SeqIO
-from os import path, mkdir, listdir, system
+from os import path, mkdir
 from math import ceil
 import multiprocessing as mp
+from functools import partial
+from pathlib import Path
 
-def alignContigs(new_contig_folder, newnew_contig_folder, processors):
-    '''
-    Align contigs and output to folder
-    Args:
-        new_contig_folder (string): outPath + "/SISRS_Run/contigs_outputs2/"
-        newnew_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/"
-        processors: num processors
-
-    Returns:
-        none
-    '''
-    contig_list = listdir(new_contig_folder)  # list of contigs
-    for con in contig_list:
-        con_p_in = path.join(new_contig_folder, con)
-        con_p_out = path.join(newnew_contig_folder, con)
-        mafft_command = f"mafft --auto --thread {processors} {con_p_in} > {con_p_out}"
-        system(mafft_command)
-
-def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig_folder):
+def write_alignment_plus_composite2(k, contigPath, num_sp, composite, new_contig_folder, processors):
     """
-
     Args:
         k (string): contig name
-        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/aligned_contigs/'
+        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/contigs_outputs/'
         num_sp (int): number of species required to be present given number of missing allowed (default is half)
         composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
         new_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/"
 
     Returns:
         int: 1 if keeping contig
-
     """
 
     i = 0
     a_file = contigPath + k + '.fasta'
-    alignment = []
     if path.exists(a_file):
-        for record in SeqIO.parse(a_file, "fasta"):
-        record.seq = record.seq.ungap("-")
-        alignment.append(record)
-        
-        #alignment = list(SeqIO.parse(a_file, "fasta"))
-        if len(alignment) >= num_sp:  # check we have enough spp
+        alignment = list(SeqIO.parse(a_file, "fasta"))
+        if len(alignment) >= num_sp:  # check we have all spp
             i = 1
             composite_seq = composite[k]  # get composite seq for this contig
+            composite_seq.id = "composite"
+            composite_seq.description = ""
             alignment.append(composite_seq)
 
-            #write contig to temp_file   
-            tempfile = new_contig_folder + k + '_temp.fasta'
-            SeqIO.write(alignment, tempfile, "fasta")
-        
-            con_p_out = new_contig_folder + 'SISRS_contig-' + contig + '.fasta'
-            mafft_command = f"mafft --auto --thread 1 {tempfile} > {con_p_out}"
-            os.system(mafft_command)
-            os.remove(tempfile)
+            #temp unaligned file
+            temp_file = new_contig_folder + k + '_temp.fasta'
+            with open(temp_file, 'w') as tmp_input:
+                SeqIO.write(alignment, tmp_input, "fasta")
 
+            # Run MAFFT alignment
+            output_file = new_contig_folder + k + '.fasta'
+            mafft_command = [
+                'mafft',
+                '--auto',
+                '--thread', f"{processors}",
+                f"{temp_file}"
+            ]
+
+            with open(output_file, 'w') as outf:
+                subprocess.run(mafft_command, stdout=outf, check=True)
+
+            # Clean up temporary file
+            Path(temp_file).unlink()
     return i
 
-def write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, composite, new_contig_folder):
+def write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, composite, new_contig_folder, processors):
     """
 
     Args:
         high_count_contigs (list): contigs that have at least the min_threshold (number of variable sites) and are longer than length_of_locus
-        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/aligned_contigs/'
+        contigPath (str): where to find all the contigs (all samples, unaligned) - often the where we are outputting data e.g. '../../SISRS_Small_test/' plus 'SISRS_Run/contigs_outputs/'
         num_sp (int): number of species required to be present given number of missing allowed (default is half)
         composite (dict):  SeqIO.to_dict(SeqIO.parse(outPath + "/SISRS_Run/Composite_Genome/contigs.fa", "fasta"))
         new_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/"
@@ -82,14 +72,32 @@ def write_alignment_plus_composite(high_count_contigs, contigPath, num_sp, compo
 
     """
 
-    i = [] #counting how many contigs we are keeping
-    pool = mp.Pool()
-    i = [pool.apply(write_alignment_plus_composite2, args=(k, contigPath, num_sp, composite, new_contig_folder)) for k in high_count_contigs]
-    #for k in high_count_contigs:
-    #    i += write_alignment_plus_composite2(k)
-    num_contigs_kept = sum(i)
-    print('There are ', num_contigs_kept, 'contigs remaining after filtering for at least', num_sp, 'species')
-    return(num_contigs_kept)
+    # Create a partial function with fixed arguments
+    # This allows us to pass only the varying argument (k) to pool.map()
+    process_contig = partial(
+        write_alignment_plus_composite2,
+        contigPath=contigPath,
+        num_sp=num_sp,
+        composite=composite,
+        new_contig_folder=new_contig_folder,
+        processors=processors
+    )
+
+    # Use context manager to automatically handle pool cleanup
+    # This ensures the pool is properly closed and joined after use
+    with mp.Pool() as pool:
+        # Map the function across all contigs in high_count_contigs
+        # Each contig is processed in parallel
+        results = pool.map(process_contig, high_count_contigs)
+
+    # Sum all the results from each contig processing
+    num_contigs_kept = sum(results)
+
+    # Print summary statistics using f-string
+    print(f'There are {num_contigs_kept} contigs remaining after filtering for at least {num_sp} species')
+
+    # Return the total count
+    return num_contigs_kept
 
 def print_probe_info(outPath, good_contigs, composite):
     '''
@@ -123,7 +131,6 @@ def print_probe_info(outPath, good_contigs, composite):
 
 def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list, max_dist, contigcounts):
     '''
-
     Args:
         high_count_contigs (list): contigs that have at least the min_threshold (number of variable sites) and are longer than length_of_locus:
         newnew_contig_folder (string): outPath + "/SISRS_Run/aligned_contigs2/":
@@ -141,7 +148,7 @@ def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list
         a_file = newnew_contig_folder + k + '.fasta'
         if path.exists(a_file):
             alignment = SeqIO.to_dict(SeqIO.parse(a_file, "fasta"))
-            composite_seq = str(alignment[k].seq).upper()
+            composite_seq = str(alignment["composite"].seq).upper()
 
             for sp, seq in alignment.items():
                 if sp in taxon_list: #not composite
@@ -150,14 +157,16 @@ def filter_contigs_distance(high_count_contigs, newnew_contig_folder, taxon_list
                     #print(str(composite_seq.seq))
                     distances[sp] = 0
                     if len(seq2) != len(composite_seq):
-                        print(composite_seq)
-                        print(seq2)
-                        sys.exit("Seqs don't match")
+                        print(f'Contig {k}: sequence length mismatch for {sp}')
+                        break
                     for i in range(len(seq2)): #go through seq site by site to get distance
                         if seq2[i] != '-':
                             if composite_seq[i] != seq2[i]:
                                 distances[sp]+=1
-                    distances[sp] = distances[sp] / len(seq2.replace('-', ''))
+                    if len(seq2.replace('-', '')) > 0:
+                        distances[sp] = distances[sp] / len(seq2.replace('-', ''))
+                    else:
+                        distances[sp] = 0
                     #print(distances[sp])
             if max(distances.values()) < max_dist:
                 good_contigs[k] = contigcounts[k]
@@ -180,21 +189,18 @@ def get_high_count_contigs(path_to_seq_lengths, path_to_sites, min_threshold, le
     """
 
     #read in informative site names and count them
-    contigcounts = {}
+    contigcounts = Counter()
     with open(path_to_sites) as file: #SISRS_contig-2/44
         for line in file:
-            l = line.split('/')
-            if l[0] in contigcounts:
-                contigcounts[l[0]] += 1
-            else:
-                contigcounts[l[0]] = 1
+            contig_name = line.split('/')[0]
+            contigcounts[contig_name] += 1
 
     #read in contig names and their overall lengths
-    with open(path_to_seq_lengths, newline = '') as file:
+    with open(path_to_seq_lengths) as file:
         contigs = dict(csv.reader(file, delimiter='\t')) #SISRS_contig-2    351
 
-    high_count_contigs = [k for k, v in contigcounts.items() if int(v) >= min_threshold and int(contigs[k]) > length_of_locus]
-    print('There are ', len(high_count_contigs), 'contigs that have at least ', min_threshold, 'variable sites and are longer than ', length_of_locus)
+    high_count_contigs = [k for k, v in contigcounts.items() if v >= min_threshold and int(contigs[k]) > length_of_locus]
+    print(f'There are {len(high_count_contigs)} contigs that have at least {min_threshold} variable sites and are longer than {length_of_locus}')
     return(high_count_contigs, contigcounts)
 
 def get_taxon_list(tpath):
@@ -237,9 +243,7 @@ def all_of_step8(outPath, alignment_file, min_threshold, processors, length_of_l
     if not path.exists(newnew_contig_folder):
         mkdir(newnew_contig_folder)
 
-    write_alignment_plus_composite(high_count_contigs, outPath + '/SISRS_Run/aligned_contigs/', num_sp, composite, newnew_contig_folder)
-
-    #alignContigs(new_contig_folder, newnew_contig_folder, processors)
+    write_alignment_plus_composite(high_count_contigs, outPath + '/SISRS_Run/aligned_contigs/', num_sp, composite, newnew_contig_folder, processors)
 
     #good ideas here: http://www.mossmatters.com/blog/SequenceClusters.html
 
@@ -268,6 +272,4 @@ if __name__ == '__main__':
     max_dist = args.max_dist #probably 0.08 or less than 8% difference from composite
     num_miss = args.num_miss #number missing in locus alignment
 
-
     all_of_step8(outPath, alignment, min_threshold, processors, length_of_locus, max_dist, num_miss)
-
