@@ -14,12 +14,20 @@ cd $SLURM_SUBMIT_DIR
 module purge
 
 #CHANGE IF NOT ON UNITY
-module load uri/main bio/Biopython/1.79-intel-2022a
+module load uri/main 
+module load conda/latest
+if ! conda env list | grep -q sisrs; then
+  conda config --add channels bioconda
+  conda create -n sisrs pyvcf3 Biopython numpy pandas psutil -y
+  pip install cyvcf2
+fi
+conda activate sisrs
+
 module load MAFFT/7.505-GCC-11.3.0-with-extensions
 
 P=$SLURM_JOB_CPUS_PER_NODE
 
-OUTFOLDER=../../SISRS_Small_test/ #CHANGE THIS to the analysis directory
+OUTFOLDER=../../SISRS_Small_test2/ #CHANGE THIS to the analysis directory
 ALIGNMENT_INFO=alignment_pi_locs_m2.txt #CHANGE
 THRESHOLD=3 #CHANGE
 LOC_LENGTH=160

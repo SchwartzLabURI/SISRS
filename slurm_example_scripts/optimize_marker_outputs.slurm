@@ -20,18 +20,18 @@ module load conda/latest
 conda activate sisrs
 
 P=10 #CHANGE THIS to the number of processors
-OUTFOLDER=../../../Centropogon_markers/ #CHANGE THIS to the analysis directory
+OUTFOLDER=../../SISRS_Small_test #CHANGE THIS to the analysis directory
 MAX_CONTIGS=ALL #CHANGE to reduce output
-LOC_LENGTH=1000
-MAX_DIST=0.08 #0.08 = throw out loci more than 8% dif from composite
+LOC_LENGTH=100
+MAX_DIST=0.70 #0.08 = throw out loci more than 8% dif from composite
 
 echo NUM_MISS ALIGNMENT_INFO THRESHOLD SISRS_sites num_contigs num_contigs2 contig_length num_pi_sites > ${OUTFOLDER}/optimize_markers2.tsv #collect results
 
-../scripts/sisrs filter_nexus -m 20 24 26 30 -f ${OUTFOLDER}/SISRS_Run/alignment_pi.nex
+#../scripts/sisrs filter_nexus -m 4 5 6 -f ${OUTFOLDER}/SISRS_Run/alignment_pi.nex
 
 for THRESHOLD in {1..3}; do #min num variable sites in contig
-  for N in {0..30..4}; do #num spp missing in site alignment
-    for NUM_MISS in {0..30..4}; do  # number spp missing in locus alignment
+  for N in {5..6..1}; do #num spp missing in site alignment
+    for NUM_MISS in {5..6..1}; do  # number spp missing in locus alignment
       ALIGNMENT_INFO=alignment_pi_locs_m${N}.txt
 
       ../scripts/sisrs filter -d $OUTFOLDER -a $ALIGNMENT_INFO -t $THRESHOLD -p $P -l $LOC_LENGTH -m $MAX_DIST -n "$NUM_MISS"

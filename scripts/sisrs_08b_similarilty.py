@@ -71,7 +71,7 @@ def heterozyg_filter(outpath, loci_to_drop, fasta_contigs):
 
     hz_dict = {} #keep track of which contigs have heterozygosity (= paralogs?)
     for taxon in taxonlist:
-        f = outpath + 'SISRS_Run/' + taxon + '/' + taxon + '_hztable.csv' #het table output by step 7
+        f = outpath + '/SISRS_Run/' + taxon + '/' + taxon + '_hztable.csv' #het table output by step 7
         with open(f, newline = '') as fi:
             hz_table = csv.reader(fi, delimiter=',') #iterator: SISRS_contig-5000011,0.09424083769633508
             for line in hz_table:

@@ -18,6 +18,6 @@ module load uri/main #bio/Biopython/1.79-intel-2022a
 module load conda/latest
 conda activate sisrs
 
-OUTFOLDER=../../SISRS_Small_test2 #CHANGE to analysis directory
+OUTFOLDER=../../octopus/output #CHANGE to analysis directory
 
-../scripts/sisrs output -m 1 2 3 -d $OUTFOLDER #CHANGE the numbers as needed
+../scripts/sisrs output -m 17 18 19 -d $OUTFOLDER #CHANGE the numbers as needed
