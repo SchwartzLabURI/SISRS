@@ -271,7 +271,7 @@ def subset(df,trim_read_dir,subset_output_dir,subset_log_dir):
                     f'in={trim_read_dir}/{Taxon}/{Dataset}_Trim_1.fastq.gz',
                     f'in2={trim_read_dir}/{Taxon}/{Dataset}_Trim_2.fastq.gz',
                     f'out={subset_output_dir}{Dataset}_GenomeReads_1.fastq.gz',
-                    f'out={subset_output_dir}{Dataset}_GenomeReads_1.fastq.gz',
+                    f'out2={subset_output_dir}{Dataset}_GenomeReads_2.fastq.gz',
                     f'samplebasestarget={ToSample}',
                     'ow=t']
             else:
