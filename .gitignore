@@ -1,3 +1,7 @@
+*out
+*err
+*pyc
 ./Reads
 ./SISRS_Run
 ./Ray_Composite_Genome
+.Rproj.user
