@@ -30,6 +30,7 @@ def main():
     setup_parser2 = subparsers.add_parser("trimmer", help="Trim reads")
     setup_parser2.add_argument('-d', '--datadir', action='store', nargs="?", help="Input folder")
     setup_parser2.add_argument('-dir', '--outputdir', action='store', nargs="?", help="Output folder")
+    setup_parser2.add_argument('-sp', '--sp', action='store', nargs="?")
     setup_parser2.add_argument('-p', '--processors', action='store', default=1, nargs="?")
     setup_parser2.add_argument('--link', action=argparse.BooleanOptionalAction, default=False)
 
@@ -225,8 +226,8 @@ def main():
             )
 
     elif args.command == "trimmer":
-        if args.datadir and args.outputdir:
-            return run2(args.datadir, args.outputdir, args.processors, args.link)
+        if args.datadir and args.outputdir and args.sp:
+            return run2(args.datadir, args.outputdir, args.sp, args.processors, args.link)
         else:
             raise NotImplementedError(
                 f"Input and output directories must be provided.",

@@ -6,8 +6,9 @@
 #SBATCH --ntasks-per-node=10   # CHANGE THIS to the number of processors on your node
 #SBATCH --mail-user="rsschwartz@uri.edu" #CHANGE THIS to your email address
 #SBATCH --mail-type=ALL
-#SBATCH --output=slurm_%x_%j.out
-#SBATCH --error=slurm_%x_%j.err
+#SBATCH --array=[0-11]%4 # CHANGE this second bracketed number to the total jobs you need(taxa-1); CHANGE after % to number of  simultaneous jobs
+#SBATCH -o slurm_%x_%A_%a.out
+#SBATCH -e slurm_%x_%A_%a.err
 
 cd $SLURM_SUBMIT_DIR
 
@@ -23,9 +24,14 @@ conda activate sisrs
 
 P=$SLURM_JOB_CPUS_PER_NODE
 
-D=../../octopus/data #CHANGE THIS to the directory with input data OR the output directory for a prior run when combined with --link
-DIR=../../octopus/output #CHANGE THIS to the analysis (output) directory
+D=~/SISRS_Small #CHANGE THIS to the directory with input data OR the output directory for a prior run when combined with --link
+OUTFOLDER=~/SISRS_Small_test2 #CHANGE THIS to the analysis (output) directory
+
+# create an array variable containing the folders names
+SPP=($(cat ${OUTFOLDER}/TaxonList.txt))
+echo ${SPP[@]}
+echo ${SPP[$SLURM_ARRAY_TASK_ID]}
 
 #Note - the only taxa used will be in TaxonList.txt so edit that for fewer taxa
 
-../scripts/sisrs trimmer -p $P -d $D -dir $DIR
+../scripts/sisrs trimmer -p $P -d $D -dir $OUTFOLDER -sp ${SPP[$SLURM_ARRAY_TASK_ID]}
