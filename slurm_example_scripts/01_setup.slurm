@@ -23,8 +23,9 @@ if ! conda env list | grep -q sisrs; then
   pip install cyvcf2
 fi
 conda activate sisrs
+pip install cyvcf2
 
-D=../../SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
-DIR=../../SISRS_Small_test2 #CHANGE THIS to the path for the output of your analysis
+D=~/SISRS_Small #CHANGE THIS to the path for the folder containing folders of fastq.gz
+DIR=~/SISRS_Small_test2 #CHANGE THIS to the path for the output of your analysis
 
 ../scripts/sisrs setup -d $D -dir $DIR
