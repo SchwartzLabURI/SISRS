@@ -107,7 +107,7 @@ def getFinalBase_Pruned(cleanBases,minread,thresh,minPenalty,threshPenalty,bothP
     '''
 
     minread = int(minread)
-    thresh = int(thresh)
+    thresh = float(thresh)
     minPenalty = int(minPenalty)
     threshPenalty = int(threshPenalty)
     bothPenalty = int(bothPenalty)
